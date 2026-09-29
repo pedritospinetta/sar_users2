@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SAR-0003 | Verificación SAR</title>
+
+    <link
+        rel="stylesheet"
+        href="../../style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="profile-container">
+
+
+    <a
+        href="../../"
+        class="back-button"
+    >
+        ← Buscar integrantes
+    </a>
+
+
+    <article class="profile-card">
+
+
+        <header class="profile-header">
+
+            <img
+                src="../../img/logo.png"
+                alt="SAR Argentina"
+            >
+
+            <h1>
+                SAR Argentina
+            </h1>
+
+            <p>
+                Verificación de integrante
+            </p>
+
+        </header>
+
+
+        <img
+            class="profile-photo"
+            src="../../img/integrante3.jpg"
+            alt="Matías Rodríguez"
+        >
+
+
+        <div class="profile-content">
+
+
+            <h2 class="profile-name">
+                Matías Rodríguez
+            </h2>
+
+
+            <div class="profile-code">
+                SAR-0003
+            </div>
+
+
+            <div class="profile-role">
+                Auxiliar
+            </div>
+
+
+            <div class="profile-status">
+
+                <span class="status inactivo">
+
+                    <span class="status-dot"></span>
+
+                    INACTIVO
+
+                </span>
+
+            </div>
+
+
+            <div class="profile-data">
+
+
+                <div class="data-row">
+
+                    <div class="data-label">
+                        Identificación
+                    </div>
+
+                    <div class="data-value">
+                        SAR-0003
+                    </div>
+
+                </div>
+
+
+                <div class="data-row">
+
+                    <div class="data-label">
+                        Función
+                    </div>
+
+                    <div class="data-value">
+                        Auxiliar
+                    </div>
+
+                </div>
+
+
+                <div class="data-row">
+
+                    <div class="data-label">
+                        Delegación
+                    </div>
+
+                    <div class="data-value">
+                        Córdoba
+                    </div>
+
+                </div>
+
+
+                <div class="data-row">
+
+                    <div class="data-label">
+                        Año de ingreso
+                    </div>
+
+                    <div class="data-value">
+                        2026
+                    </div>
+
+                </div>
+
+
+                <div class="data-row">
+
+                    <div class="data-label">
+                        Especialidades
+                    </div>
+
+                    <div class="specialties">
+
+                        <span class="specialty">
+                            Logística
+                        </span>
+
+                        <span class="specialty">
+                            Apoyo operativo
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="verification inactive">
+
+                <strong>
+                    ⚠ Integrante inactivo
+                </strong>
+
+                Esta identificación figura actualmente
+                como inactiva en el registro SAR.
+
+            </div>
+
+
+            <div class="qr-section">
+
+                <strong>
+                    QR de verificación
+                </strong>
+
+                <div class="qr-description">
+                    Escaneá este código para acceder a esta credencial.
+                </div>
+
+                <div id="qrcode"></div>
+
+            </div>
+
+
+        </div>
+
+
+    </article>
+
+
+</div>
+
+
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
+</script>
+
+
+<script>
+
+new QRCode(
+    document.getElementById("qrcode"),
+    {
+        text: window.location.href,
+        width: 160,
+        height: 160
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>
