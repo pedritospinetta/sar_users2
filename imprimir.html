@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="robots"
+        content="noindex,nofollow"
+    >
+
+    <title>
+        Imprimir credenciales | SAR Argentina
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #e9e9e9;
+        }
+
+
+        .screen-toolbar {
+            position: sticky;
+
+            top: 0;
+
+            z-index: 500;
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            padding: 15px;
+
+            background: #171717;
+
+            border-bottom:
+                4px solid #ff6500;
+        }
+
+
+        .screen-toolbar button {
+            padding:
+                11px
+                17px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+
+        .print-button {
+            background: #ff6500;
+
+            color: white;
+        }
+
+
+        .back-button {
+            background: #333;
+
+            color: white;
+        }
+
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+
+            margin:
+                15px auto;
+
+            padding:
+                15mm
+                12mm;
+
+            display: grid;
+
+            grid-template-columns:
+                85.6mm
+                85.6mm;
+
+            grid-auto-rows:
+                53.98mm;
+
+            justify-content: center;
+
+            align-content: start;
+
+            gap:
+                6mm
+                6mm;
+
+            background: white;
+
+            box-shadow:
+                0 4px 25px rgba(0,0,0,.14);
+
+            page-break-after: always;
+        }
+
+
+        .credential {
+            width: 85.6mm;
+            height: 53.98mm;
+
+            position: relative;
+
+            overflow: hidden;
+
+            display: grid;
+
+            grid-template-columns:
+                29mm
+                1fr;
+
+            border:
+                .3mm solid #111;
+
+            border-radius:
+                3mm;
+
+            background: white;
+
+            color: #111;
+
+            break-inside: avoid;
+        }
+
+
+        .credential.inactivo {
+            opacity: .86;
+        }
+
+
+        .credential-left {
+            position: relative;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding:
+                3mm;
+
+            background: #171717;
+
+            border-right:
+                1.5mm solid #ff6500;
+        }
+
+
+        .credential-logo {
+            width: 12mm;
+            height: 12mm;
+
+            margin-bottom:
+                2mm;
+
+            object-fit: contain;
+
+            border-radius:
+                1.5mm;
+        }
+
+
+        .credential-photo {
+            width: 21mm;
+            height: 24mm;
+
+            object-fit: cover;
+
+            border:
+                .8mm solid white;
+
+            border-radius:
+                2mm;
+        }
+
+
+        .sar-mini {
+            margin-top:
+                2mm;
+
+            color: white;
+
+            font-size:
+                2.3mm;
+
+            font-weight: bold;
+
+            text-align: center;
+        }
+
+
+        .credential-content {
+            position: relative;
+
+            padding:
+                4mm
+                4mm
+                3mm;
+
+            display: flex;
+
+            flex-direction: column;
+        }
+
+
+        .credential-title {
+            color: #ff6500;
+
+            font-size:
+                2.3mm;
+
+            font-weight: 900;
+
+            letter-spacing:
+                .25mm;
+
+            text-transform:
+                uppercase;
+        }
+
+
+        .credential-name {
+            margin-top:
+                1.5mm;
+
+            font-size:
+                4mm;
+
+            font-weight: 900;
+
+            line-height:
+                1.05;
+        }
+
+
+        .credential-role {
+            margin-top:
+                .8mm;
+
+            color: #555;
+
+            font-size:
+                2.5mm;
+        }
+
+
+        .credential-id {
+            margin-top:
+                1.7mm;
+
+            font-size:
+                2.8mm;
+
+            font-weight: bold;
+        }
+
+
+        .credential-data {
+            margin-top:
+                1.3mm;
+
+            font-size:
+                2.2mm;
+
+            line-height:
+                1.45;
+        }
+
+
+        .credential-status {
+            position: absolute;
+
+            left: 4mm;
+            bottom: 3mm;
+
+            padding:
+                1mm
+                2mm;
+
+            border-radius:
+                4mm;
+
+            font-size:
+                1.9mm;
+
+            font-weight: 900;
+        }
+
+
+        .credential-status.activo {
+            background: #def6e8;
+
+            color: #147b40;
+        }
+
+
+        .credential-status.inactivo {
+            background: #ffe1df;
+
+            color: #a42620;
+        }
+
+
+        .qr-container {
+            position: absolute;
+
+            right: 3mm;
+            bottom: 3mm;
+
+            width: 15mm;
+            height: 15mm;
+        }
+
+
+        .qr-container img,
+        .qr-container canvas {
+            width: 15mm !important;
+            height: 15mm !important;
+        }
+
+
+        .cut-mark {
+            position: absolute;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            border:
+                .15mm dashed
+                rgba(0,0,0,.18);
+        }
+
+
+        .empty-message {
+            padding: 60px;
+
+            text-align: center;
+        }
+
+
+        @page {
+            size: A4 portrait;
+
+            margin: 0;
+        }
+
+
+        @media print {
+
+            body {
+                background: white;
+            }
+
+
+            .screen-toolbar {
+                display: none;
+            }
+
+
+            .page {
+                margin: 0;
+
+                box-shadow: none;
+
+                page-break-after: always;
+            }
+
+
+            .page:last-child {
+                page-break-after: auto;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="screen-toolbar">
+
+    <button
+        class="back-button"
+        onclick="window.close()"
+    >
+        Volver
+    </button>
+
+
+    <button
+        class="print-button"
+        onclick="window.print()"
+    >
+        Imprimir credenciales
+    </button>
+
+</div>
+
+
+<div id="print-area"></div>
+
+
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+></script>
+
+
+<script
+    type="module"
+    src="./imprimir.js?v=3"
+></script>
+
+
+</body>
+
+</html>
