@@ -1,79 +1,505 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Registro de Integrantes | SAR Argentina</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="./style.css">
+    <meta
+        name="description"
+        content="Sistema de registro y verificación de integrantes de SAR Argentina."
+    >
+
+    <title>
+        Registro de Integrantes | SAR Argentina
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="./style.css?v=5"
+    >
 </head>
 
 <body>
 
+
+<!-- =========================================
+HEADER
+========================================= -->
+
 <header class="main-header">
 
-    <div class="header-logo">
-        <img src="./img/logo.jpg" alt="SAR Argentina">
+    <div class="header-left">
+
+        <a
+            href="./"
+            class="brand-link"
+        >
+
+            <img
+                src="./img/logo.jpg"
+                alt="SAR Argentina"
+                class="header-logo-img"
+            >
+
+            <div class="brand-info">
+
+                <h1>
+                    SAR ARGENTINA
+                </h1>
+
+                <p>
+                    Registro de Integrantes
+                </p>
+
+            </div>
+
+        </a>
+
     </div>
 
-    <div>
-        <h1>SAR Argentina</h1>
-        <p>Registro de Integrantes</p>
+
+    <!-- MENU HAMBURGUESA -->
+
+    <div class="menu-container">
+
+        <button
+            id="menu-toggle"
+            class="menu-toggle"
+            type="button"
+            aria-label="Abrir menú"
+            aria-expanded="false"
+        >
+            ☰
+        </button>
+
+
+        <nav
+            id="menu-dropdown"
+            class="menu-dropdown"
+        >
+
+            <a href="./">
+                Inicio
+            </a>
+
+            <a href="#registro">
+                Integrantes
+            </a>
+
+            <a href="#verificacion">
+                Verificación
+            </a>
+
+            <div class="menu-separator"></div>
+
+            <a
+                href="./login.html"
+                class="admin-menu-link"
+            >
+                🔐 Acceso administrativo
+            </a>
+
+        </nav>
+
     </div>
 
 </header>
 
 
-<main class="container">
+<!-- =========================================
+HERO
+========================================= -->
+
+<main>
 
     <section class="hero">
 
-        <h2>Verificación de integrantes</h2>
+        <div class="container hero-inner">
 
-        <p>
-            Buscá un integrante por nombre, identificación, función o delegación.
-        </p>
+            <div class="hero-label">
+                SISTEMA DE VERIFICACIÓN
+            </div>
 
-        <div class="search-box">
 
-            <input
-                type="text"
-                id="buscador"
-                placeholder="Ej: SAR-0001, Juan Pérez, Rescatista"
-                autocomplete="off"
-            >
+            <h2>
+                Registro de integrantes
+            </h2>
+
+
+            <p class="hero-description">
+                Consultá integrantes registrados mediante
+                nombre, identificación SAR, función,
+                especialidad o delegación.
+            </p>
+
+
+            <div class="search-area">
+
+                <label
+                    for="buscador"
+                    class="search-label"
+                >
+                    Buscar integrante
+                </label>
+
+
+                <div class="search-box">
+
+                    <span
+                        class="search-icon"
+                        aria-hidden="true"
+                    >
+                        🔎
+                    </span>
+
+
+                    <input
+                        type="search"
+                        id="buscador"
+                        placeholder="Nombre, SAR-0001, Rescatista..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <p class="search-help">
+                    Ingresá nombre, código SAR, función o delegación.
+                </p>
+
+            </div>
 
         </div>
 
     </section>
 
 
-    <section>
+    <!-- =========================================
+    RESUMEN
+    ========================================= -->
 
-        <div class="section-title">
+    <section class="summary-section">
 
-            <h2>Integrantes</h2>
+        <div class="container summary-grid">
 
-            <span id="cantidad"></span>
+
+            <article class="summary-card">
+
+                <div class="summary-icon">
+                    👤
+                </div>
+
+                <div>
+
+                    <strong id="total-integrantes">
+                        —
+                    </strong>
+
+                    <span>
+                        Integrantes registrados
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <div class="summary-icon status-summary">
+                    ✓
+                </div>
+
+                <div>
+
+                    <strong>
+                        Verificación digital
+                    </strong>
+
+                    <span>
+                        Consulta individual
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <div class="summary-icon qr-summary">
+                    QR
+                </div>
+
+                <div>
+
+                    <strong>
+                        Identificación
+                    </strong>
+
+                    <span>
+                        Acceso mediante código QR
+                    </span>
+
+                </div>
+
+            </article>
 
         </div>
 
-        <div id="lista-integrantes" class="members-grid"></div>
+    </section>
+
+
+    <!-- =========================================
+    REGISTRO
+    ========================================= -->
+
+    <section
+        class="registry-section"
+        id="registro"
+    >
+
+        <div class="container">
+
+            <div class="section-header">
+
+                <div>
+
+                    <div class="section-label">
+                        REGISTRO
+                    </div>
+
+                    <h2>
+                        Integrantes
+                    </h2>
+
+                    <p>
+                        Seleccioná un integrante para consultar
+                        su ficha de verificación.
+                    </p>
+
+                </div>
+
+
+                <div
+                    id="cantidad"
+                    class="member-counter"
+                >
+                </div>
+
+            </div>
+
+
+            <div
+                id="lista-integrantes"
+                class="members-grid"
+            >
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+    VERIFICACION
+    ========================================= -->
+
+    <section
+        class="verification-section"
+        id="verificacion"
+    >
+
+        <div class="container verification-grid">
+
+            <div class="verification-text">
+
+                <div class="section-label">
+                    VERIFICACIÓN DIGITAL
+                </div>
+
+
+                <h2>
+                    Verificación de credenciales
+                </h2>
+
+
+                <p>
+                    Cada integrante registrado dispone de una
+                    identificación individual dentro del sistema.
+                </p>
+
+
+                <p>
+                    Al escanear el código QR de una credencial,
+                    se accede directamente a la ficha correspondiente.
+                </p>
+
+
+                <div class="verification-points">
+
+                    <div>
+                        <span>✓</span>
+                        Identificación SAR individual
+                    </div>
+
+                    <div>
+                        <span>✓</span>
+                        Estado activo o inactivo
+                    </div>
+
+                    <div>
+                        <span>✓</span>
+                        Función y delegación
+                    </div>
+
+                    <div>
+                        <span>✓</span>
+                        Verificación digital
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <aside class="verification-card">
+
+                <div class="verification-shield">
+                    🛡️
+                </div>
+
+                <h3>
+                    Consulta institucional
+                </h3>
+
+                <p>
+                    La información visible corresponde al registro
+                    habilitado para consulta.
+                </p>
+
+                <div class="verification-secure">
+                    SISTEMA DE VERIFICACIÓN SAR
+                </div>
+
+            </aside>
+
+        </div>
 
     </section>
 
 </main>
 
 
-<footer>
-    <p>
-        SAR Argentina — Sistema de verificación de integrantes
-    </p>
+<!-- =========================================
+FOOTER
+========================================= -->
+
+<footer class="main-footer">
+
+    <div class="container footer-content">
+
+        <div class="footer-brand">
+
+            <img
+                src="./img/logo.jpg"
+                alt="SAR Argentina"
+            >
+
+            <div>
+
+                <strong>
+                    SAR Argentina
+                </strong>
+
+                <span>
+                    Registro y verificación de integrantes
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-right">
+
+            <span>
+                © <span id="current-year"></span> SAR Argentina
+            </span>
+
+        </div>
+
+    </div>
+
 </footer>
 
 
-<script src="./app.js"></script>
+<script src="./app.js?v=5"></script>
+
+
+<script>
+
+    const menuToggle =
+        document.getElementById("menu-toggle");
+
+    const menuDropdown =
+        document.getElementById("menu-dropdown");
+
+
+    menuToggle.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+            const abierto =
+                menuDropdown.classList.toggle("show");
+
+            menuToggle.setAttribute(
+                "aria-expanded",
+                abierto
+            );
+
+        }
+    );
+
+
+    document.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                !menuToggle.contains(event.target)
+                &&
+                !menuDropdown.contains(event.target)
+            ) {
+
+                menuDropdown.classList.remove("show");
+
+                menuToggle.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+            }
+
+        }
+    );
+
+
+    document.getElementById(
+        "current-year"
+    ).textContent =
+        new Date().getFullYear();
+
+</script>
+
 
 </body>
+
 </html>
