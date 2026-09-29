@@ -1,3 +1,4 @@
+
 let integrantes = [];
 
 const lista = document.getElementById("lista-integrantes");
@@ -9,7 +10,7 @@ async function cargarIntegrantes() {
 
     try {
 
-        const respuesta = await fetch("./data/integrantes.json");
+        const respuesta = await fetch("./integrantes.json");
 
         if (!respuesta.ok) {
             throw new Error("No se pudo cargar integrantes.json");
@@ -60,8 +61,7 @@ function mostrarIntegrantes(datos) {
 
     datos.forEach(persona => {
 
-        const tarjeta =
-            document.createElement("article");
+        const tarjeta = document.createElement("article");
 
         tarjeta.className = "member-card";
 
