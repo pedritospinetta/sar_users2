@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="robots"
+        content="noindex,nofollow"
+    >
+
+    <title>Administración | SAR Argentina</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --orange: #ff6500;
+            --orange-dark: #d95400;
+
+            --dark: #141414;
+            --dark2: #222222;
+
+            --background: #f2f3f5;
+
+            --white: #ffffff;
+
+            --border: #e1e3e6;
+
+            --text: #191919;
+            --muted: #6d737c;
+
+            --green: #168447;
+            --green-bg: #e1f6e9;
+
+            --red: #b02a37;
+            --red-bg: #ffe5e8;
+
+            --blue: #2468d3;
+        }
+
+
+        body {
+            min-height: 100vh;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: var(--background);
+
+            color: var(--text);
+        }
+
+
+        /* HEADER */
+
+        .admin-header {
+            position: sticky;
+
+            top: 0;
+
+            z-index: 900;
+
+            background: var(--dark);
+
+            color: white;
+
+            border-bottom:
+                5px solid var(--orange);
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,.16);
+        }
+
+
+        .header-inner {
+            max-width: 1300px;
+
+            margin: auto;
+
+            padding:
+                13px
+                22px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+
+        .brand {
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+        }
+
+
+        .brand img {
+            width: 58px;
+            height: 58px;
+
+            object-fit: contain;
+
+            border-radius: 8px;
+        }
+
+
+        .brand h1 {
+            font-size: 20px;
+        }
+
+
+        .brand p {
+            margin-top: 4px;
+
+            color: #aaa;
+
+            font-size: 12px;
+        }
+
+
+        .header-actions {
+            display: flex;
+
+            gap: 9px;
+
+            align-items: center;
+        }
+
+
+        .header-button {
+            padding:
+                10px
+                14px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+
+        .public-button {
+            background: #333;
+
+            color: white;
+        }
+
+
+        .logout-button {
+            background: #3a2020;
+
+            color: #ffb4b4;
+        }
+
+
+        /* GENERAL */
+
+        .container {
+            width: 100%;
+
+            max-width: 1300px;
+
+            margin: auto;
+
+            padding:
+                35px
+                22px;
+        }
+
+
+        .loading {
+            padding: 15px;
+
+            margin-bottom: 25px;
+
+            border-radius: 10px;
+
+            background: #fff0e5;
+
+            color: #984611;
+        }
+
+
+        .page-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-end;
+
+            gap: 25px;
+
+            margin-bottom: 28px;
+        }
+
+
+        .page-label {
+            margin-bottom: 7px;
+
+            color: var(--orange);
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            letter-spacing: 1px;
+        }
+
+
+        .page-header h2 {
+            margin-bottom: 7px;
+
+            font-size: 32px;
+        }
+
+
+        .page-header p {
+            color: var(--muted);
+        }
+
+
+        .new-button {
+            padding:
+                13px
+                18px;
+
+            border: 0;
+
+            border-radius: 9px;
+
+            background: var(--orange);
+
+            color: white;
+
+            font-weight: 800;
+
+            cursor: pointer;
+        }
+
+
+        .new-button:hover {
+            background: var(--orange-dark);
+        }
+
+
+        /* TOOLBAR */
+
+        .toolbar {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            flex-wrap: wrap;
+
+            margin-bottom: 25px;
+
+            padding: 15px;
+
+            background: white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 12px;
+        }
+
+
+        .search-input {
+            flex: 1;
+
+            min-width: 250px;
+
+            padding:
+                13px
+                15px;
+
+            border:
+                1px solid #d5d7da;
+
+            border-radius: 8px;
+
+            outline: none;
+
+            font-size: 14px;
+        }
+
+
+        .search-input:focus {
+            border-color: var(--orange);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(255,101,0,.10);
+        }
+
+
+        .print-tools {
+            display: flex;
+
+            gap: 8px;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+        }
+
+
+        .tool-button {
+            padding:
+                11px
+                13px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 8px;
+
+            background: #f8f8f8;
+
+            cursor: pointer;
+
+            font-weight: 700;
+        }
+
+
+        .print-button {
+            background: var(--dark);
+
+            color: white;
+
+            border-color: var(--dark);
+        }
+
+
+        .selected-counter {
+            color: var(--muted);
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+
+        /* GRID */
+
+        .members-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fill,
+                    minmax(330px, 1fr)
+                );
+
+            gap: 20px;
+        }
+
+
+        .member-card {
+            position: relative;
+
+            overflow: hidden;
+
+            background: white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 8px 25px rgba(0,0,0,.055);
+        }
+
+
+        .select-area {
+            position: absolute;
+
+            top: 14px;
+            right: 14px;
+
+            z-index: 2;
+
+            width: 27px;
+            height: 27px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 7px;
+
+            background: rgba(255,255,255,.93);
+
+            box-shadow:
+                0 2px 8px rgba(0,0,0,.13);
+        }
+
+
+        .print-checkbox {
+            width: 18px;
+            height: 18px;
+
+            accent-color: var(--orange);
+
+            cursor: pointer;
+        }
+
+
+        .member-main {
+            display: flex;
+
+            align-items: center;
+
+            gap: 17px;
+
+            padding:
+                22px;
+        }
+
+
+        .member-photo {
+            width: 95px;
+            height: 95px;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            object-fit: cover;
+
+            background: #eee;
+
+            border:
+                4px solid #f0f0f0;
+        }
+
+
+        .member-id {
+            margin-bottom: 5px;
+
+            color: var(--orange);
+
+            font-size: 12px;
+
+            font-weight: 800;
+        }
+
+
+        .member-name {
+            margin-bottom: 5px;
+
+            font-size: 19px;
+        }
+
+
+        .member-role {
+            margin-bottom: 10px;
+
+            color: var(--muted);
+
+            font-size: 14px;
+        }
+
+
+        .status {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            padding:
+                5px
+                9px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+
+            font-weight: 800;
+        }
+
+
+        .status.activo {
+            background: var(--green-bg);
+
+            color: var(--green);
+        }
+
+
+        .status.inactivo {
+            background: var(--red-bg);
+
+            color: var(--red);
+        }
+
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: currentColor;
+        }
+
+
+        .member-actions {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 8px;
+
+            padding:
+                0
+                22px
+                22px;
+        }
+
+
+        .action-button {
+            padding:
+                10px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            text-align: center;
+
+            text-decoration: none;
+        }
+
+
+        .edit-button {
+            background: var(--orange);
+
+            color: white;
+        }
+
+
+        .view-button {
+            background: #ededed;
+
+            color: #333;
+        }
+
+
+        .delete-button {
+            background: var(--red-bg);
+
+            color: var(--red);
+        }
+
+
+        .print-one-button {
+            background: #202020;
+
+            color: white;
+        }
+
+
+        /* EMPTY */
+
+        .empty {
+            grid-column: 1 / -1;
+
+            padding: 50px;
+
+            text-align: center;
+
+            background: white;
+
+            border-radius: 14px;
+
+            color: var(--muted);
+        }
+
+
+        /* MODAL */
+
+        .modal-overlay {
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 5000;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(0,0,0,.70);
+        }
+
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+
+        .modal {
+            width: 100%;
+
+            max-width: 750px;
+
+            max-height: 92vh;
+
+            overflow-y: auto;
+
+            background: white;
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 25px 80px rgba(0,0,0,.35);
+        }
+
+
+        .modal-header {
+            position: sticky;
+
+            top: 0;
+
+            z-index: 2;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding:
+                20px
+                24px;
+
+            background: var(--dark);
+
+            color: white;
+
+            border-bottom:
+                4px solid var(--orange);
+        }
+
+
+        .modal-header h3 {
+            font-size: 20px;
+        }
+
+
+        .close-modal {
+            width: 38px;
+            height: 38px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            background: #333;
+
+            color: white;
+
+            font-size: 20px;
+
+            cursor: pointer;
+        }
+
+
+        .modal-content {
+            padding: 25px;
+        }
+
+
+        .form-grid {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 18px;
+        }
+
+
+        .form-group {
+            display: flex;
+
+            flex-direction: column;
+        }
+
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+
+        .form-group label {
+            margin-bottom: 6px;
+
+            font-size: 12px;
+
+            font-weight: 800;
+        }
+
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+
+            padding:
+                12px
+                13px;
+
+            border:
+                1px solid #d2d4d7;
+
+            border-radius: 8px;
+
+            font-family: inherit;
+
+            font-size: 14px;
+
+            outline: none;
+        }
+
+
+        .form-group textarea {
+            min-height: 85px;
+
+            resize: vertical;
+        }
+
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--orange);
+
+            box-shadow:
+                0 0 0 3px rgba(255,101,0,.10);
+        }
+
+
+        .photo-preview {
+            width: 125px;
+            height: 125px;
+
+            margin-top: 10px;
+
+            border-radius: 12px;
+
+            object-fit: cover;
+
+            background: #eee;
+        }
+
+
+        .modal-actions {
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 10px;
+
+            margin-top: 25px;
+        }
+
+
+        .save-button {
+            padding:
+                12px
+                18px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            background: var(--orange);
+
+            color: white;
+
+            font-weight: 800;
+
+            cursor: pointer;
+        }
+
+
+        .cancel-button {
+            padding:
+                12px
+                18px;
+
+            border:
+                1px solid #ddd;
+
+            border-radius: 8px;
+
+            background: #f4f4f4;
+
+            cursor: pointer;
+        }
+
+
+        .form-message {
+            margin-top: 18px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+
+        .form-message.error {
+            color: var(--red);
+        }
+
+
+        .form-message.success {
+            color: var(--green);
+        }
+
+
+        /* RESPONSIVE */
+
+        @media(max-width: 700px) {
+
+            .header-inner {
+                padding:
+                    11px
+                    14px;
+            }
+
+            .brand img {
+                width: 48px;
+                height: 48px;
+            }
+
+            .brand h1 {
+                font-size: 16px;
+            }
+
+            .brand p {
+                font-size: 10px;
+            }
+
+            .public-button {
+                display: none;
+            }
+
+            .container {
+                padding:
+                    25px
+                    15px;
+            }
+
+            .page-header {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .new-button {
+                width: 100%;
+            }
+
+            .toolbar {
+                align-items: stretch;
+
+                flex-direction: column;
+            }
+
+            .print-tools {
+                width: 100%;
+            }
+
+            .tool-button {
+                flex: 1;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="admin-header">
+
+    <div class="header-inner">
+
+        <div class="brand">
+
+            <img
+                src="./img/logo.jpg"
+                alt="SAR Argentina"
+            >
+
+            <div>
+
+                <h1>
+                    SAR ARGENTINA
+                </h1>
+
+                <p>
+                    Administración de integrantes
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <button
+                class="header-button public-button"
+                id="go-public"
+            >
+                Ver sitio
+            </button>
+
+            <button
+                class="header-button logout-button"
+                id="logout-button"
+            >
+                Cerrar sesión
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div
+        id="loading"
+        class="loading"
+    >
+        Verificando sesión...
+    </div>
+
+
+    <div
+        id="admin-content"
+        style="display:none;"
+    >
+
+        <section class="page-header">
+
+            <div>
+
+                <div class="page-label">
+                    PANEL ADMINISTRATIVO
+                </div>
+
+                <h2>
+                    Integrantes
+                </h2>
+
+                <p id="admin-welcome">
+                    Administración del registro SAR.
+                </p>
+
+            </div>
+
+
+            <button
+                id="new-member-button"
+                class="new-button"
+            >
+                + Nuevo integrante
+            </button>
+
+        </section>
+
+
+        <div class="toolbar">
+
+            <input
+                type="search"
+                id="search-input"
+                class="search-input"
+                placeholder="Buscar por nombre, ID SAR o cargo"
+            >
+
+
+            <div class="print-tools">
+
+                <span
+                    id="selected-counter"
+                    class="selected-counter"
+                >
+                    0 seleccionadas
+                </span>
+
+
+                <button
+                    id="select-all"
+                    class="tool-button"
+                >
+                    Seleccionar todas
+                </button>
+
+
+                <button
+                    id="clear-selection"
+                    class="tool-button"
+                >
+                    Quitar selección
+                </button>
+
+
+                <button
+                    id="print-selected"
+                    class="tool-button print-button"
+                >
+                    Imprimir seleccionadas
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="members-grid"
+            class="members-grid"
+        >
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- MODAL -->
+
+<div
+    id="member-modal"
+    class="modal-overlay"
+>
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <h3 id="modal-title">
+                Editar integrante
+            </h3>
+
+            <button
+                id="close-modal"
+                class="close-modal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-content">
+
+            <form id="member-form">
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label for="member-id">
+                            ID SAR
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-id"
+                            placeholder="SAR-0001"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="member-status">
+                            Estado
+                        </label>
+
+                        <select
+                            id="member-status"
+                            required
+                        >
+
+                            <option value="activo">
+                                Activo
+                            </option>
+
+                            <option value="inactivo">
+                                Inactivo
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group full">
+
+                        <label for="member-name">
+                            Nombre completo
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="member-dni">
+                            DNI
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-dni"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="member-role">
+                            Cargo / función
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-role"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="member-delegation">
+                            Delegación
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-delegation"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="member-blood">
+                            Grupo sanguíneo
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-blood"
+                            placeholder="O+"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="member-entry">
+                            Año de ingreso
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-entry"
+                            placeholder="2026"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group full">
+
+                        <label for="member-specialties">
+                            Especialidades
+                        </label>
+
+                        <textarea
+                            id="member-specialties"
+                            placeholder="Búsqueda y rescate, Primeros auxilios, Comunicaciones"
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="form-group full">
+
+                        <label for="member-photo">
+                            Foto del integrante
+                        </label>
+
+                        <input
+                            type="file"
+                            id="member-photo"
+                            accept="image/jpeg,image/png,image/webp"
+                        >
+
+                        <img
+                            id="photo-preview"
+                            class="photo-preview"
+                            src="./img/logo.jpg"
+                            alt="Vista previa"
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+                <div
+                    id="form-message"
+                    class="form-message"
+                >
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancel-button"
+                        class="cancel-button"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="save-button"
+                    >
+                        Guardar cambios
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script
+    type="module"
+    src="./admin.js?v=10"
+></script>
+
+
+</body>
+
+</html>
