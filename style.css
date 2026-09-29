@@ -7,17 +7,8 @@
 :root {
     --orange: #ff6a00;
     --orange-dark: #d95500;
-
-    --black: #111111;
-
     --dark: #181818;
-    --dark-2: #242424;
-
     --white: #ffffff;
-
-    --gray: #e7e7e7;
-    --gray-dark: #777777;
-
     --green: #20b45b;
     --red: #db3a34;
 }
@@ -105,7 +96,6 @@ body {
     border: 2px solid #d5d5d5;
 
     outline: none;
-
     transition: 0.2s;
 }
 
@@ -136,7 +126,6 @@ body {
 
 .members-grid {
     display: grid;
-
     grid-template-columns:
         repeat(auto-fit, minmax(260px, 1fr));
 
@@ -148,9 +137,7 @@ body {
 
 .member-card {
     background: white;
-
     border-radius: 14px;
-
     overflow: hidden;
 
     box-shadow:
@@ -182,14 +169,12 @@ body {
 
 .member-id {
     color: var(--orange);
-
     font-weight: bold;
     font-size: 14px;
 }
 
 .member-name {
     font-size: 21px;
-
     margin-top: 7px;
     margin-bottom: 4px;
 }
@@ -204,17 +189,13 @@ body {
 
 .status {
     display: inline-flex;
-
     align-items: center;
-
     gap: 6px;
 
     padding: 5px 10px;
 
     border-radius: 20px;
-
     font-size: 13px;
-
     font-weight: bold;
 }
 
@@ -233,32 +214,26 @@ body {
     height: 8px;
 
     border-radius: 50%;
-
     background: currentColor;
 }
 
 
-/* BOTON */
+/* BOTÓN */
 
 .view-button {
     display: block;
-
     margin-top: 17px;
 
     text-decoration: none;
-
     text-align: center;
 
     color: white;
-
     background: var(--orange);
 
     padding: 12px;
-
     border-radius: 8px;
 
     font-weight: bold;
-
     transition: 0.2s;
 }
 
@@ -271,17 +246,13 @@ body {
 
 .profile-container {
     max-width: 700px;
-
     margin: 35px auto;
-
     padding: 20px;
 }
 
 .profile-card {
     background: white;
-
     border-radius: 18px;
-
     overflow: hidden;
 
     box-shadow:
@@ -290,9 +261,7 @@ body {
 
 .profile-header {
     background: var(--dark);
-
     color: white;
-
     text-align: center;
 
     padding: 25px;
@@ -305,7 +274,6 @@ body {
     height: 85px;
 
     object-fit: contain;
-
     margin-bottom: 10px;
 }
 
@@ -325,43 +293,35 @@ body {
     height: 180px;
 
     border-radius: 50%;
-
     object-fit: cover;
     object-position: center;
 
-    margin:
-        30px auto 15px auto;
+    margin: 30px auto 15px auto;
 
     border: 6px solid #f0f0f0;
 }
 
 .profile-content {
     padding: 10px 30px 35px;
-
     text-align: center;
 }
 
 .profile-name {
     font-size: 28px;
-
     margin-bottom: 5px;
 }
 
 .profile-code {
     font-size: 18px;
-
     font-weight: bold;
 
     color: var(--orange);
-
     margin-bottom: 10px;
 }
 
 .profile-role {
     font-size: 18px;
-
     color: #555;
-
     margin-bottom: 20px;
 }
 
@@ -374,25 +334,19 @@ body {
 
 .profile-data {
     text-align: left;
-
     border-top: 1px solid #ddd;
-
     margin-top: 25px;
 }
 
 .data-row {
     padding: 15px 0;
-
     border-bottom: 1px solid #eee;
 }
 
 .data-label {
     color: #777;
-
     font-size: 13px;
-
     text-transform: uppercase;
-
     margin-bottom: 4px;
 }
 
@@ -405,9 +359,7 @@ body {
 
 .specialties {
     display: flex;
-
     flex-wrap: wrap;
-
     gap: 8px;
 
     margin-top: 8px;
@@ -419,28 +371,24 @@ body {
     border-radius: 20px;
 
     padding: 7px 11px;
-
     font-size: 13px;
 }
 
 
-/* VERIFICACION */
+/* VERIFICACIÓN */
 
 .verification {
     margin-top: 30px;
-
     padding: 20px;
 
     border-radius: 10px;
 
     background: #eaf8ef;
-
     color: #146b35;
 }
 
 .verification strong {
     display: block;
-
     margin-bottom: 5px;
 }
 
@@ -454,27 +402,22 @@ body {
 
 .qr-section {
     text-align: center;
-
     margin-top: 30px;
 }
 
 .qr-section strong {
     display: block;
-
     margin-bottom: 5px;
 }
 
 .qr-description {
     color: #777;
-
     font-size: 13px;
 }
 
 #qrcode {
     display: flex;
-
     justify-content: center;
-
     margin-top: 15px;
 }
 
@@ -488,11 +431,9 @@ body {
 
 .back-button {
     display: inline-block;
-
     margin-bottom: 15px;
 
     color: #555;
-
     text-decoration: none;
 
     font-weight: bold;
@@ -503,13 +444,11 @@ body {
 }
 
 
-/* NO RESULTS */
+/* SIN RESULTADOS */
 
 .no-results {
     text-align: center;
-
     padding: 50px;
-
     color: #777;
 
     grid-column: 1 / -1;
@@ -520,11 +459,9 @@ body {
 
 footer {
     text-align: center;
-
     padding: 25px;
 
     color: #777;
-
     font-size: 14px;
 }
 
@@ -551,8 +488,7 @@ footer {
     }
 
     .profile-content {
-        padding:
-            10px 20px 30px;
+        padding: 10px 20px 30px;
     }
 
     .profile-name {
