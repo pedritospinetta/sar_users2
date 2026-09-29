@@ -6,8 +6,7 @@ import {
 
 import {
     signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged
+    signOut
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 
@@ -18,15 +17,11 @@ import {
 
 
 const form =
-    document.getElementById(
-        "login-form"
-    );
+    document.getElementById("login-form");
 
 
 const message =
-    document.getElementById(
-        "login-message"
-    );
+    document.getElementById("login-message");
 
 
 async function verificarComandante(usuario) {
@@ -40,15 +35,11 @@ async function verificarComandante(usuario) {
 
 
     const usuarioSnap =
-        await getDoc(
-            usuarioRef
-        );
+        await getDoc(usuarioRef);
 
 
     if (!usuarioSnap.exists()) {
-
         return false;
-
     }
 
 
@@ -142,7 +133,7 @@ form.addEventListener(
                         "./admin.html";
 
                 },
-                500
+                700
             );
 
 
@@ -155,46 +146,10 @@ form.addEventListener(
 
 
             message.textContent =
-                "Correo o contraseña incorrectos.";
+                "Correo electrónico o contraseña incorrectos.";
 
             message.className =
                 "login-message error";
-
-        }
-
-    }
-);
-
-
-onAuthStateChanged(
-    auth,
-    async usuario => {
-
-        if (!usuario) {
-            return;
-        }
-
-
-        try {
-
-            const autorizado =
-                await verificarComandante(
-                    usuario
-                );
-
-
-            if (autorizado) {
-
-                window.location.href =
-                    "./admin.html";
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
 
         }
 
