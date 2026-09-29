@@ -672,3 +672,193 @@ footer {
 .login-back:hover {
     color: #ff6a00;
 }
+/* ==============================
+   LOGIN ADMIN
+============================== */
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #111111,
+            #232323
+        );
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+
+    background: #ffffff;
+    padding: 35px;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.login-logo {
+    display: block;
+
+    width: 110px;
+    height: 110px;
+
+    object-fit: contain;
+
+    margin: 0 auto 20px auto;
+}
+
+.login-card h1 {
+    text-align: center;
+
+    margin-bottom: 8px;
+
+    font-size: 28px;
+}
+
+.login-card > p {
+    text-align: center;
+
+    color: #777;
+
+    margin-bottom: 30px;
+}
+
+#login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+#login-form label {
+    margin-bottom: 7px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+#login-form input {
+    width: 100%;
+
+    padding: 14px;
+
+    margin-bottom: 20px;
+
+    border:
+        1px solid
+        #d5d5d5;
+
+    border-radius: 8px;
+
+    font-size: 16px;
+
+    outline: none;
+
+    transition: 0.2s;
+}
+
+#login-form input:focus {
+    border-color: #ff6a00;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(255, 106, 0, 0.12);
+}
+
+#login-form button {
+    border: none;
+
+    padding: 14px;
+
+    border-radius: 8px;
+
+    background: #ff6a00;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+#login-form button:hover {
+    background: #d95500;
+}
+
+.login-message {
+    margin-top: 18px;
+
+    padding: 12px;
+
+    border-radius: 8px;
+
+    text-align: center;
+
+    font-size: 14px;
+
+    display: none;
+}
+
+.login-message:not(:empty) {
+    display: block;
+}
+
+.login-message.error {
+    background: #ffe3e0;
+    color: #a92720;
+}
+
+.login-message.success {
+    background: #e4f8eb;
+    color: #166c37;
+}
+
+.login-back {
+    display: block;
+
+    margin-top: 22px;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    color: #555;
+
+    font-size: 14px;
+}
+
+.login-back:hover {
+    color: #ff6a00;
+}
+
+@media(max-width: 600px) {
+
+    .login-page {
+        padding: 15px;
+    }
+
+    .login-card {
+        padding: 25px;
+    }
+
+    .login-logo {
+        width: 90px;
+        height: 90px;
+    }
+
+    .login-card h1 {
+        font-size: 24px;
+    }
+
+}
