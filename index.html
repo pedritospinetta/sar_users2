@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Registro de Integrantes | SAR Argentina</title>
+
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+<header class="main-header">
+
+    <div class="header-logo">
+        <img src="./img/logo.png" alt="SAR Argentina">
+    </div>
+
+    <div>
+        <h1>SAR Argentina</h1>
+        <p>Registro de Integrantes</p>
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <section class="hero">
+
+        <h2>Verificación de integrantes</h2>
+
+        <p>
+            Buscá un integrante por nombre, identificación, función o delegación.
+        </p>
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="buscador"
+                placeholder="Ej: SAR-0001, Juan Pérez, Rescatista"
+                autocomplete="off"
+            >
+
+        </div>
+
+    </section>
+
+
+    <section>
+
+        <div class="section-title">
+
+            <h2>Integrantes</h2>
+
+            <span id="cantidad"></span>
+
+        </div>
+
+
+        <div id="lista-integrantes" class="members-grid"></div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <p>
+        SAR Argentina — Sistema de verificación de integrantes
+    </p>
+
+</footer>
+
+
+<script src="./app.js"></script>
+
+</body>
+</html>
