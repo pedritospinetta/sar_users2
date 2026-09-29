@@ -1,0 +1,46 @@
+[
+    {
+        "id": "SAR-0001",
+        "slug": "sar-0001",
+        "nombre": "Juan Martín Pérez",
+        "cargo": "Rescatista",
+        "estado": "activo",
+        "foto": "integrante1.jpg",
+        "ingreso": "2024",
+        "delegacion": "Buenos Aires",
+        "especialidades": [
+            "Búsqueda y rescate",
+            "Primeros auxilios",
+            "Comunicaciones"
+        ]
+    },
+    {
+        "id": "SAR-0002",
+        "slug": "sar-0002",
+        "nombre": "Lucía Fernández",
+        "cargo": "Operadora de comunicaciones",
+        "estado": "activo",
+        "foto": "integrante2.jpg",
+        "ingreso": "2025",
+        "delegacion": "Corrientes",
+        "especialidades": [
+            "Comunicaciones",
+            "Coordinación operativa",
+            "Primeros auxilios"
+        ]
+    },
+    {
+        "id": "SAR-0003",
+        "slug": "sar-0003",
+        "nombre": "Matías Rodríguez",
+        "cargo": "Auxiliar",
+        "estado": "inactivo",
+        "foto": "integrante3.jpg",
+        "ingreso": "2026",
+        "delegacion": "Córdoba",
+        "especialidades": [
+            "Logística",
+            "Apoyo operativo"
+        ]
+    }
+]
