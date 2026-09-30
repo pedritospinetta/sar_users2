@@ -21,15 +21,15 @@ const profile =
     );
 
 
-const errorBox =
-    document.getElementById(
-        "error-box"
-    );
-
-
 const inactiveBox =
     document.getElementById(
         "inactive-box"
+    );
+
+
+const errorBox =
+    document.getElementById(
+        "error-box"
     );
 
 
@@ -40,13 +40,14 @@ const parametros =
 
 
 const id =
-    (
+    String(
         parametros.get("id")
         ||
         ""
     )
         .trim()
         .toUpperCase();
+
 
 
 async function cargarIntegrante() {
@@ -70,13 +71,13 @@ async function cargarIntegrante() {
             );
 
 
-        const documento =
+        const resultado =
             await getDoc(
                 referencia
             );
 
 
-        if (!documento.exists()) {
+        if (!resultado.exists()) {
 
             mostrarNoEncontrado();
 
@@ -88,15 +89,15 @@ async function cargarIntegrante() {
         const persona = {
 
             id:
-                documento.id,
+                resultado.id,
 
-            ...documento.data()
+            ...resultado.data()
 
         };
 
 
         const estado =
-            (
+            String(
                 persona.estado
                 ||
                 "inactivo"
@@ -118,7 +119,7 @@ async function cargarIntegrante() {
         }
 
 
-        mostrarPerfilActivo(
+        mostrarActivo(
             persona
         );
 
@@ -131,14 +132,15 @@ async function cargarIntegrante() {
         );
 
 
-        mostrarNoEncontrado();
+        mostrarErrorConsulta();
 
     }
 
 }
 
 
-function mostrarPerfilActivo(
+
+function mostrarActivo(
     persona
 ) {
 
@@ -146,11 +148,11 @@ function mostrarPerfilActivo(
         "none";
 
 
-    errorBox.style.display =
+    inactiveBox.style.display =
         "none";
 
 
-    inactiveBox.style.display =
+    errorBox.style.display =
         "none";
 
 
@@ -164,20 +166,20 @@ function mostrarPerfilActivo(
         "./img/logo.jpg";
 
 
-    const profilePhoto =
+    const imagen =
         document.getElementById(
             "profile-photo"
         );
 
 
-    profilePhoto.src =
+    imagen.src =
         foto;
 
 
-    profilePhoto.onerror =
-        () => {
+    imagen.onerror =
+        function() {
 
-            profilePhoto.src =
+            imagen.src =
                 "./img/logo.jpg";
 
         };
@@ -233,66 +235,16 @@ function mostrarPerfilActivo(
     );
 
 
-    const specialtiesSection =
-        document.getElementById(
-            "specialties-section"
-        );
-
-
-    const specialtiesList =
-        document.getElementById(
-            "specialties-list"
-        );
-
-
-    specialtiesList.innerHTML =
-        "";
-
-
-    if (
-        Array.isArray(
-            persona.especialidades
-        )
-        &&
-        persona.especialidades.length > 0
-    ) {
-
-        persona.especialidades.forEach(
-            especialidad => {
-
-                const chip =
-                    document.createElement(
-                        "span"
-                    );
-
-
-                chip.className =
-                    "specialty";
-
-
-                chip.textContent =
-                    especialidad;
-
-
-                specialtiesList.appendChild(
-                    chip
-                );
-
-            }
-        );
-
-    } else {
-
-        specialtiesSection.style.display =
-            "none";
-
-    }
+    mostrarEspecialidades(
+        persona.especialidades
+    );
 
 
     document.title =
         `${persona.nombre || persona.id} | SAR Argentina`;
 
 }
+
 
 
 function mostrarInactivo(
@@ -330,9 +282,10 @@ function mostrarInactivo(
 
 
     document.title =
-        `Credencial no vigente | SAR Argentina`;
+        "Credencial no vigente | SAR Argentina";
 
 }
+
 
 
 function mostrarNoEncontrado() {
@@ -357,8 +310,8 @@ function mostrarNoEncontrado() {
 
         <div
             style="
-                font-size:52px;
-                margin-bottom:18px;
+                font-size:55px;
+                margin-bottom:20px;
             "
         >
             ⚠️
@@ -378,11 +331,14 @@ function mostrarNoEncontrado() {
         <p
             style="
                 color:#6e747d;
-                line-height:1.5;
+                line-height:1.6;
             "
         >
-            No se encontraron datos asociados a esta
-            identificación en la base de datos.
+
+            No se encontraron datos
+            asociados a esta identificación
+            en la base de datos.
+
         </p>
 
     `;
@@ -390,15 +346,63 @@ function mostrarNoEncontrado() {
 }
 
 
+
+function mostrarErrorConsulta() {
+
+    loading.style.display =
+        "none";
+
+
+    profile.style.display =
+        "none";
+
+
+    inactiveBox.style.display =
+        "none";
+
+
+    errorBox.style.display =
+        "block";
+
+
+    errorBox.innerHTML = `
+
+        <h2
+            style="
+                margin-bottom:10px;
+                color:#a52a24;
+            "
+        >
+            No se pudo verificar la credencial
+        </h2>
+
+
+        <p
+            style="
+                color:#6e747d;
+            "
+        >
+
+            Ocurrió un problema al consultar
+            el registro. Intentá nuevamente.
+
+        </p>
+
+    `;
+
+}
+
+
+
 function completarCampo(
     valorId,
-    cardId,
+    tarjetaId,
     valor
 ) {
 
-    const card =
+    const tarjeta =
         document.getElementById(
-            cardId
+            tarjetaId
         );
 
 
@@ -410,7 +414,7 @@ function completarCampo(
         String(valor).trim() === ""
     ) {
 
-        card.style.display =
+        tarjeta.style.display =
             "none";
 
         return;
@@ -418,7 +422,7 @@ function completarCampo(
     }
 
 
-    card.style.display =
+    tarjeta.style.display =
         "";
 
 
@@ -428,6 +432,75 @@ function completarCampo(
         valor;
 
 }
+
+
+
+function mostrarEspecialidades(
+    especialidades
+) {
+
+    const seccion =
+        document.getElementById(
+            "specialties-section"
+        );
+
+
+    const lista =
+        document.getElementById(
+            "specialties-list"
+        );
+
+
+    lista.innerHTML =
+        "";
+
+
+    if (
+        !Array.isArray(
+            especialidades
+        )
+        ||
+        especialidades.length === 0
+    ) {
+
+        seccion.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    seccion.style.display =
+        "";
+
+
+    especialidades.forEach(
+        especialidad => {
+
+            const elemento =
+                document.createElement(
+                    "span"
+                );
+
+
+            elemento.className =
+                "specialty";
+
+
+            elemento.textContent =
+                especialidad;
+
+
+            lista.appendChild(
+                elemento
+            );
+
+        }
+    );
+
+}
+
 
 
 cargarIntegrante();
