@@ -28,6 +28,7 @@
 
 
         body {
+
             margin: 0;
 
             font-family:
@@ -35,16 +36,17 @@
                 Helvetica,
                 sans-serif;
 
-            background: #e9e9e9;
+            background: #e7e7e7;
         }
 
 
-        .screen-toolbar {
+        .toolbar {
+
             position: sticky;
 
             top: 0;
 
-            z-index: 500;
+            z-index: 100;
 
             display: flex;
 
@@ -52,16 +54,17 @@
 
             gap: 10px;
 
-            padding: 15px;
+            padding: 14px;
 
-            background: #171717;
+            background: #151515;
 
             border-bottom:
                 4px solid #ff6500;
         }
 
 
-        .screen-toolbar button {
+        .toolbar button {
+
             padding:
                 11px
                 17px;
@@ -70,35 +73,38 @@
 
             border-radius: 8px;
 
-            cursor: pointer;
-
             font-weight: bold;
-        }
 
-
-        .print-button {
-            background: #ff6500;
-
-            color: white;
+            cursor: pointer;
         }
 
 
         .back-button {
+
             background: #333;
 
             color: white;
         }
 
 
+        .print-button {
+
+            background: #ff6500;
+
+            color: white;
+        }
+
+
         .page {
+
             width: 210mm;
-            min-height: 297mm;
+            height: 297mm;
 
             margin:
                 15px auto;
 
             padding:
-                15mm
+                13mm
                 12mm;
 
             display: grid;
@@ -107,47 +113,52 @@
                 85.6mm
                 85.6mm;
 
-            grid-auto-rows:
-                53.98mm;
+            grid-template-rows:
+                repeat(
+                    4,
+                    53.98mm
+                );
 
             justify-content: center;
 
             align-content: start;
 
             gap:
-                6mm
+                5mm
                 6mm;
 
             background: white;
 
             box-shadow:
-                0 4px 25px rgba(0,0,0,.14);
+                0 5px 25px
+                rgba(0,0,0,.16);
 
             page-break-after: always;
         }
 
 
         .credential {
-            width: 85.6mm;
-            height: 53.98mm;
 
             position: relative;
+
+            width: 85.6mm;
+            height: 53.98mm;
 
             overflow: hidden;
 
             display: grid;
 
             grid-template-columns:
-                29mm
+                28mm
                 1fr;
 
+            background: white;
+
             border:
-                .3mm solid #111;
+                .3mm solid #222;
 
             border-radius:
-                3mm;
-
-            background: white;
+                2.8mm;
 
             color: #111;
 
@@ -155,13 +166,7 @@
         }
 
 
-        .credential.inactivo {
-            opacity: .86;
-        }
-
-
         .credential-left {
-            position: relative;
 
             display: flex;
 
@@ -174,155 +179,170 @@
             padding:
                 3mm;
 
-            background: #171717;
+            background: #161616;
 
             border-right:
-                1.5mm solid #ff6500;
+                1.4mm solid #ff6500;
         }
 
 
         .credential-logo {
-            width: 12mm;
-            height: 12mm;
+
+            width: 11mm;
+            height: 11mm;
 
             margin-bottom:
                 2mm;
 
             object-fit: contain;
 
+            background: white;
+
             border-radius:
-                1.5mm;
+                1mm;
         }
 
 
         .credential-photo {
-            width: 21mm;
+
+            width: 20mm;
             height: 24mm;
 
             object-fit: cover;
 
             border:
-                .8mm solid white;
+                .7mm solid white;
 
             border-radius:
                 2mm;
         }
 
 
-        .sar-mini {
+        .sar-title {
+
             margin-top:
                 2mm;
 
             color: white;
 
             font-size:
-                2.3mm;
+                2mm;
 
-            font-weight: bold;
-
-            text-align: center;
+            font-weight: 900;
         }
 
 
         .credential-content {
+
             position: relative;
 
             padding:
                 4mm
-                4mm
-                3mm;
+                4mm;
 
-            display: flex;
-
-            flex-direction: column;
+            overflow: hidden;
         }
 
 
-        .credential-title {
+        .institution {
+
             color: #ff6500;
 
             font-size:
-                2.3mm;
+                2.1mm;
 
             font-weight: 900;
 
             letter-spacing:
-                .25mm;
-
-            text-transform:
-                uppercase;
+                .15mm;
         }
 
 
         .credential-name {
+
             margin-top:
                 1.5mm;
 
+            max-width:
+                47mm;
+
             font-size:
-                4mm;
+                3.9mm;
 
             font-weight: 900;
 
-            line-height:
-                1.05;
+            line-height: 1;
         }
 
 
         .credential-role {
+
             margin-top:
-                .8mm;
+                1mm;
 
             color: #555;
 
             font-size:
                 2.5mm;
-        }
-
-
-        .credential-id {
-            margin-top:
-                1.7mm;
-
-            font-size:
-                2.8mm;
 
             font-weight: bold;
         }
 
 
-        .credential-data {
+        .credential-id {
+
             margin-top:
-                1.3mm;
+                1.5mm;
 
             font-size:
-                2.2mm;
+                2.7mm;
+
+            font-weight: 900;
+        }
+
+
+        .credential-data {
+
+            margin-top:
+                1mm;
+
+            max-width:
+                35mm;
+
+            color: #333;
+
+            font-size:
+                2mm;
 
             line-height:
-                1.45;
+                1.4;
         }
 
 
         .credential-status {
+
             position: absolute;
 
             left: 4mm;
+
             bottom: 3mm;
 
             padding:
-                1mm
+                .9mm
                 2mm;
 
             border-radius:
-                4mm;
+                5mm;
 
             font-size:
-                1.9mm;
+                1.8mm;
 
             font-weight: 900;
         }
 
 
         .credential-status.activo {
+
             background: #def6e8;
 
             color: #147b40;
@@ -330,6 +350,7 @@
 
 
         .credential-status.inactivo {
+
             background: #ffe1df;
 
             color: #a42620;
@@ -337,9 +358,11 @@
 
 
         .qr-container {
+
             position: absolute;
 
             right: 3mm;
+
             bottom: 3mm;
 
             width: 15mm;
@@ -349,25 +372,14 @@
 
         .qr-container img,
         .qr-container canvas {
+
             width: 15mm !important;
             height: 15mm !important;
         }
 
 
-        .cut-mark {
-            position: absolute;
+        .empty {
 
-            inset: 0;
-
-            pointer-events: none;
-
-            border:
-                .15mm dashed
-                rgba(0,0,0,.18);
-        }
-
-
-        .empty-message {
             padding: 60px;
 
             text-align: center;
@@ -375,6 +387,7 @@
 
 
         @page {
+
             size: A4 portrait;
 
             margin: 0;
@@ -384,16 +397,19 @@
         @media print {
 
             body {
+
                 background: white;
             }
 
 
-            .screen-toolbar {
+            .toolbar {
+
                 display: none;
             }
 
 
             .page {
+
                 margin: 0;
 
                 box-shadow: none;
@@ -403,6 +419,7 @@
 
 
             .page:last-child {
+
                 page-break-after: auto;
             }
 
@@ -416,10 +433,11 @@
 <body>
 
 
-<div class="screen-toolbar">
+<div class="toolbar">
 
     <button
         class="back-button"
+        type="button"
         onclick="window.close()"
     >
         Volver
@@ -428,9 +446,10 @@
 
     <button
         class="print-button"
+        type="button"
         onclick="window.print()"
     >
-        Imprimir credenciales
+        Imprimir
     </button>
 
 </div>
@@ -446,7 +465,7 @@
 
 <script
     type="module"
-    src="./imprimir.js?v=3"
+    src="./imprimir.js?v=10"
 ></script>
 
 
