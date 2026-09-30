@@ -5,8 +5,7 @@ import {
 
 
 import {
-    onAuthStateChanged,
-    signOut
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 
@@ -22,19 +21,21 @@ import {
 
 
 
-/* ==============================================
+/* =========================================
 CLOUDINARY
-============================================== */
+========================================= */
 
 const CLOUD_NAME =
     "hyvxppyb";
+
 
 const UPLOAD_PRESET =
     "sar_integrantes";
 
 
-
-async function subirFotoCloudinary(archivo) {
+async function subirFotoCloudinary(
+    archivo
+) {
 
     const formData =
         new FormData();
@@ -62,67 +63,39 @@ async function subirFotoCloudinary(archivo) {
         );
 
 
-    if (!respuesta.ok) {
-
-        let mensaje =
-            "No se pudo subir la fotografía.";
-
-
-        try {
-
-            const errorCloudinary =
-                await respuesta.json();
-
-
-            if (
-                errorCloudinary
-                &&
-                errorCloudinary.error
-                &&
-                errorCloudinary.error.message
-            ) {
-
-                mensaje =
-                    errorCloudinary.error.message;
-
-            }
-
-        } catch (error) {
-
-            console.error(error);
-
-        }
-
-
-        throw new Error(
-            mensaje
-        );
-
-    }
-
-
-    const resultado =
+    const datos =
         await respuesta.json();
 
 
-    if (!resultado.secure_url) {
+    if (!respuesta.ok) {
 
         throw new Error(
-            "Cloudinary no devolvió la URL de la imagen."
+            datos?.error?.message
+            ||
+            "No se pudo subir la fotografía."
         );
 
     }
 
 
-    return resultado.secure_url;
+    if (!datos.secure_url) {
+
+        throw new Error(
+            "Cloudinary no devolvió la URL de la fotografía."
+        );
+
+    }
+
+
+    return datos.secure_url;
 
 }
 
 
 
-/* ==============================================
+/* =========================================
 ELEMENTOS
-============================================== */
+========================================= */
 
 const loading =
     document.getElementById(
@@ -191,26 +164,30 @@ const saveButton =
 
 
 
-/* ==============================================
+/* =========================================
 VARIABLES
-============================================== */
+========================================= */
 
-let integrantes = [];
+let integrantes =
+    [];
+
 
 let seleccionados =
     new Set();
 
+
 let editandoId =
     null;
+
 
 let fotoActual =
     "";
 
 
 
-/* ==============================================
-SEGURIDAD ADMIN
-============================================== */
+/* =========================================
+COMPROBAR COMANDANTE
+========================================= */
 
 async function comprobarComandante(
     usuario
@@ -232,7 +209,9 @@ async function comprobarComandante(
 
     if (!documento.exists()) {
 
-        return null;
+        throw new Error(
+            "No existe el registro administrativo de este usuario."
+        );
 
     }
 
@@ -243,11 +222,22 @@ async function comprobarComandante(
 
     if (
         datos.rol !== "comandante"
-        ||
+    ) {
+
+        throw new Error(
+            "El usuario no tiene rol de comandante."
+        );
+
+    }
+
+
+    if (
         datos.activo !== true
     ) {
 
-        return null;
+        throw new Error(
+            "La cuenta administrativa está inactiva."
+        );
 
     }
 
@@ -258,13 +248,40 @@ async function comprobarComandante(
 
 
 
-/* ==============================================
+/* =========================================
 SESIÓN
-============================================== */
+========================================= */
+
+let authRespondio =
+    false;
+
+
+setTimeout(
+    () => {
+
+        if (!authRespondio) {
+
+            loading.textContent =
+                "Firebase está tardando en verificar la sesión. Recargá la página.";
+
+
+            loading.className =
+                "loading error";
+
+        }
+
+    },
+    10000
+);
+
 
 onAuthStateChanged(
     auth,
     async usuario => {
+
+        authRespondio =
+            true;
+
 
         if (!usuario) {
 
@@ -279,32 +296,24 @@ onAuthStateChanged(
 
         try {
 
+            loading.textContent =
+                "Verificando permisos del comandante...";
+
+
             const datos =
                 await comprobarComandante(
                     usuario
                 );
 
 
-            if (!datos) {
-
-                await signOut(auth);
-
-
-                window.location.replace(
-                    "./login.html"
-                );
-
-                return;
-
-            }
-
-
             document.getElementById(
                 "admin-welcome"
             ).textContent =
                 `Sesión iniciada como ${
-                    datos.nombre ||
-                    usuario.email ||
+                    datos.nombre
+                    ||
+                    usuario.email
+                    ||
                     "Comandante"
                 }.`;
 
@@ -323,17 +332,17 @@ onAuthStateChanged(
         } catch (error) {
 
             console.error(
-                "Error verificando permisos:",
+                "Error verificando administrador:",
                 error
             );
 
 
-            await signOut(auth);
+            loading.textContent =
+                `Error: ${error.message}`;
 
 
-            window.location.replace(
-                "./login.html"
-            );
+            loading.className =
+                "loading error";
 
         }
 
@@ -342,9 +351,9 @@ onAuthStateChanged(
 
 
 
-/* ==============================================
+/* =========================================
 CARGAR INTEGRANTES
-============================================== */
+========================================= */
 
 async function cargarIntegrantes() {
 
@@ -357,7 +366,7 @@ async function cargarIntegrantes() {
 
     try {
 
-        const consulta =
+        const resultado =
             await getDocs(
                 collection(
                     db,
@@ -370,7 +379,7 @@ async function cargarIntegrantes() {
             [];
 
 
-        consulta.forEach(
+        resultado.forEach(
             documento => {
 
                 integrantes.push({
@@ -413,7 +422,8 @@ async function cargarIntegrantes() {
 
         membersGrid.innerHTML = `
             <div class="empty">
-                No se pudieron cargar los integrantes.
+                Error cargando integrantes:
+                ${error.message}
             </div>
         `;
 
@@ -423,11 +433,13 @@ async function cargarIntegrantes() {
 
 
 
-/* ==============================================
+/* =========================================
 MOSTRAR INTEGRANTES
-============================================== */
+========================================= */
 
-function renderIntegrantes(lista) {
+function renderIntegrantes(
+    lista
+) {
 
     membersGrid.innerHTML =
         "";
@@ -439,7 +451,7 @@ function renderIntegrantes(lista) {
 
         membersGrid.innerHTML = `
             <div class="empty">
-                No hay integrantes para mostrar.
+                No hay integrantes registrados.
             </div>
         `;
 
@@ -483,6 +495,7 @@ function renderIntegrantes(lista) {
                         type="checkbox"
                         class="print-checkbox"
                         data-id="${persona.id}"
+
                         ${
                             seleccionados.has(
                                 persona.id
@@ -498,8 +511,8 @@ function renderIntegrantes(lista) {
                 <div class="member-main">
 
                     <img
-                        class="member-photo"
                         src="${foto}"
+                        class="member-photo"
                         alt=""
                         loading="lazy"
                         onerror="this.src='./img/logo.jpg'"
@@ -514,12 +527,20 @@ function renderIntegrantes(lista) {
 
 
                         <h3 class="member-name">
-                            ${persona.nombre || "Sin nombre"}
+                            ${
+                                persona.nombre
+                                ||
+                                "Sin nombre"
+                            }
                         </h3>
 
 
                         <div class="member-role">
-                            ${persona.cargo || "Sin cargo"}
+                            ${
+                                persona.cargo
+                                ||
+                                "Sin cargo"
+                            }
                         </div>
 
 
@@ -542,40 +563,42 @@ function renderIntegrantes(lista) {
 
                 <div class="member-actions">
 
+
                     <button
+                        type="button"
                         class="action-button edit-button"
                         data-edit="${persona.id}"
-                        type="button"
                     >
                         Editar
                     </button>
 
 
                     <button
+                        type="button"
                         class="action-button view-button"
                         data-view="${persona.id}"
-                        type="button"
                     >
                         Ver ficha
                     </button>
 
 
                     <button
+                        type="button"
                         class="action-button print-one-button"
                         data-print="${persona.id}"
-                        type="button"
                     >
                         Imprimir
                     </button>
 
 
                     <button
+                        type="button"
                         class="action-button delete-button"
                         data-delete="${persona.id}"
-                        type="button"
                     >
                         Eliminar
                     </button>
+
 
                 </div>
 
@@ -590,17 +613,17 @@ function renderIntegrantes(lista) {
     );
 
 
-    conectarEventosTarjetas();
+    conectarEventos();
 
 }
 
 
 
-/* ==============================================
+/* =========================================
 EVENTOS TARJETAS
-============================================== */
+========================================= */
 
-function conectarEventosTarjetas() {
+function conectarEventos() {
 
 
     document
@@ -740,26 +763,9 @@ function conectarEventosTarjetas() {
 
 
 
-/* ==============================================
-CONTADOR
-============================================== */
-
-function actualizarContador() {
-
-    selectedCounter.textContent =
-        `${seleccionados.size} seleccionada${
-            seleccionados.size !== 1
-                ? "s"
-                : ""
-        }`;
-
-}
-
-
-
-/* ==============================================
-BUSCADOR
-============================================== */
+/* =========================================
+BUSCAR
+========================================= */
 
 searchInput.addEventListener(
     "input",
@@ -771,60 +777,21 @@ searchInput.addEventListener(
                 .toLowerCase();
 
 
-        const filtrados =
+        const encontrados =
             integrantes.filter(
                 persona => {
 
-                    return (
+                    const contenido = `
+                        ${persona.id || ""}
+                        ${persona.nombre || ""}
+                        ${persona.cargo || ""}
+                        ${persona.dni || ""}
+                        ${persona.delegacion || ""}
+                    `.toLowerCase();
 
-                        (
-                            persona.id
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
 
-                        ||
-
-                        (
-                            persona.nombre
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
-
-                        ||
-
-                        (
-                            persona.cargo
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
-
-                        ||
-
-                        (
-                            persona.dni
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
-
-                        ||
-
-                        (
-                            persona.delegacion
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
-
+                    return contenido.includes(
+                        texto
                     );
 
                 }
@@ -832,7 +799,7 @@ searchInput.addEventListener(
 
 
         renderIntegrantes(
-            filtrados
+            encontrados
         );
 
     }
@@ -840,9 +807,22 @@ searchInput.addEventListener(
 
 
 
-/* ==============================================
-SELECCIONAR TODAS
-============================================== */
+/* =========================================
+SELECCIÓN PARA IMPRIMIR
+========================================= */
+
+function actualizarContador() {
+
+    selectedCounter.textContent =
+        `${seleccionados.size} seleccionada${
+            seleccionados.size !== 1
+            ? "s"
+            : ""
+        }`;
+
+}
+
+
 
 document
     .getElementById(
@@ -878,10 +858,6 @@ document
 
 
 
-/* ==============================================
-QUITAR SELECCIÓN
-============================================== */
-
 document
     .getElementById(
         "clear-selection"
@@ -913,10 +889,6 @@ document
     );
 
 
-
-/* ==============================================
-IMPRIMIR SELECCIONADAS
-============================================== */
 
 document
     .getElementById(
@@ -950,7 +922,9 @@ document
 
 
 
-function imprimirIds(ids) {
+function imprimirIds(
+    ids
+) {
 
     const personas =
         integrantes.filter(
@@ -978,9 +952,9 @@ function imprimirIds(ids) {
 
 
 
-/* ==============================================
+/* =========================================
 NUEVO INTEGRANTE
-============================================== */
+========================================= */
 
 document
     .getElementById(
@@ -998,20 +972,16 @@ document
                 "";
 
 
+            memberForm.reset();
+
+
             modalTitle.textContent =
                 "Nuevo integrante";
 
 
-            memberForm.reset();
-
-
-            const idInput =
-                document.getElementById(
-                    "member-id"
-                );
-
-
-            idInput.disabled =
+            document.getElementById(
+                "member-id"
+            ).disabled =
                 false;
 
 
@@ -1023,10 +993,6 @@ document
                 "";
 
 
-            formMessage.className =
-                "form-message";
-
-
             modal.classList.add(
                 "show"
             );
@@ -1036,11 +1002,13 @@ document
 
 
 
-/* ==============================================
+/* =========================================
 EDITAR
-============================================== */
+========================================= */
 
-function abrirEditar(id) {
+function abrirEditar(
+    id
+) {
 
     const persona =
         integrantes.find(
@@ -1132,16 +1100,10 @@ function abrirEditar(id) {
         Array.isArray(
             persona.especialidades
         )
-            ? persona.especialidades.join(
-                ", "
-            )
-            : "";
-
-
-    photoPreview.src =
-        fotoActual
-        ||
-        "./img/logo.jpg";
+        ? persona.especialidades.join(
+            ", "
+        )
+        : "";
 
 
     document.getElementById(
@@ -1150,12 +1112,14 @@ function abrirEditar(id) {
         "";
 
 
+    photoPreview.src =
+        fotoActual
+        ||
+        "./img/logo.jpg";
+
+
     formMessage.textContent =
         "";
-
-
-    formMessage.className =
-        "form-message";
 
 
     modal.classList.add(
@@ -1166,9 +1130,9 @@ function abrirEditar(id) {
 
 
 
-/* ==============================================
+/* =========================================
 PREVISUALIZAR FOTO
-============================================== */
+========================================= */
 
 document
     .getElementById(
@@ -1189,7 +1153,7 @@ document
             }
 
 
-            const tiposPermitidos = [
+            const permitidos = [
                 "image/jpeg",
                 "image/png",
                 "image/webp"
@@ -1197,13 +1161,13 @@ document
 
 
             if (
-                !tiposPermitidos.includes(
+                !permitidos.includes(
                     archivo.type
                 )
             ) {
 
                 alert(
-                    "La foto debe ser JPG, PNG o WEBP."
+                    "La imagen debe ser JPG, PNG o WEBP."
                 );
 
 
@@ -1216,16 +1180,13 @@ document
             }
 
 
-            const maximo =
-                5 * 1024 * 1024;
-
-
             if (
-                archivo.size > maximo
+                archivo.size >
+                5 * 1024 * 1024
             ) {
 
                 alert(
-                    "La imagen no puede superar los 5 MB."
+                    "La imagen no puede superar 5 MB."
                 );
 
 
@@ -1248,9 +1209,9 @@ document
 
 
 
-/* ==============================================
+/* =========================================
 GUARDAR
-============================================== */
+========================================= */
 
 memberForm.addEventListener(
     "submit",
@@ -1271,23 +1232,11 @@ memberForm.addEventListener(
             "";
 
 
-        formMessage.className =
-            "form-message";
+        try {
 
-
-        let id;
-
-
-        if (
-            editandoId
-        ) {
-
-            id =
-                editandoId;
-
-        } else {
-
-            id =
+            const id =
+                editandoId
+                ||
                 document
                     .getElementById(
                         "member-id"
@@ -1296,43 +1245,19 @@ memberForm.addEventListener(
                     .trim()
                     .toUpperCase();
 
-        }
 
+            if (
+                !/^SAR-\d+$/i.test(
+                    id
+                )
+            ) {
 
-        if (!id) {
+                throw new Error(
+                    "El ID debe tener formato SAR-0001."
+                );
 
-            mostrarError(
-                "Ingresá un ID SAR."
-            );
+            }
 
-            finalizarGuardado();
-
-            return;
-
-        }
-
-
-        if (
-            !/^SAR-\d+$/i.test(id)
-        ) {
-
-            mostrarError(
-                "El ID debe tener un formato como SAR-0001."
-            );
-
-            finalizarGuardado();
-
-            return;
-
-        }
-
-
-        try {
-
-            /*
-             * Evita reemplazar accidentalmente
-             * otro integrante al crear uno nuevo.
-             */
 
             if (!editandoId) {
 
@@ -1350,14 +1275,9 @@ memberForm.addEventListener(
                     existente.exists()
                 ) {
 
-                    mostrarError(
-                        `Ya existe un integrante con ID ${id}.`
+                    throw new Error(
+                        `Ya existe ${id}.`
                     );
-
-
-                    finalizarGuardado();
-
-                    return;
 
                 }
 
@@ -1365,7 +1285,7 @@ memberForm.addEventListener(
 
 
             let fotoUrl =
-                fotoActual || "";
+                fotoActual;
 
 
             const archivo =
@@ -1398,8 +1318,8 @@ memberForm.addEventListener(
                     .value
                     .split(",")
                     .map(
-                        texto =>
-                            texto.trim()
+                        valor =>
+                            valor.trim()
                     )
                     .filter(Boolean);
 
@@ -1465,18 +1385,13 @@ memberForm.addEventListener(
                     especialidades,
 
                 fotoUrl:
-                    fotoUrl,
+                    fotoUrl || "",
 
                 actualizado:
                     serverTimestamp()
 
             };
 
-
-            /*
-             * Solo agrega fecha de creación
-             * cuando el integrante es nuevo.
-             */
 
             if (!editandoId) {
 
@@ -1500,7 +1415,7 @@ memberForm.addEventListener(
 
 
             formMessage.textContent =
-                "Cambios guardados correctamente.";
+                "Guardado correctamente.";
 
 
             formMessage.className =
@@ -1516,27 +1431,32 @@ memberForm.addEventListener(
                     cerrarModal();
 
                 },
-                700
+                600
             );
 
 
         } catch (error) {
 
             console.error(
-                "Error guardando integrante:",
                 error
             );
 
 
-            mostrarError(
-                error.message
-                ||
-                "No se pudieron guardar los cambios."
-            );
+            formMessage.textContent =
+                error.message;
+
+
+            formMessage.className =
+                "form-message error";
 
         } finally {
 
-            finalizarGuardado();
+            saveButton.disabled =
+                false;
+
+
+            saveButton.textContent =
+                "Guardar cambios";
 
         }
 
@@ -1545,41 +1465,17 @@ memberForm.addEventListener(
 
 
 
-function mostrarError(texto) {
-
-    formMessage.textContent =
-        texto;
-
-
-    formMessage.className =
-        "form-message error";
-
-}
-
-
-
-function finalizarGuardado() {
-
-    saveButton.disabled =
-        false;
-
-
-    saveButton.textContent =
-        "Guardar cambios";
-
-}
-
-
-
-/* ==============================================
+/* =========================================
 ELIMINAR
-============================================== */
+========================================= */
 
-async function eliminarIntegrante(id) {
+async function eliminarIntegrante(
+    id
+) {
 
     const confirmar =
         confirm(
-            `¿Seguro que querés eliminar ${id}?\n\nSi solamente dejó de pertenecer al SAR, es mejor editarlo y ponerlo INACTIVO.`
+            `¿Eliminar ${id}?\n\nSi solamente dejó de pertenecer al SAR, conviene ponerlo INACTIVO.`
         );
 
 
@@ -1620,7 +1516,7 @@ async function eliminarIntegrante(id) {
 
 
         alert(
-            "No se pudo eliminar el integrante."
+            `No se pudo eliminar: ${error.message}`
         );
 
     }
@@ -1629,9 +1525,9 @@ async function eliminarIntegrante(id) {
 
 
 
-/* ==============================================
+/* =========================================
 MODAL
-============================================== */
+========================================= */
 
 function cerrarModal() {
 
@@ -1640,15 +1536,15 @@ function cerrarModal() {
     );
 
 
+    memberForm.reset();
+
+
     editandoId =
         null;
 
 
     fotoActual =
         "";
-
-
-    memberForm.reset();
 
 
     document.getElementById(
@@ -1701,50 +1597,9 @@ modal.addEventListener(
 
 
 
-/* ==============================================
-CERRAR SESIÓN
-============================================== */
-
-document
-    .getElementById(
-        "logout-button"
-    )
-    .addEventListener(
-        "click",
-        async () => {
-
-            try {
-
-                await signOut(
-                    auth
-                );
-
-
-                window.location.replace(
-                    "./login.html"
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    error
-                );
-
-                alert(
-                    "No se pudo cerrar la sesión."
-                );
-
-            }
-
-        }
-    );
-
-
-
-/* ==============================================
-SITIO PÚBLICO
-============================================== */
+/* =========================================
+VER SITIO
+========================================= */
 
 document
     .getElementById(
