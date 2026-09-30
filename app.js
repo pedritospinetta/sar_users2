@@ -14,18 +14,14 @@ let integrantes = [];
 const lista =
     document.getElementById("lista-integrantes");
 
-
 const buscador =
     document.getElementById("buscador");
-
 
 const cantidad =
     document.getElementById("cantidad");
 
-
 const totalIntegrantes =
     document.getElementById("total-integrantes");
-
 
 
 async function cargarIntegrantes() {
@@ -48,23 +44,38 @@ async function cargarIntegrantes() {
             );
 
 
-        integrantes = [];
+        const todos = [];
 
 
         resultado.forEach(
             documento => {
 
-                integrantes.push({
-
-                    id:
-                        documento.id,
-
+                todos.push({
+                    id: documento.id,
                     ...documento.data()
-
                 });
 
             }
         );
+
+
+        /*
+        SOLO LOS ACTIVOS APARECEN
+        EN LA PÁGINA PÚBLICA
+        */
+
+        integrantes =
+            todos.filter(
+                persona =>
+                    (
+                        persona.estado
+                        ||
+                        ""
+                    )
+                        .toLowerCase()
+                        .trim()
+                    === "activo"
+            );
 
 
         integrantes.sort(
@@ -119,7 +130,6 @@ async function cargarIntegrantes() {
 }
 
 
-
 function mostrarIntegrantes(datos) {
 
     lista.innerHTML =
@@ -131,8 +141,8 @@ function mostrarIntegrantes(datos) {
         cantidad.textContent =
             `${datos.length} integrante${
                 datos.length !== 1
-                ? "s"
-                : ""
+                    ? "s"
+                    : ""
             }`;
 
     }
@@ -144,7 +154,7 @@ function mostrarIntegrantes(datos) {
 
         lista.innerHTML = `
             <div class="no-results">
-                No se encontraron integrantes.
+                No se encontraron integrantes activos.
             </div>
         `;
 
@@ -156,6 +166,12 @@ function mostrarIntegrantes(datos) {
     datos.forEach(
         persona => {
 
+            const foto =
+                persona.fotoUrl
+                ||
+                "./img/logo.jpg";
+
+
             const tarjeta =
                 document.createElement(
                     "article"
@@ -164,26 +180,6 @@ function mostrarIntegrantes(datos) {
 
             tarjeta.className =
                 "member-card";
-
-
-            const estado =
-                (
-                    persona.estado
-                    ||
-                    "inactivo"
-                ).toLowerCase();
-
-
-            const estadoTexto =
-                estado === "activo"
-                ? "MIEMBRO ACTIVO"
-                : "MIEMBRO INACTIVO";
-
-
-            const foto =
-                persona.fotoUrl
-                ||
-                "./img/logo.jpg";
 
 
             tarjeta.innerHTML = `
@@ -198,7 +194,6 @@ function mostrarIntegrantes(datos) {
 
 
                 <div class="member-info">
-
 
                     <div class="member-id">
                         ${persona.id}
@@ -215,11 +210,11 @@ function mostrarIntegrantes(datos) {
                     </div>
 
 
-                    <div class="status ${estado}">
+                    <div class="status activo">
 
                         <span class="status-dot"></span>
 
-                        ${estadoTexto}
+                        MIEMBRO ACTIVO
 
                     </div>
 
@@ -230,7 +225,6 @@ function mostrarIntegrantes(datos) {
                     >
                         Ver ficha
                     </a>
-
 
                 </div>
 
@@ -245,7 +239,6 @@ function mostrarIntegrantes(datos) {
     );
 
 }
-
 
 
 buscador.addEventListener(
@@ -314,16 +307,6 @@ buscador.addEventListener(
 
                         ||
 
-                        (
-                            persona.dni
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
-
-                        ||
-
                         especialidades.includes(
                             texto
                         )
@@ -340,7 +323,6 @@ buscador.addEventListener(
 
     }
 );
-
 
 
 cargarIntegrantes();
