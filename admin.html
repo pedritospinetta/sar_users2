@@ -15,9 +15,7 @@
         content="noindex,nofollow"
     >
 
-    <title>
-        Administración | SAR Argentina
-    </title>
+    <title>Administración | SAR Argentina</title>
 
 
     <style>
@@ -28,18 +26,13 @@
             box-sizing: border-box;
         }
 
-
         :root {
-
             --orange: #ff6500;
             --orange-dark: #d95600;
 
             --dark: #151515;
-            --dark2: #242424;
 
             --background: #f2f3f5;
-
-            --white: #ffffff;
 
             --border: #e1e3e6;
 
@@ -53,9 +46,7 @@
             --red-bg: #ffe5e8;
         }
 
-
         body {
-
             min-height: 100vh;
 
             font-family:
@@ -72,7 +63,6 @@
         /* HEADER */
 
         .admin-header {
-
             position: sticky;
 
             top: 0;
@@ -90,9 +80,7 @@
                 0 5px 20px rgba(0,0,0,.15);
         }
 
-
         .header-inner {
-
             max-width: 1300px;
 
             margin: auto;
@@ -110,9 +98,7 @@
             gap: 20px;
         }
 
-
         .brand {
-
             display: flex;
 
             align-items: center;
@@ -120,26 +106,22 @@
             gap: 14px;
         }
 
-
         .brand img {
-
             width: 58px;
             height: 58px;
 
             object-fit: contain;
 
             border-radius: 8px;
+
+            background: white;
         }
 
-
         .brand h1 {
-
             font-size: 20px;
         }
 
-
         .brand p {
-
             margin-top: 4px;
 
             color: #aaa;
@@ -147,9 +129,7 @@
             font-size: 12px;
         }
 
-
         .header-actions {
-
             display: flex;
 
             align-items: center;
@@ -157,9 +137,7 @@
             gap: 8px;
         }
 
-
         .header-button {
-
             padding:
                 10px
                 14px;
@@ -173,27 +151,32 @@
             cursor: pointer;
         }
 
-
         .public-button {
-
             background: #333;
 
             color: white;
         }
 
-
         .logout-button {
+            background: #502323;
 
-            background: #432121;
+            color: #ffcccc;
+        }
 
-            color: #ffbcbc;
+        .logout-button:hover {
+            background: #642929;
+        }
+
+        .logout-button:disabled {
+            opacity: .6;
+
+            cursor: wait;
         }
 
 
         /* MAIN */
 
         .container {
-
             width: 100%;
 
             max-width: 1300px;
@@ -205,9 +188,7 @@
                 22px;
         }
 
-
         .loading {
-
             padding: 15px;
 
             margin-bottom: 25px;
@@ -219,9 +200,13 @@
             color: #984611;
         }
 
+        .loading.error {
+            background: #ffe5e8;
+
+            color: #a52632;
+        }
 
         .page-header {
-
             display: flex;
 
             justify-content: space-between;
@@ -233,9 +218,7 @@
             margin-bottom: 28px;
         }
 
-
         .page-label {
-
             margin-bottom: 7px;
 
             color: var(--orange);
@@ -247,23 +230,17 @@
             letter-spacing: 1px;
         }
 
-
         .page-header h2 {
-
             margin-bottom: 7px;
 
             font-size: 32px;
         }
 
-
         .page-header p {
-
             color: var(--muted);
         }
 
-
         .new-button {
-
             padding:
                 13px
                 18px;
@@ -279,13 +256,9 @@
             font-weight: 800;
 
             cursor: pointer;
-
-            white-space: nowrap;
         }
 
-
         .new-button:hover {
-
             background: var(--orange-dark);
         }
 
@@ -293,7 +266,6 @@
         /* TOOLBAR */
 
         .toolbar {
-
             display: flex;
 
             align-items: center;
@@ -316,9 +288,7 @@
             border-radius: 12px;
         }
 
-
         .search-input {
-
             flex: 1;
 
             min-width: 250px;
@@ -337,9 +307,7 @@
             font-size: 14px;
         }
 
-
         .search-input:focus {
-
             border-color: var(--orange);
 
             box-shadow:
@@ -347,9 +315,7 @@
                 rgba(255,101,0,.10);
         }
 
-
         .print-tools {
-
             display: flex;
 
             gap: 8px;
@@ -359,9 +325,7 @@
             flex-wrap: wrap;
         }
 
-
         .tool-button {
-
             padding:
                 11px
                 13px;
@@ -378,9 +342,7 @@
             font-weight: 700;
         }
 
-
         .print-button {
-
             background: #1e1e1e;
 
             color: white;
@@ -388,9 +350,7 @@
             border-color: #1e1e1e;
         }
 
-
         .selected-counter {
-
             color: var(--muted);
 
             font-size: 13px;
@@ -402,7 +362,6 @@
         /* CARDS */
 
         .members-grid {
-
             display: grid;
 
             grid-template-columns:
@@ -414,9 +373,7 @@
             gap: 20px;
         }
 
-
         .member-card {
-
             position: relative;
 
             overflow: hidden;
@@ -429,12 +386,11 @@
             border-radius: 15px;
 
             box-shadow:
-                0 8px 25px rgba(0,0,0,.055);
+                0 8px 25px
+                rgba(0,0,0,.055);
         }
 
-
         .select-area {
-
             position: absolute;
 
             top: 14px;
@@ -452,15 +408,15 @@
 
             border-radius: 7px;
 
-            background: rgba(255,255,255,.95);
+            background:
+                rgba(255,255,255,.95);
 
             box-shadow:
-                0 2px 8px rgba(0,0,0,.13);
+                0 2px 8px
+                rgba(0,0,0,.13);
         }
 
-
         .print-checkbox {
-
             width: 18px;
             height: 18px;
 
@@ -469,9 +425,7 @@
             cursor: pointer;
         }
 
-
         .member-main {
-
             display: flex;
 
             align-items: center;
@@ -481,9 +435,7 @@
             padding: 22px;
         }
 
-
         .member-photo {
-
             width: 95px;
             height: 95px;
 
@@ -499,9 +451,7 @@
                 4px solid #f0f0f0;
         }
 
-
         .member-id {
-
             margin-bottom: 5px;
 
             color: var(--orange);
@@ -511,17 +461,13 @@
             font-weight: 800;
         }
 
-
         .member-name {
-
             margin-bottom: 5px;
 
             font-size: 19px;
         }
 
-
         .member-role {
-
             margin-bottom: 10px;
 
             color: var(--muted);
@@ -529,9 +475,7 @@
             font-size: 14px;
         }
 
-
         .status {
-
             display: inline-flex;
 
             align-items: center;
@@ -549,25 +493,19 @@
             font-weight: 800;
         }
 
-
         .status.activo {
-
             background: var(--green-bg);
 
             color: var(--green);
         }
 
-
         .status.inactivo {
-
             background: var(--red-bg);
 
             color: var(--red);
         }
 
-
         .status-dot {
-
             width: 7px;
             height: 7px;
 
@@ -576,9 +514,7 @@
             background: currentColor;
         }
 
-
         .member-actions {
-
             display: grid;
 
             grid-template-columns:
@@ -590,9 +526,7 @@
                 0 22px 22px;
         }
 
-
         .action-button {
-
             padding: 10px;
 
             border: 0;
@@ -606,45 +540,33 @@
             font-weight: 800;
 
             text-align: center;
-
-            text-decoration: none;
         }
 
-
         .edit-button {
-
             background: var(--orange);
 
             color: white;
         }
 
-
         .view-button {
-
             background: #ededed;
 
             color: #333;
         }
 
-
         .print-one-button {
-
             background: #222;
 
             color: white;
         }
 
-
         .delete-button {
-
             background: var(--red-bg);
 
             color: var(--red);
         }
 
-
         .empty {
-
             grid-column: 1 / -1;
 
             padding: 55px;
@@ -662,7 +584,6 @@
         /* MODAL */
 
         .modal-overlay {
-
             position: fixed;
 
             inset: 0;
@@ -680,15 +601,11 @@
                 rgba(0,0,0,.70);
         }
 
-
         .modal-overlay.show {
-
             display: flex;
         }
 
-
         .modal {
-
             width: 100%;
 
             max-width: 760px;
@@ -700,14 +617,9 @@
             background: white;
 
             border-radius: 16px;
-
-            box-shadow:
-                0 25px 80px rgba(0,0,0,.35);
         }
 
-
         .modal-header {
-
             position: sticky;
 
             top: 0;
@@ -732,15 +644,7 @@
                 4px solid var(--orange);
         }
 
-
-        .modal-header h3 {
-
-            font-size: 20px;
-        }
-
-
         .close-modal {
-
             width: 38px;
             height: 38px;
 
@@ -757,15 +661,11 @@
             cursor: pointer;
         }
 
-
         .modal-content {
-
             padding: 25px;
         }
 
-
         .form-grid {
-
             display: grid;
 
             grid-template-columns:
@@ -774,23 +674,17 @@
             gap: 18px;
         }
 
-
         .form-group {
-
             display: flex;
 
             flex-direction: column;
         }
 
-
         .form-group.full {
-
             grid-column: 1 / -1;
         }
 
-
         .form-group label {
-
             margin-bottom: 6px;
 
             font-size: 12px;
@@ -798,11 +692,9 @@
             font-weight: 800;
         }
 
-
         .form-group input,
         .form-group select,
         .form-group textarea {
-
             width: 100%;
 
             padding:
@@ -821,29 +713,13 @@
             outline: none;
         }
 
-
         .form-group textarea {
-
             min-height: 85px;
 
             resize: vertical;
         }
 
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-
-            border-color: var(--orange);
-
-            box-shadow:
-                0 0 0 3px
-                rgba(255,101,0,.10);
-        }
-
-
         .photo-preview {
-
             width: 130px;
             height: 130px;
 
@@ -856,9 +732,7 @@
             background: #eee;
         }
 
-
         .photo-help {
-
             margin-top: 7px;
 
             color: #888;
@@ -866,9 +740,7 @@
             font-size: 11px;
         }
 
-
         .modal-actions {
-
             display: flex;
 
             justify-content: flex-end;
@@ -878,54 +750,35 @@
             margin-top: 25px;
         }
 
-
-        .save-button {
-
+        .save-button,
+        .cancel-button {
             padding:
                 12px
                 18px;
 
-            border: 0;
-
             border-radius: 8px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+        .save-button {
+            border: 0;
 
             background: var(--orange);
 
             color: white;
-
-            font-weight: 800;
-
-            cursor: pointer;
         }
-
-
-        .save-button:disabled {
-
-            opacity: .55;
-
-            cursor: wait;
-        }
-
 
         .cancel-button {
-
-            padding:
-                12px
-                18px;
-
             border:
                 1px solid #ddd;
 
-            border-radius: 8px;
-
             background: #f4f4f4;
-
-            cursor: pointer;
         }
 
-
         .form-message {
-
             margin-top: 18px;
 
             font-size: 13px;
@@ -933,15 +786,11 @@
             font-weight: bold;
         }
 
-
         .form-message.error {
-
             color: var(--red);
         }
 
-
         .form-message.success {
-
             color: var(--green);
         }
 
@@ -949,88 +798,51 @@
         @media(max-width: 700px) {
 
             .header-inner {
-
                 padding:
                     11px
                     14px;
             }
 
-
             .brand img {
-
                 width: 48px;
                 height: 48px;
             }
 
-
             .brand h1 {
-
                 font-size: 16px;
             }
 
-
-            .brand p {
-
-                font-size: 10px;
-            }
-
-
             .public-button {
-
                 display: none;
             }
 
-
             .container {
-
                 padding:
                     25px
                     15px;
             }
 
-
             .page-header {
-
                 align-items: flex-start;
 
                 flex-direction: column;
             }
 
-
             .new-button {
-
                 width: 100%;
             }
 
-
             .toolbar {
-
                 align-items: stretch;
 
                 flex-direction: column;
             }
 
-
-            .print-tools {
-
-                width: 100%;
-            }
-
-
-            .tool-button {
-
-                flex: 1;
-            }
-
-
             .form-grid {
-
                 grid-template-columns: 1fr;
             }
 
-
             .form-group.full {
-
                 grid-column: auto;
             }
 
@@ -1057,9 +869,7 @@
 
             <div>
 
-                <h1>
-                    SAR ARGENTINA
-                </h1>
+                <h1>SAR ARGENTINA</h1>
 
                 <p>
                     Administración de integrantes
@@ -1080,6 +890,7 @@
                 Ver sitio
             </button>
 
+
             <button
                 id="logout-button"
                 class="header-button logout-button"
@@ -1097,7 +908,6 @@
 
 <main class="container">
 
-
     <div
         id="loading"
         class="loading"
@@ -1110,7 +920,6 @@
         id="admin-content"
         style="display:none;"
     >
-
 
         <section class="page-header">
 
@@ -1144,12 +953,11 @@
 
         <div class="toolbar">
 
-
             <input
                 type="search"
                 id="search-input"
                 class="search-input"
-                placeholder="Buscar por nombre, ID SAR, cargo o DNI"
+                placeholder="Buscar integrante"
             >
 
 
@@ -1197,8 +1005,7 @@
         <div
             id="members-grid"
             class="members-grid"
-        >
-        </div>
+        ></div>
 
     </div>
 
@@ -1211,7 +1018,6 @@
 >
 
     <div class="modal">
-
 
         <div class="modal-header">
 
@@ -1263,7 +1069,6 @@
 
                         <select
                             id="member-status"
-                            required
                         >
 
                             <option value="activo">
@@ -1346,7 +1151,6 @@
                         <input
                             type="text"
                             id="member-blood"
-                            placeholder="O+"
                         >
 
                     </div>
@@ -1361,7 +1165,6 @@
                         <input
                             type="text"
                             id="member-entry"
-                            placeholder="2026"
                         >
 
                     </div>
@@ -1375,7 +1178,6 @@
 
                         <textarea
                             id="member-specialties"
-                            placeholder="Búsqueda y rescate, Primeros auxilios, Comunicaciones"
                         ></textarea>
 
                     </div>
@@ -1384,7 +1186,7 @@
                     <div class="form-group full">
 
                         <label for="member-photo">
-                            Foto del integrante
+                            Foto
                         </label>
 
                         <input
@@ -1394,18 +1196,17 @@
                         >
 
                         <div class="photo-help">
-                            JPG, PNG o WEBP. La imagen se subirá a Cloudinary.
+                            JPG, PNG o WEBP. Máximo 5 MB.
                         </div>
 
                         <img
                             id="photo-preview"
                             class="photo-preview"
                             src="./img/logo.jpg"
-                            alt="Vista previa"
+                            alt=""
                         >
 
                     </div>
-
 
                 </div>
 
@@ -1413,16 +1214,15 @@
                 <div
                     id="form-message"
                     class="form-message"
-                >
-                </div>
+                ></div>
 
 
                 <div class="modal-actions">
 
                     <button
                         id="cancel-button"
-                        class="cancel-button"
                         type="button"
+                        class="cancel-button"
                     >
                         Cancelar
                     </button>
@@ -1430,17 +1230,15 @@
 
                     <button
                         id="save-button"
-                        class="save-button"
                         type="submit"
+                        class="save-button"
                     >
                         Guardar cambios
                     </button>
 
                 </div>
 
-
             </form>
-
 
         </div>
 
@@ -1449,9 +1247,78 @@
 </div>
 
 
+<!--
+ESTE SCRIPT MANEJA CERRAR SESIÓN DE FORMA INDEPENDIENTE.
+AUNQUE ADMIN.JS FALLE, ESTE BOTÓN DEBERÍA SEGUIR FUNCIONANDO.
+-->
+
+<script type="module">
+
+    import {
+        auth
+    } from "./firebase-config.js";
+
+    import {
+        signOut
+    } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+
+    const logoutButton =
+        document.getElementById(
+            "logout-button"
+        );
+
+
+    logoutButton.addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                logoutButton.disabled =
+                    true;
+
+                logoutButton.textContent =
+                    "Cerrando...";
+
+
+                await signOut(auth);
+
+
+                window.location.replace(
+                    "./login.html"
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Error cerrando sesión:",
+                    error
+                );
+
+
+                logoutButton.disabled =
+                    false;
+
+                logoutButton.textContent =
+                    "Cerrar sesión";
+
+
+                alert(
+                    "No se pudo cerrar la sesión."
+                );
+
+            }
+
+        }
+    );
+
+</script>
+
+
 <script
     type="module"
-    src="./admin.js?v=20"
+    src="./admin.js?v=30"
 ></script>
 
 
