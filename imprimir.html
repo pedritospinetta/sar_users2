@@ -453,27 +453,65 @@
             margin: 0;
         }
 
-        @media print {
+@media print {
 
-            body {
-                background: white;
-            }
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
 
-            .toolbar {
-                display: none;
-            }
+    html,
+    body {
+        background: white !important;
+    }
 
-            .page {
-                margin: 0;
+    .toolbar {
+        display: none !important;
+    }
 
-                page-break-after: always;
-            }
+    .page {
+        margin: 0 !important;
 
-            .page:last-child {
-                page-break-after: auto;
-            }
+        background: white !important;
 
-        }
+        page-break-after: always;
+    }
+
+    .page:last-child {
+        page-break-after: auto;
+    }
+
+    .credential {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .left {
+        background: #141414 !important;
+    }
+
+    .orange-line {
+        background: #ff6500 !important;
+    }
+
+    .role.commander {
+        background: #ff6500 !important;
+        color: #ffffff !important;
+    }
+
+    .microtext {
+        color: #b00000 !important;
+    }
+
+    .band-blue {
+        background: #74acdf !important;
+    }
+
+    .band-white {
+        background: #ffffff !important;
+    }
+
+}
 
     </style>
 
