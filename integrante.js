@@ -27,6 +27,12 @@ const errorBox =
     );
 
 
+const inactiveBox =
+    document.getElementById(
+        "inactive-box"
+    );
+
+
 const parametros =
     new URLSearchParams(
         window.location.search
@@ -43,12 +49,11 @@ const id =
         .toUpperCase();
 
 
-
 async function cargarIntegrante() {
 
     if (!id) {
 
-        mostrarError();
+        mostrarNoEncontrado();
 
         return;
 
@@ -73,7 +78,7 @@ async function cargarIntegrante() {
 
         if (!documento.exists()) {
 
-            mostrarError();
+            mostrarNoEncontrado();
 
             return;
 
@@ -90,7 +95,30 @@ async function cargarIntegrante() {
         };
 
 
-        mostrarPerfil(
+        const estado =
+            (
+                persona.estado
+                ||
+                "inactivo"
+            )
+                .toLowerCase()
+                .trim();
+
+
+        if (
+            estado !== "activo"
+        ) {
+
+            mostrarInactivo(
+                persona
+            );
+
+            return;
+
+        }
+
+
+        mostrarPerfilActivo(
             persona
         );
 
@@ -103,15 +131,14 @@ async function cargarIntegrante() {
         );
 
 
-        mostrarError();
+        mostrarNoEncontrado();
 
     }
 
 }
 
 
-
-function mostrarPerfil(
+function mostrarPerfilActivo(
     persona
 ) {
 
@@ -123,16 +150,12 @@ function mostrarPerfil(
         "none";
 
 
+    inactiveBox.style.display =
+        "none";
+
+
     profile.style.display =
         "block";
-
-
-    const estado =
-        (
-            persona.estado
-            ||
-            "inactivo"
-        ).toLowerCase();
 
 
     const foto =
@@ -180,36 +203,6 @@ function mostrarPerfil(
         persona.cargo
         ||
         "Sin función";
-
-
-    const status =
-        document.getElementById(
-            "profile-status"
-        );
-
-
-    status.className =
-        `status-box ${estado}`;
-
-
-    document.getElementById(
-        "profile-status-text"
-    ).textContent =
-        estado === "activo"
-            ? "MIEMBRO ACTIVO"
-            : "MIEMBRO INACTIVO";
-
-
-    if (
-        estado === "inactivo"
-    ) {
-
-        document.getElementById(
-            "inactive-warning"
-        ).style.display =
-            "block";
-
-    }
 
 
     completarCampo(
@@ -302,6 +295,100 @@ function mostrarPerfil(
 }
 
 
+function mostrarInactivo(
+    persona
+) {
+
+    loading.style.display =
+        "none";
+
+
+    profile.style.display =
+        "none";
+
+
+    errorBox.style.display =
+        "none";
+
+
+    inactiveBox.style.display =
+        "block";
+
+
+    document.getElementById(
+        "inactive-id"
+    ).textContent =
+        persona.id;
+
+
+    document.getElementById(
+        "inactive-name"
+    ).textContent =
+        persona.nombre
+        ||
+        "Integrante";
+
+
+    document.title =
+        `Credencial no vigente | SAR Argentina`;
+
+}
+
+
+function mostrarNoEncontrado() {
+
+    loading.style.display =
+        "none";
+
+
+    profile.style.display =
+        "none";
+
+
+    inactiveBox.style.display =
+        "none";
+
+
+    errorBox.style.display =
+        "block";
+
+
+    errorBox.innerHTML = `
+
+        <div
+            style="
+                font-size:52px;
+                margin-bottom:18px;
+            "
+        >
+            ⚠️
+        </div>
+
+
+        <h2
+            style="
+                color:#a52a24;
+                margin-bottom:10px;
+            "
+        >
+            Integrante no encontrado
+        </h2>
+
+
+        <p
+            style="
+                color:#6e747d;
+                line-height:1.5;
+            "
+        >
+            No se encontraron datos asociados a esta
+            identificación en la base de datos.
+        </p>
+
+    `;
+
+}
+
 
 function completarCampo(
     valorId,
@@ -331,30 +418,16 @@ function completarCampo(
     }
 
 
+    card.style.display =
+        "";
+
+
     document.getElementById(
         valorId
     ).textContent =
         valor;
 
 }
-
-
-
-function mostrarError() {
-
-    loading.style.display =
-        "none";
-
-
-    profile.style.display =
-        "none";
-
-
-    errorBox.style.display =
-        "block";
-
-}
-
 
 
 cargarIntegrante();
