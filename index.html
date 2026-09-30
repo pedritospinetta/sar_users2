@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -20,9 +21,11 @@
 
     <link
         rel="stylesheet"
-        href="./style.css?v=5"
+        href="./style.css?v=70"
     >
+
 </head>
+
 
 <body>
 
@@ -53,7 +56,7 @@ HEADER
                 </h1>
 
                 <p>
-                    Registro de Integrantes
+                    Cuerpo Argentino de Rescate
                 </p>
 
             </div>
@@ -63,59 +66,101 @@ HEADER
     </div>
 
 
-    <!-- MENU HAMBURGUESA -->
+    <div class="header-actions">
 
-    <div class="menu-container">
-
-        <button
-            id="menu-toggle"
-            class="menu-toggle"
-            type="button"
-            aria-label="Abrir menú"
-            aria-expanded="false"
+        <a
+            href="./"
+            class="header-link"
         >
-            ☰
-        </button>
+            Inicio
+        </a>
 
 
-        <nav
-            id="menu-dropdown"
-            class="menu-dropdown"
+        <a
+            href="#registro"
+            class="header-link"
         >
+            Integrantes
+        </a>
 
-            <a href="./">
-                Inicio
-            </a>
 
-            <a href="#registro">
-                Integrantes
-            </a>
+        <a
+            href="https://www.sar-argentina.org.ar"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="header-link"
+        >
+            Quiénes somos
+        </a>
 
-            <a href="#verificacion">
-                Verificación
-            </a>
 
-            <div class="menu-separator"></div>
+        <div class="menu-container">
 
-            <a
-                href="./login.html"
-                class="admin-menu-link"
+            <button
+                id="menu-toggle"
+                class="menu-toggle"
+                type="button"
+                aria-label="Abrir menú"
+                aria-expanded="false"
             >
-                🔐 Acceso administrativo
-            </a>
+                ☰
+            </button>
 
-        </nav>
+
+            <nav
+                id="menu-dropdown"
+                class="menu-dropdown"
+            >
+
+                <a href="./">
+                    Inicio
+                </a>
+
+                <a href="#registro">
+                    Integrantes
+                </a>
+
+                <a href="#verificacion">
+                    Verificación
+                </a>
+
+                <a
+                    href="https://www.sar-argentina.org.ar"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Quiénes somos
+                </a>
+
+                <div class="menu-separator"></div>
+
+                <a
+                    href="./login.html"
+                    class="admin-menu-link"
+                >
+                    🔐 Acceso administrativo
+                </a>
+
+            </nav>
+
+        </div>
 
     </div>
 
 </header>
 
 
+
 <!-- =========================================
-HERO
+CONTENIDO
 ========================================= -->
 
 <main>
+
+
+    <!-- =========================================
+    HERO
+    ========================================= -->
 
     <section class="hero">
 
@@ -132,9 +177,11 @@ HERO
 
 
             <p class="hero-description">
-                Consultá integrantes registrados mediante
-                nombre, identificación SAR, función,
-                especialidad o delegación.
+
+                Consultá integrantes activos registrados
+                mediante nombre, identificación SAR,
+                función, especialidad o delegación.
+
             </p>
 
 
@@ -161,7 +208,7 @@ HERO
                     <input
                         type="search"
                         id="buscador"
-                        placeholder="Nombre, SAR-0001, Rescatista..."
+                        placeholder="Nombre, SAR-001, Rescatista..."
                         autocomplete="off"
                     >
 
@@ -169,7 +216,10 @@ HERO
 
 
                 <p class="search-help">
-                    Ingresá nombre, código SAR, función o delegación.
+
+                    Ingresá nombre, código SAR,
+                    función o delegación.
+
                 </p>
 
             </div>
@@ -177,6 +227,7 @@ HERO
         </div>
 
     </section>
+
 
 
     <!-- =========================================
@@ -201,7 +252,7 @@ HERO
                     </strong>
 
                     <span>
-                        Integrantes registrados
+                        Integrantes activos
                     </span>
 
                 </div>
@@ -222,7 +273,7 @@ HERO
                     </strong>
 
                     <span>
-                        Consulta individual
+                        Estado actualizado
                     </span>
 
                 </div>
@@ -243,16 +294,18 @@ HERO
                     </strong>
 
                     <span>
-                        Acceso mediante código QR
+                        Verificación mediante código QR
                     </span>
 
                 </div>
 
             </article>
 
+
         </div>
 
     </section>
+
 
 
     <!-- =========================================
@@ -289,8 +342,7 @@ HERO
                 <div
                     id="cantidad"
                     class="member-counter"
-                >
-                </div>
+                ></div>
 
             </div>
 
@@ -298,16 +350,16 @@ HERO
             <div
                 id="lista-integrantes"
                 class="members-grid"
-            >
-            </div>
+            ></div>
 
         </div>
 
     </section>
 
 
+
     <!-- =========================================
-    VERIFICACION
+    VERIFICACIÓN
     ========================================= -->
 
     <section
@@ -316,6 +368,7 @@ HERO
     >
 
         <div class="container verification-grid">
+
 
             <div class="verification-text">
 
@@ -330,14 +383,19 @@ HERO
 
 
                 <p>
-                    Cada integrante registrado dispone de una
-                    identificación individual dentro del sistema.
+
+                    Cada integrante dispone de una identificación
+                    individual dentro del sistema.
+
                 </p>
 
 
                 <p>
+
                     Al escanear el código QR de una credencial,
-                    se accede directamente a la ficha correspondiente.
+                    se consulta directamente el estado actual
+                    registrado para esa persona.
+
                 </p>
 
 
@@ -350,7 +408,7 @@ HERO
 
                     <div>
                         <span>✓</span>
-                        Estado activo o inactivo
+                        Estado actualizado
                     </div>
 
                     <div>
@@ -360,7 +418,7 @@ HERO
 
                     <div>
                         <span>✓</span>
-                        Verificación digital
+                        Verificación mediante QR
                     </div>
 
                 </div>
@@ -379,8 +437,11 @@ HERO
                 </h3>
 
                 <p>
-                    La información visible corresponde al registro
-                    habilitado para consulta.
+
+                    La información visible se obtiene
+                    directamente del registro digital
+                    de integrantes de SAR Argentina.
+
                 </p>
 
                 <div class="verification-secure">
@@ -389,11 +450,14 @@ HERO
 
             </aside>
 
+
         </div>
 
     </section>
 
+
 </main>
+
 
 
 <!-- =========================================
@@ -404,7 +468,12 @@ FOOTER
 
     <div class="container footer-content">
 
-        <div class="footer-brand">
+        <a
+            href="https://www.sar-argentina.org.ar"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-brand"
+        >
 
             <img
                 src="./img/logo.jpg"
@@ -418,19 +487,19 @@ FOOTER
                 </strong>
 
                 <span>
-                    Registro y verificación de integrantes
+                    Cuerpo Argentino de Rescate
                 </span>
 
             </div>
 
-        </div>
+        </a>
 
 
         <div class="footer-right">
 
-            <span>
-                © <span id="current-year"></span> SAR Argentina
-            </span>
+            ©
+            <span id="current-year"></span>
+            SAR Argentina
 
         </div>
 
@@ -439,19 +508,34 @@ FOOTER
 </footer>
 
 
+
+<!-- =========================================
+FIRESTORE / INTEGRANTES
+========================================= -->
+
 <script
     type="module"
-    src="./app.js?v=50"
+    src="./app.js?v=70"
 ></script>
 
+
+
+<!-- =========================================
+MENU
+========================================= -->
 
 <script>
 
     const menuToggle =
-        document.getElementById("menu-toggle");
+        document.getElementById(
+            "menu-toggle"
+        );
+
 
     const menuDropdown =
-        document.getElementById("menu-dropdown");
+        document.getElementById(
+            "menu-dropdown"
+        );
 
 
     menuToggle.addEventListener(
@@ -460,8 +544,12 @@ FOOTER
 
             event.stopPropagation();
 
+
             const abierto =
-                menuDropdown.classList.toggle("show");
+                menuDropdown.classList.toggle(
+                    "show"
+                );
+
 
             menuToggle.setAttribute(
                 "aria-expanded",
@@ -477,12 +565,19 @@ FOOTER
         function(event) {
 
             if (
-                !menuToggle.contains(event.target)
+                !menuToggle.contains(
+                    event.target
+                )
                 &&
-                !menuDropdown.contains(event.target)
+                !menuDropdown.contains(
+                    event.target
+                )
             ) {
 
-                menuDropdown.classList.remove("show");
+                menuDropdown.classList.remove(
+                    "show"
+                );
+
 
                 menuToggle.setAttribute(
                     "aria-expanded",
@@ -493,6 +588,34 @@ FOOTER
 
         }
     );
+
+
+    document
+        .querySelectorAll(
+            "#menu-dropdown a"
+        )
+        .forEach(
+            enlace => {
+
+                enlace.addEventListener(
+                    "click",
+                    () => {
+
+                        menuDropdown.classList.remove(
+                            "show"
+                        );
+
+
+                        menuToggle.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+                    }
+                );
+
+            }
+        );
 
 
     document.getElementById(
