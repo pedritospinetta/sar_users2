@@ -1,1763 +1,1460 @@
-import {
-    auth,
-    db
-} from "./firebase-config.js";
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="robots"
+        content="noindex,nofollow"
+    >
+
+    <title>
+        Administración | SAR Argentina
+    </title>
 
 
-import {
-    onAuthStateChanged,
-    signOut
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    <style>
 
-
-import {
-    collection,
-    getDocs,
-    doc,
-    getDoc,
-    setDoc,
-    deleteDoc,
-    serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-
-
-
-/* ==============================================
-CLOUDINARY
-============================================== */
-
-const CLOUD_NAME =
-    "hyvxppyb";
-
-const UPLOAD_PRESET =
-    "sar_integrantes";
-
-
-
-async function subirFotoCloudinary(archivo) {
-
-    const formData =
-        new FormData();
-
-
-    formData.append(
-        "file",
-        archivo
-    );
-
-
-    formData.append(
-        "upload_preset",
-        UPLOAD_PRESET
-    );
-
-
-    const respuesta =
-        await fetch(
-            `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-            {
-                method: "POST",
-                body: formData
-            }
-        );
-
-
-    if (!respuesta.ok) {
-
-        let mensaje =
-            "No se pudo subir la fotografía.";
-
-
-        try {
-
-            const errorCloudinary =
-                await respuesta.json();
-
-
-            if (
-                errorCloudinary
-                &&
-                errorCloudinary.error
-                &&
-                errorCloudinary.error.message
-            ) {
-
-                mensaje =
-                    errorCloudinary.error.message;
-
-            }
-
-        } catch (error) {
-
-            console.error(error);
-
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
 
-        throw new Error(
-            mensaje
-        );
+        :root {
 
-    }
+            --orange: #ff6500;
+            --orange-dark: #d95600;
 
+            --dark: #151515;
+            --dark2: #242424;
 
-    const resultado =
-        await respuesta.json();
+            --background: #f2f3f5;
 
+            --white: #ffffff;
 
-    if (!resultado.secure_url) {
+            --border: #e1e3e6;
 
-        throw new Error(
-            "Cloudinary no devolvió la URL de la imagen."
-        );
+            --text: #191919;
+            --muted: #6e747d;
 
-    }
+            --green: #168447;
+            --green-bg: #e1f6e9;
 
-
-    return resultado.secure_url;
-
-}
-
-
-
-/* ==============================================
-ELEMENTOS
-============================================== */
-
-const loading =
-    document.getElementById(
-        "loading"
-    );
-
-
-const adminContent =
-    document.getElementById(
-        "admin-content"
-    );
-
-
-const membersGrid =
-    document.getElementById(
-        "members-grid"
-    );
-
-
-const searchInput =
-    document.getElementById(
-        "search-input"
-    );
-
-
-const selectedCounter =
-    document.getElementById(
-        "selected-counter"
-    );
-
-
-const modal =
-    document.getElementById(
-        "member-modal"
-    );
-
-
-const memberForm =
-    document.getElementById(
-        "member-form"
-    );
-
-
-const modalTitle =
-    document.getElementById(
-        "modal-title"
-    );
-
-
-const formMessage =
-    document.getElementById(
-        "form-message"
-    );
-
-
-const photoPreview =
-    document.getElementById(
-        "photo-preview"
-    );
-
-
-const saveButton =
-    document.getElementById(
-        "save-button"
-    );
-
-
-
-/* ==============================================
-VARIABLES
-============================================== */
-
-let integrantes = [];
-
-let seleccionados =
-    new Set();
-
-let editandoId =
-    null;
-
-let fotoActual =
-    "";
-
-
-
-/* ==============================================
-SEGURIDAD ADMIN
-============================================== */
-
-async function comprobarComandante(
-    usuario
-) {
-
-    const referencia =
-        doc(
-            db,
-            "usuarios",
-            usuario.uid
-        );
-
-
-    const documento =
-        await getDoc(
-            referencia
-        );
-
-
-    if (!documento.exists()) {
-
-        return null;
-
-    }
-
-
-    const datos =
-        documento.data();
-
-
-    if (
-        datos.rol !== "comandante"
-        ||
-        datos.activo !== true
-    ) {
-
-        return null;
-
-    }
-
-
-    return datos;
-
-}
-
-
-
-/* ==============================================
-SESIÓN
-============================================== */
-
-onAuthStateChanged(
-    auth,
-    async usuario => {
-
-        if (!usuario) {
-
-            window.location.replace(
-                "./login.html"
-            );
-
-            return;
-
+            --red: #b02a37;
+            --red-bg: #ffe5e8;
         }
 
 
-        try {
+        body {
 
-            const datos =
-                await comprobarComandante(
-                    usuario
+            min-height: 100vh;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: var(--background);
+
+            color: var(--text);
+        }
+
+
+        /* HEADER */
+
+        .admin-header {
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 1000;
+
+            background: var(--dark);
+
+            color: white;
+
+            border-bottom:
+                5px solid var(--orange);
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,.15);
+        }
+
+
+        .header-inner {
+
+            max-width: 1300px;
+
+            margin: auto;
+
+            padding:
+                13px
+                22px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+        }
+
+
+        .brand img {
+
+            width: 58px;
+            height: 58px;
+
+            object-fit: contain;
+
+            border-radius: 8px;
+        }
+
+
+        .brand h1 {
+
+            font-size: 20px;
+        }
+
+
+        .brand p {
+
+            margin-top: 4px;
+
+            color: #aaa;
+
+            font-size: 12px;
+        }
+
+
+        .header-actions {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+        }
+
+
+        .header-button {
+
+            padding:
+                10px
+                14px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+
+        .public-button {
+
+            background: #333;
+
+            color: white;
+        }
+
+
+        .logout-button {
+
+            background: #432121;
+
+            color: #ffbcbc;
+        }
+
+
+        /* MAIN */
+
+        .container {
+
+            width: 100%;
+
+            max-width: 1300px;
+
+            margin: auto;
+
+            padding:
+                35px
+                22px;
+        }
+
+
+        .loading {
+
+            padding: 15px;
+
+            margin-bottom: 25px;
+
+            border-radius: 10px;
+
+            background: #fff0e5;
+
+            color: #984611;
+        }
+
+
+        .page-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-end;
+
+            gap: 25px;
+
+            margin-bottom: 28px;
+        }
+
+
+        .page-label {
+
+            margin-bottom: 7px;
+
+            color: var(--orange);
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            letter-spacing: 1px;
+        }
+
+
+        .page-header h2 {
+
+            margin-bottom: 7px;
+
+            font-size: 32px;
+        }
+
+
+        .page-header p {
+
+            color: var(--muted);
+        }
+
+
+        .new-button {
+
+            padding:
+                13px
+                18px;
+
+            border: 0;
+
+            border-radius: 9px;
+
+            background: var(--orange);
+
+            color: white;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            white-space: nowrap;
+        }
+
+
+        .new-button:hover {
+
+            background: var(--orange-dark);
+        }
+
+
+        /* TOOLBAR */
+
+        .toolbar {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            flex-wrap: wrap;
+
+            margin-bottom: 25px;
+
+            padding: 15px;
+
+            background: white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 12px;
+        }
+
+
+        .search-input {
+
+            flex: 1;
+
+            min-width: 250px;
+
+            padding:
+                13px
+                15px;
+
+            border:
+                1px solid #d5d7da;
+
+            border-radius: 8px;
+
+            outline: none;
+
+            font-size: 14px;
+        }
+
+
+        .search-input:focus {
+
+            border-color: var(--orange);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(255,101,0,.10);
+        }
+
+
+        .print-tools {
+
+            display: flex;
+
+            gap: 8px;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+        }
+
+
+        .tool-button {
+
+            padding:
+                11px
+                13px;
+
+            border:
+                1px solid #ddd;
+
+            border-radius: 8px;
+
+            background: #f8f8f8;
+
+            cursor: pointer;
+
+            font-weight: 700;
+        }
+
+
+        .print-button {
+
+            background: #1e1e1e;
+
+            color: white;
+
+            border-color: #1e1e1e;
+        }
+
+
+        .selected-counter {
+
+            color: var(--muted);
+
+            font-size: 13px;
+
+            font-weight: bold;
+        }
+
+
+        /* CARDS */
+
+        .members-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fill,
+                    minmax(330px, 1fr)
                 );
 
-
-            if (!datos) {
-
-                await signOut(auth);
+            gap: 20px;
+        }
 
 
-                window.location.replace(
-                    "./login.html"
-                );
+        .member-card {
 
-                return;
+            position: relative;
 
+            overflow: hidden;
+
+            background: white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 8px 25px rgba(0,0,0,.055);
+        }
+
+
+        .select-area {
+
+            position: absolute;
+
+            top: 14px;
+            right: 14px;
+
+            z-index: 2;
+
+            width: 29px;
+            height: 29px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 7px;
+
+            background: rgba(255,255,255,.95);
+
+            box-shadow:
+                0 2px 8px rgba(0,0,0,.13);
+        }
+
+
+        .print-checkbox {
+
+            width: 18px;
+            height: 18px;
+
+            accent-color: var(--orange);
+
+            cursor: pointer;
+        }
+
+
+        .member-main {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 17px;
+
+            padding: 22px;
+        }
+
+
+        .member-photo {
+
+            width: 95px;
+            height: 95px;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            object-fit: cover;
+
+            background: #eee;
+
+            border:
+                4px solid #f0f0f0;
+        }
+
+
+        .member-id {
+
+            margin-bottom: 5px;
+
+            color: var(--orange);
+
+            font-size: 12px;
+
+            font-weight: 800;
+        }
+
+
+        .member-name {
+
+            margin-bottom: 5px;
+
+            font-size: 19px;
+        }
+
+
+        .member-role {
+
+            margin-bottom: 10px;
+
+            color: var(--muted);
+
+            font-size: 14px;
+        }
+
+
+        .status {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            padding:
+                5px
+                9px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+
+            font-weight: 800;
+        }
+
+
+        .status.activo {
+
+            background: var(--green-bg);
+
+            color: var(--green);
+        }
+
+
+        .status.inactivo {
+
+            background: var(--red-bg);
+
+            color: var(--red);
+        }
+
+
+        .status-dot {
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: currentColor;
+        }
+
+
+        .member-actions {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 8px;
+
+            padding:
+                0 22px 22px;
+        }
+
+
+        .action-button {
+
+            padding: 10px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            text-align: center;
+
+            text-decoration: none;
+        }
+
+
+        .edit-button {
+
+            background: var(--orange);
+
+            color: white;
+        }
+
+
+        .view-button {
+
+            background: #ededed;
+
+            color: #333;
+        }
+
+
+        .print-one-button {
+
+            background: #222;
+
+            color: white;
+        }
+
+
+        .delete-button {
+
+            background: var(--red-bg);
+
+            color: var(--red);
+        }
+
+
+        .empty {
+
+            grid-column: 1 / -1;
+
+            padding: 55px;
+
+            text-align: center;
+
+            background: white;
+
+            border-radius: 14px;
+
+            color: var(--muted);
+        }
+
+
+        /* MODAL */
+
+        .modal-overlay {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 5000;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(0,0,0,.70);
+        }
+
+
+        .modal-overlay.show {
+
+            display: flex;
+        }
+
+
+        .modal {
+
+            width: 100%;
+
+            max-width: 760px;
+
+            max-height: 92vh;
+
+            overflow-y: auto;
+
+            background: white;
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 25px 80px rgba(0,0,0,.35);
+        }
+
+
+        .modal-header {
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 3;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding:
+                20px
+                24px;
+
+            background: var(--dark);
+
+            color: white;
+
+            border-bottom:
+                4px solid var(--orange);
+        }
+
+
+        .modal-header h3 {
+
+            font-size: 20px;
+        }
+
+
+        .close-modal {
+
+            width: 38px;
+            height: 38px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            background: #333;
+
+            color: white;
+
+            font-size: 20px;
+
+            cursor: pointer;
+        }
+
+
+        .modal-content {
+
+            padding: 25px;
+        }
+
+
+        .form-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 18px;
+        }
+
+
+        .form-group {
+
+            display: flex;
+
+            flex-direction: column;
+        }
+
+
+        .form-group.full {
+
+            grid-column: 1 / -1;
+        }
+
+
+        .form-group label {
+
+            margin-bottom: 6px;
+
+            font-size: 12px;
+
+            font-weight: 800;
+        }
+
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+
+            width: 100%;
+
+            padding:
+                12px
+                13px;
+
+            border:
+                1px solid #d2d4d7;
+
+            border-radius: 8px;
+
+            font-family: inherit;
+
+            font-size: 14px;
+
+            outline: none;
+        }
+
+
+        .form-group textarea {
+
+            min-height: 85px;
+
+            resize: vertical;
+        }
+
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+
+            border-color: var(--orange);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(255,101,0,.10);
+        }
+
+
+        .photo-preview {
+
+            width: 130px;
+            height: 130px;
+
+            margin-top: 12px;
+
+            border-radius: 12px;
+
+            object-fit: cover;
+
+            background: #eee;
+        }
+
+
+        .photo-help {
+
+            margin-top: 7px;
+
+            color: #888;
+
+            font-size: 11px;
+        }
+
+
+        .modal-actions {
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 10px;
+
+            margin-top: 25px;
+        }
+
+
+        .save-button {
+
+            padding:
+                12px
+                18px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            background: var(--orange);
+
+            color: white;
+
+            font-weight: 800;
+
+            cursor: pointer;
+        }
+
+
+        .save-button:disabled {
+
+            opacity: .55;
+
+            cursor: wait;
+        }
+
+
+        .cancel-button {
+
+            padding:
+                12px
+                18px;
+
+            border:
+                1px solid #ddd;
+
+            border-radius: 8px;
+
+            background: #f4f4f4;
+
+            cursor: pointer;
+        }
+
+
+        .form-message {
+
+            margin-top: 18px;
+
+            font-size: 13px;
+
+            font-weight: bold;
+        }
+
+
+        .form-message.error {
+
+            color: var(--red);
+        }
+
+
+        .form-message.success {
+
+            color: var(--green);
+        }
+
+
+        @media(max-width: 700px) {
+
+            .header-inner {
+
+                padding:
+                    11px
+                    14px;
             }
 
 
-            document.getElementById(
-                "admin-welcome"
-            ).textContent =
-                `Sesión iniciada como ${
-                    datos.nombre ||
-                    usuario.email ||
-                    "Comandante"
-                }.`;
+            .brand img {
+
+                width: 48px;
+                height: 48px;
+            }
 
 
-            loading.style.display =
-                "none";
+            .brand h1 {
+
+                font-size: 16px;
+            }
 
 
-            adminContent.style.display =
-                "block";
+            .brand p {
+
+                font-size: 10px;
+            }
 
 
-            await cargarIntegrantes();
+            .public-button {
+
+                display: none;
+            }
 
 
-        } catch (error) {
+            .container {
 
-            console.error(
-                "Error verificando permisos:",
-                error
-            );
-
-
-            await signOut(auth);
+                padding:
+                    25px
+                    15px;
+            }
 
 
-            window.location.replace(
-                "./login.html"
-            );
+            .page-header {
+
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+
+            .new-button {
+
+                width: 100%;
+            }
+
+
+            .toolbar {
+
+                align-items: stretch;
+
+                flex-direction: column;
+            }
+
+
+            .print-tools {
+
+                width: 100%;
+            }
+
+
+            .tool-button {
+
+                flex: 1;
+            }
+
+
+            .form-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .form-group.full {
+
+                grid-column: auto;
+            }
 
         }
 
-    }
-);
+    </style>
+
+</head>
 
 
+<body>
 
-/* ==============================================
-CARGAR INTEGRANTES
-============================================== */
 
-async function cargarIntegrantes() {
+<header class="admin-header">
 
-    membersGrid.innerHTML = `
-        <div class="empty">
-            Cargando integrantes...
+    <div class="header-inner">
+
+        <div class="brand">
+
+            <img
+                src="./img/logo.jpg"
+                alt="SAR Argentina"
+            >
+
+            <div>
+
+                <h1>
+                    SAR ARGENTINA
+                </h1>
+
+                <p>
+                    Administración de integrantes
+                </p>
+
+            </div>
+
         </div>
-    `;
 
 
-    try {
+        <div class="header-actions">
 
-        const consulta =
-            await getDocs(
-                collection(
-                    db,
-                    "integrantes"
-                )
-            );
+            <button
+                id="go-public"
+                class="header-button public-button"
+                type="button"
+            >
+                Ver sitio
+            </button>
 
+            <button
+                id="logout-button"
+                class="header-button logout-button"
+                type="button"
+            >
+                Cerrar sesión
+            </button>
 
-        integrantes =
-            [];
+        </div>
 
+    </div>
 
-        consulta.forEach(
-            documento => {
-
-                integrantes.push({
-
-                    id:
-                        documento.id,
-
-                    ...documento.data()
-
-                });
-
-            }
-        );
+</header>
 
 
-        integrantes.sort(
-            (a, b) =>
-                a.id.localeCompare(
-                    b.id,
-                    undefined,
-                    {
-                        numeric: true
-                    }
-                )
-        );
+<main class="container">
 
 
-        renderIntegrantes(
-            integrantes
-        );
+    <div
+        id="loading"
+        class="loading"
+    >
+        Verificando sesión y permisos...
+    </div>
 
 
-    } catch (error) {
-
-        console.error(
-            "Error cargando integrantes:",
-            error
-        );
+    <div
+        id="admin-content"
+        style="display:none;"
+    >
 
 
-        membersGrid.innerHTML = `
-            <div class="empty">
-                No se pudieron cargar los integrantes.
-            </div>
-        `;
+        <section class="page-header">
 
-    }
+            <div>
 
-}
-
-
-
-/* ==============================================
-MOSTRAR INTEGRANTES
-============================================== */
-
-function renderIntegrantes(lista) {
-
-    membersGrid.innerHTML =
-        "";
-
-
-    if (
-        lista.length === 0
-    ) {
-
-        membersGrid.innerHTML = `
-            <div class="empty">
-                No hay integrantes para mostrar.
-            </div>
-        `;
-
-        return;
-
-    }
-
-
-    lista.forEach(
-        persona => {
-
-            const estado =
-                (
-                    persona.estado
-                    ||
-                    "inactivo"
-                ).toLowerCase();
-
-
-            const foto =
-                persona.fotoUrl
-                ||
-                "./img/logo.jpg";
-
-
-            const card =
-                document.createElement(
-                    "article"
-                );
-
-
-            card.className =
-                "member-card";
-
-
-            card.innerHTML = `
-
-                <div class="select-area">
-
-                    <input
-                        type="checkbox"
-                        class="print-checkbox"
-                        data-id="${persona.id}"
-                        ${
-                            seleccionados.has(
-                                persona.id
-                            )
-                            ? "checked"
-                            : ""
-                        }
-                    >
-
+                <div class="page-label">
+                    PANEL ADMINISTRATIVO
                 </div>
 
+                <h2>
+                    Integrantes
+                </h2>
 
-                <div class="member-main">
+                <p id="admin-welcome">
+                    Administración del registro SAR.
+                </p>
 
-                    <img
-                        class="member-photo"
-                        src="${foto}"
-                        alt=""
-                        loading="lazy"
-                        onerror="this.src='./img/logo.jpg'"
-                    >
-
-
-                    <div>
-
-                        <div class="member-id">
-                            ${persona.id}
-                        </div>
+            </div>
 
 
-                        <h3 class="member-name">
-                            ${persona.nombre || "Sin nombre"}
-                        </h3>
+            <button
+                id="new-member-button"
+                class="new-button"
+                type="button"
+            >
+                + Nuevo integrante
+            </button>
+
+        </section>
 
 
-                        <div class="member-role">
-                            ${persona.cargo || "Sin cargo"}
-                        </div>
+        <div class="toolbar">
 
 
-                        <div class="status ${estado}">
+            <input
+                type="search"
+                id="search-input"
+                class="search-input"
+                placeholder="Buscar por nombre, ID SAR, cargo o DNI"
+            >
 
-                            <span class="status-dot"></span>
 
-                            ${
-                                estado === "activo"
-                                ? "ACTIVO"
-                                : "INACTIVO"
-                            }
+            <div class="print-tools">
 
-                        </div>
+                <span
+                    id="selected-counter"
+                    class="selected-counter"
+                >
+                    0 seleccionadas
+                </span>
+
+
+                <button
+                    id="select-all"
+                    class="tool-button"
+                    type="button"
+                >
+                    Seleccionar todas
+                </button>
+
+
+                <button
+                    id="clear-selection"
+                    class="tool-button"
+                    type="button"
+                >
+                    Quitar selección
+                </button>
+
+
+                <button
+                    id="print-selected"
+                    class="tool-button print-button"
+                    type="button"
+                >
+                    Imprimir seleccionadas
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="members-grid"
+            class="members-grid"
+        >
+        </div>
+
+    </div>
+
+</main>
+
+
+<div
+    id="member-modal"
+    class="modal-overlay"
+>
+
+    <div class="modal">
+
+
+        <div class="modal-header">
+
+            <h3 id="modal-title">
+                Editar integrante
+            </h3>
+
+            <button
+                id="close-modal"
+                class="close-modal"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-content">
+
+
+            <form id="member-form">
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label for="member-id">
+                            ID SAR
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-id"
+                            placeholder="SAR-0001"
+                            required
+                        >
 
                     </div>
 
+
+                    <div class="form-group">
+
+                        <label for="member-status">
+                            Estado
+                        </label>
+
+                        <select
+                            id="member-status"
+                            required
+                        >
+
+                            <option value="activo">
+                                Activo
+                            </option>
+
+                            <option value="inactivo">
+                                Inactivo
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group full">
+
+                        <label for="member-name">
+                            Nombre completo
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="member-dni">
+                            DNI
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-dni"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="member-role">
+                            Cargo / función
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-role"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="member-delegation">
+                            Delegación
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-delegation"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="member-blood">
+                            Grupo sanguíneo
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-blood"
+                            placeholder="O+"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="member-entry">
+                            Año de ingreso
+                        </label>
+
+                        <input
+                            type="text"
+                            id="member-entry"
+                            placeholder="2026"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group full">
+
+                        <label for="member-specialties">
+                            Especialidades
+                        </label>
+
+                        <textarea
+                            id="member-specialties"
+                            placeholder="Búsqueda y rescate, Primeros auxilios, Comunicaciones"
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="form-group full">
+
+                        <label for="member-photo">
+                            Foto del integrante
+                        </label>
+
+                        <input
+                            type="file"
+                            id="member-photo"
+                            accept="image/jpeg,image/png,image/webp"
+                        >
+
+                        <div class="photo-help">
+                            JPG, PNG o WEBP. La imagen se subirá a Cloudinary.
+                        </div>
+
+                        <img
+                            id="photo-preview"
+                            class="photo-preview"
+                            src="./img/logo.jpg"
+                            alt="Vista previa"
+                        >
+
+                    </div>
+
+
                 </div>
 
 
-                <div class="member-actions">
+                <div
+                    id="form-message"
+                    class="form-message"
+                >
+                </div>
+
+
+                <div class="modal-actions">
 
                     <button
-                        class="action-button edit-button"
-                        data-edit="${persona.id}"
+                        id="cancel-button"
+                        class="cancel-button"
                         type="button"
                     >
-                        Editar
+                        Cancelar
                     </button>
 
 
                     <button
-                        class="action-button view-button"
-                        data-view="${persona.id}"
-                        type="button"
+                        id="save-button"
+                        class="save-button"
+                        type="submit"
                     >
-                        Ver ficha
-                    </button>
-
-
-                    <button
-                        class="action-button print-one-button"
-                        data-print="${persona.id}"
-                        type="button"
-                    >
-                        Imprimir
-                    </button>
-
-
-                    <button
-                        class="action-button delete-button"
-                        data-delete="${persona.id}"
-                        type="button"
-                    >
-                        Eliminar
+                        Guardar cambios
                     </button>
 
                 </div>
 
-            `;
 
+            </form>
 
-            membersGrid.appendChild(
-                card
-            );
 
-        }
-    );
+        </div>
 
+    </div>
 
-    conectarEventosTarjetas();
+</div>
 
-}
 
+<script
+    type="module"
+    src="./admin.js?v=20"
+></script>
 
 
-/* ==============================================
-EVENTOS TARJETAS
-============================================== */
+</body>
 
-function conectarEventosTarjetas() {
-
-
-    document
-        .querySelectorAll(
-            ".print-checkbox"
-        )
-        .forEach(
-            checkbox => {
-
-                checkbox.addEventListener(
-                    "change",
-                    () => {
-
-                        const id =
-                            checkbox.dataset.id;
-
-
-                        if (
-                            checkbox.checked
-                        ) {
-
-                            seleccionados.add(
-                                id
-                            );
-
-                        } else {
-
-                            seleccionados.delete(
-                                id
-                            );
-
-                        }
-
-
-                        actualizarContador();
-
-                    }
-                );
-
-            }
-        );
-
-
-    document
-        .querySelectorAll(
-            "[data-edit]"
-        )
-        .forEach(
-            boton => {
-
-                boton.addEventListener(
-                    "click",
-                    () => {
-
-                        abrirEditar(
-                            boton.dataset.edit
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-
-    document
-        .querySelectorAll(
-            "[data-delete]"
-        )
-        .forEach(
-            boton => {
-
-                boton.addEventListener(
-                    "click",
-                    () => {
-
-                        eliminarIntegrante(
-                            boton.dataset.delete
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-
-    document
-        .querySelectorAll(
-            "[data-print]"
-        )
-        .forEach(
-            boton => {
-
-                boton.addEventListener(
-                    "click",
-                    () => {
-
-                        imprimirIds([
-                            boton.dataset.print
-                        ]);
-
-                    }
-                );
-
-            }
-        );
-
-
-    document
-        .querySelectorAll(
-            "[data-view]"
-        )
-        .forEach(
-            boton => {
-
-                boton.addEventListener(
-                    "click",
-                    () => {
-
-                        const id =
-                            boton.dataset.view;
-
-
-                        window.open(
-                            `./?id=${encodeURIComponent(id)}`,
-                            "_blank"
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-}
-
-
-
-/* ==============================================
-CONTADOR
-============================================== */
-
-function actualizarContador() {
-
-    selectedCounter.textContent =
-        `${seleccionados.size} seleccionada${
-            seleccionados.size !== 1
-                ? "s"
-                : ""
-        }`;
-
-}
-
-
-
-/* ==============================================
-BUSCADOR
-============================================== */
-
-searchInput.addEventListener(
-    "input",
-    () => {
-
-        const texto =
-            searchInput.value
-                .trim()
-                .toLowerCase();
-
-
-        const filtrados =
-            integrantes.filter(
-                persona => {
-
-                    return (
-
-                        (
-                            persona.id
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
-
-                        ||
-
-                        (
-                            persona.nombre
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
-
-                        ||
-
-                        (
-                            persona.cargo
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
-
-                        ||
-
-                        (
-                            persona.dni
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
-
-                        ||
-
-                        (
-                            persona.delegacion
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
-
-                    );
-
-                }
-            );
-
-
-        renderIntegrantes(
-            filtrados
-        );
-
-    }
-);
-
-
-
-/* ==============================================
-SELECCIONAR TODAS
-============================================== */
-
-document
-    .getElementById(
-        "select-all"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            document
-                .querySelectorAll(
-                    ".print-checkbox"
-                )
-                .forEach(
-                    checkbox => {
-
-                        checkbox.checked =
-                            true;
-
-
-                        seleccionados.add(
-                            checkbox.dataset.id
-                        );
-
-                    }
-                );
-
-
-            actualizarContador();
-
-        }
-    );
-
-
-
-/* ==============================================
-QUITAR SELECCIÓN
-============================================== */
-
-document
-    .getElementById(
-        "clear-selection"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            seleccionados.clear();
-
-
-            document
-                .querySelectorAll(
-                    ".print-checkbox"
-                )
-                .forEach(
-                    checkbox => {
-
-                        checkbox.checked =
-                            false;
-
-                    }
-                );
-
-
-            actualizarContador();
-
-        }
-    );
-
-
-
-/* ==============================================
-IMPRIMIR SELECCIONADAS
-============================================== */
-
-document
-    .getElementById(
-        "print-selected"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            if (
-                seleccionados.size === 0
-            ) {
-
-                alert(
-                    "Seleccioná al menos una credencial."
-                );
-
-                return;
-
-            }
-
-
-            imprimirIds(
-                Array.from(
-                    seleccionados
-                )
-            );
-
-        }
-    );
-
-
-
-function imprimirIds(ids) {
-
-    const personas =
-        integrantes.filter(
-            persona =>
-                ids.includes(
-                    persona.id
-                )
-        );
-
-
-    sessionStorage.setItem(
-        "credencialesImprimir",
-        JSON.stringify(
-            personas
-        )
-    );
-
-
-    window.open(
-        "./imprimir.html",
-        "_blank"
-    );
-
-}
-
-
-
-/* ==============================================
-NUEVO INTEGRANTE
-============================================== */
-
-document
-    .getElementById(
-        "new-member-button"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            editandoId =
-                null;
-
-
-            fotoActual =
-                "";
-
-
-            modalTitle.textContent =
-                "Nuevo integrante";
-
-
-            memberForm.reset();
-
-
-            const idInput =
-                document.getElementById(
-                    "member-id"
-                );
-
-
-            idInput.disabled =
-                false;
-
-
-            photoPreview.src =
-                "./img/logo.jpg";
-
-
-            formMessage.textContent =
-                "";
-
-
-            formMessage.className =
-                "form-message";
-
-
-            modal.classList.add(
-                "show"
-            );
-
-        }
-    );
-
-
-
-/* ==============================================
-EDITAR
-============================================== */
-
-function abrirEditar(id) {
-
-    const persona =
-        integrantes.find(
-            integrante =>
-                integrante.id === id
-        );
-
-
-    if (!persona) {
-
-        return;
-
-    }
-
-
-    editandoId =
-        id;
-
-
-    fotoActual =
-        persona.fotoUrl
-        ||
-        "";
-
-
-    modalTitle.textContent =
-        `Editar ${id}`;
-
-
-    const idInput =
-        document.getElementById(
-            "member-id"
-        );
-
-
-    idInput.value =
-        id;
-
-
-    idInput.disabled =
-        true;
-
-
-    document.getElementById(
-        "member-name"
-    ).value =
-        persona.nombre || "";
-
-
-    document.getElementById(
-        "member-dni"
-    ).value =
-        persona.dni || "";
-
-
-    document.getElementById(
-        "member-role"
-    ).value =
-        persona.cargo || "";
-
-
-    document.getElementById(
-        "member-status"
-    ).value =
-        persona.estado || "activo";
-
-
-    document.getElementById(
-        "member-delegation"
-    ).value =
-        persona.delegacion || "";
-
-
-    document.getElementById(
-        "member-blood"
-    ).value =
-        persona.grupoSanguineo || "";
-
-
-    document.getElementById(
-        "member-entry"
-    ).value =
-        persona.ingreso || "";
-
-
-    document.getElementById(
-        "member-specialties"
-    ).value =
-        Array.isArray(
-            persona.especialidades
-        )
-            ? persona.especialidades.join(
-                ", "
-            )
-            : "";
-
-
-    photoPreview.src =
-        fotoActual
-        ||
-        "./img/logo.jpg";
-
-
-    document.getElementById(
-        "member-photo"
-    ).value =
-        "";
-
-
-    formMessage.textContent =
-        "";
-
-
-    formMessage.className =
-        "form-message";
-
-
-    modal.classList.add(
-        "show"
-    );
-
-}
-
-
-
-/* ==============================================
-PREVISUALIZAR FOTO
-============================================== */
-
-document
-    .getElementById(
-        "member-photo"
-    )
-    .addEventListener(
-        "change",
-        event => {
-
-            const archivo =
-                event.target.files[0];
-
-
-            if (!archivo) {
-
-                return;
-
-            }
-
-
-            const tiposPermitidos = [
-                "image/jpeg",
-                "image/png",
-                "image/webp"
-            ];
-
-
-            if (
-                !tiposPermitidos.includes(
-                    archivo.type
-                )
-            ) {
-
-                alert(
-                    "La foto debe ser JPG, PNG o WEBP."
-                );
-
-
-                event.target.value =
-                    "";
-
-
-                return;
-
-            }
-
-
-            const maximo =
-                5 * 1024 * 1024;
-
-
-            if (
-                archivo.size > maximo
-            ) {
-
-                alert(
-                    "La imagen no puede superar los 5 MB."
-                );
-
-
-                event.target.value =
-                    "";
-
-
-                return;
-
-            }
-
-
-            photoPreview.src =
-                URL.createObjectURL(
-                    archivo
-                );
-
-        }
-    );
-
-
-
-/* ==============================================
-GUARDAR
-============================================== */
-
-memberForm.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-
-        saveButton.disabled =
-            true;
-
-
-        saveButton.textContent =
-            "Guardando...";
-
-
-        formMessage.textContent =
-            "";
-
-
-        formMessage.className =
-            "form-message";
-
-
-        let id;
-
-
-        if (
-            editandoId
-        ) {
-
-            id =
-                editandoId;
-
-        } else {
-
-            id =
-                document
-                    .getElementById(
-                        "member-id"
-                    )
-                    .value
-                    .trim()
-                    .toUpperCase();
-
-        }
-
-
-        if (!id) {
-
-            mostrarError(
-                "Ingresá un ID SAR."
-            );
-
-            finalizarGuardado();
-
-            return;
-
-        }
-
-
-        if (
-            !/^SAR-\d+$/i.test(id)
-        ) {
-
-            mostrarError(
-                "El ID debe tener un formato como SAR-0001."
-            );
-
-            finalizarGuardado();
-
-            return;
-
-        }
-
-
-        try {
-
-            /*
-             * Evita reemplazar accidentalmente
-             * otro integrante al crear uno nuevo.
-             */
-
-            if (!editandoId) {
-
-                const existente =
-                    await getDoc(
-                        doc(
-                            db,
-                            "integrantes",
-                            id
-                        )
-                    );
-
-
-                if (
-                    existente.exists()
-                ) {
-
-                    mostrarError(
-                        `Ya existe un integrante con ID ${id}.`
-                    );
-
-
-                    finalizarGuardado();
-
-                    return;
-
-                }
-
-            }
-
-
-            let fotoUrl =
-                fotoActual || "";
-
-
-            const archivo =
-                document
-                    .getElementById(
-                        "member-photo"
-                    )
-                    .files[0];
-
-
-            if (archivo) {
-
-                formMessage.textContent =
-                    "Subiendo fotografía...";
-
-
-                fotoUrl =
-                    await subirFotoCloudinary(
-                        archivo
-                    );
-
-            }
-
-
-            const especialidades =
-                document
-                    .getElementById(
-                        "member-specialties"
-                    )
-                    .value
-                    .split(",")
-                    .map(
-                        texto =>
-                            texto.trim()
-                    )
-                    .filter(Boolean);
-
-
-            const datos = {
-
-                nombre:
-                    document
-                        .getElementById(
-                            "member-name"
-                        )
-                        .value
-                        .trim(),
-
-                dni:
-                    document
-                        .getElementById(
-                            "member-dni"
-                        )
-                        .value
-                        .trim(),
-
-                cargo:
-                    document
-                        .getElementById(
-                            "member-role"
-                        )
-                        .value
-                        .trim(),
-
-                estado:
-                    document
-                        .getElementById(
-                            "member-status"
-                        )
-                        .value,
-
-                delegacion:
-                    document
-                        .getElementById(
-                            "member-delegation"
-                        )
-                        .value
-                        .trim(),
-
-                grupoSanguineo:
-                    document
-                        .getElementById(
-                            "member-blood"
-                        )
-                        .value
-                        .trim(),
-
-                ingreso:
-                    document
-                        .getElementById(
-                            "member-entry"
-                        )
-                        .value
-                        .trim(),
-
-                especialidades:
-                    especialidades,
-
-                fotoUrl:
-                    fotoUrl,
-
-                actualizado:
-                    serverTimestamp()
-
-            };
-
-
-            /*
-             * Solo agrega fecha de creación
-             * cuando el integrante es nuevo.
-             */
-
-            if (!editandoId) {
-
-                datos.creado =
-                    serverTimestamp();
-
-            }
-
-
-            await setDoc(
-                doc(
-                    db,
-                    "integrantes",
-                    id
-                ),
-                datos,
-                {
-                    merge: true
-                }
-            );
-
-
-            formMessage.textContent =
-                "Cambios guardados correctamente.";
-
-
-            formMessage.className =
-                "form-message success";
-
-
-            await cargarIntegrantes();
-
-
-            setTimeout(
-                () => {
-
-                    cerrarModal();
-
-                },
-                700
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Error guardando integrante:",
-                error
-            );
-
-
-            mostrarError(
-                error.message
-                ||
-                "No se pudieron guardar los cambios."
-            );
-
-        } finally {
-
-            finalizarGuardado();
-
-        }
-
-    }
-);
-
-
-
-function mostrarError(texto) {
-
-    formMessage.textContent =
-        texto;
-
-
-    formMessage.className =
-        "form-message error";
-
-}
-
-
-
-function finalizarGuardado() {
-
-    saveButton.disabled =
-        false;
-
-
-    saveButton.textContent =
-        "Guardar cambios";
-
-}
-
-
-
-/* ==============================================
-ELIMINAR
-============================================== */
-
-async function eliminarIntegrante(id) {
-
-    const confirmar =
-        confirm(
-            `¿Seguro que querés eliminar ${id}?\n\nSi solamente dejó de pertenecer al SAR, es mejor editarlo y ponerlo INACTIVO.`
-        );
-
-
-    if (!confirmar) {
-
-        return;
-
-    }
-
-
-    try {
-
-        await deleteDoc(
-            doc(
-                db,
-                "integrantes",
-                id
-            )
-        );
-
-
-        seleccionados.delete(
-            id
-        );
-
-
-        await cargarIntegrantes();
-
-
-        actualizarContador();
-
-
-    } catch (error) {
-
-        console.error(
-            error
-        );
-
-
-        alert(
-            "No se pudo eliminar el integrante."
-        );
-
-    }
-
-}
-
-
-
-/* ==============================================
-MODAL
-============================================== */
-
-function cerrarModal() {
-
-    modal.classList.remove(
-        "show"
-    );
-
-
-    editandoId =
-        null;
-
-
-    fotoActual =
-        "";
-
-
-    memberForm.reset();
-
-
-    document.getElementById(
-        "member-id"
-    ).disabled =
-        false;
-
-
-    photoPreview.src =
-        "./img/logo.jpg";
-
-}
-
-
-
-document
-    .getElementById(
-        "close-modal"
-    )
-    .addEventListener(
-        "click",
-        cerrarModal
-    );
-
-
-document
-    .getElementById(
-        "cancel-button"
-    )
-    .addEventListener(
-        "click",
-        cerrarModal
-    );
-
-
-modal.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target === modal
-        ) {
-
-            cerrarModal();
-
-        }
-
-    }
-);
-
-
-
-/* ==============================================
-CERRAR SESIÓN
-============================================== */
-
-document
-    .getElementById(
-        "logout-button"
-    )
-    .addEventListener(
-        "click",
-        async () => {
-
-            try {
-
-                await signOut(
-                    auth
-                );
-
-
-                window.location.replace(
-                    "./login.html"
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    error
-                );
-
-                alert(
-                    "No se pudo cerrar la sesión."
-                );
-
-            }
-
-        }
-    );
-
-
-
-/* ==============================================
-SITIO PÚBLICO
-============================================== */
-
-document
-    .getElementById(
-        "go-public"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            window.open(
-                "./",
-                "_blank"
-            );
-
-        }
-    );
+</html>
