@@ -1,13 +1,11 @@
 import {
     auth,
-    db,
-    storage
+    db
 } from "./firebase-config.js";
 
 
 import {
-    onAuthStateChanged,
-    signOut
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 
@@ -22,92 +20,262 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 
-import {
-    ref,
-    uploadBytes,
-    getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-storage.js";
+/* =========================================
+CLOUDINARY
+========================================= */
 
+const CLOUD_NAME =
+    "hyvxppyb";
+
+
+const UPLOAD_PRESET =
+    "sar_integrantes";
+
+
+async function subirFotoCloudinary(
+    archivo
+) {
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "file",
+        archivo
+    );
+
+
+    formData.append(
+        "upload_preset",
+        UPLOAD_PRESET
+    );
+
+
+    const respuesta =
+        await fetch(
+            `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+
+    const datos =
+        await respuesta.json();
+
+
+    if (!respuesta.ok) {
+
+        throw new Error(
+            datos?.error?.message
+            ||
+            "No se pudo subir la fotografía."
+        );
+
+    }
+
+
+    if (!datos.secure_url) {
+
+        throw new Error(
+            "Cloudinary no devolvió la URL de la fotografía."
+        );
+
+    }
+
+
+    return datos.secure_url;
+
+}
+
+
+/* =========================================
+ELEMENTOS
+========================================= */
 
 const loading =
-    document.getElementById("loading");
+    document.getElementById(
+        "loading"
+    );
+
 
 const adminContent =
-    document.getElementById("admin-content");
+    document.getElementById(
+        "admin-content"
+    );
+
 
 const membersGrid =
-    document.getElementById("members-grid");
+    document.getElementById(
+        "members-grid"
+    );
+
 
 const searchInput =
-    document.getElementById("search-input");
+    document.getElementById(
+        "search-input"
+    );
+
 
 const selectedCounter =
-    document.getElementById("selected-counter");
+    document.getElementById(
+        "selected-counter"
+    );
+
 
 const modal =
-    document.getElementById("member-modal");
+    document.getElementById(
+        "member-modal"
+    );
+
 
 const memberForm =
-    document.getElementById("member-form");
+    document.getElementById(
+        "member-form"
+    );
+
 
 const modalTitle =
-    document.getElementById("modal-title");
+    document.getElementById(
+        "modal-title"
+    );
+
 
 const formMessage =
-    document.getElementById("form-message");
+    document.getElementById(
+        "form-message"
+    );
+
 
 const photoPreview =
-    document.getElementById("photo-preview");
+    document.getElementById(
+        "photo-preview"
+    );
 
 
-let integrantes = [];
+const saveButton =
+    document.getElementById(
+        "save-button"
+    );
+
+
+/* =========================================
+VARIABLES
+========================================= */
+
+let integrantes =
+    [];
+
 
 let seleccionados =
     new Set();
 
+
 let editandoId =
     null;
+
 
 let fotoActual =
     "";
 
 
+/* =========================================
+VERIFICAR COMANDANTE
+========================================= */
 
-async function comprobarComandante(usuario) {
+async function comprobarComandante(
+    usuario
+) {
 
-    const refUsuario =
+    const referencia =
         doc(
             db,
             "usuarios",
             usuario.uid
         );
 
-    const snap =
-        await getDoc(refUsuario);
 
-    if (!snap.exists()) {
-        return null;
+    const documento =
+        await getDoc(
+            referencia
+        );
+
+
+    if (!documento.exists()) {
+
+        throw new Error(
+            "No existe el registro administrativo de este usuario."
+        );
+
     }
 
+
     const datos =
-        snap.data();
+        documento.data();
+
 
     if (
         datos.rol !== "comandante"
-        ||
-        datos.activo !== true
     ) {
-        return null;
+
+        throw new Error(
+            "El usuario no tiene rol de comandante."
+        );
+
     }
 
+
+    if (
+        datos.activo !== true
+    ) {
+
+        throw new Error(
+            "La cuenta administrativa está inactiva."
+        );
+
+    }
+
+
     return datos;
+
 }
 
+
+/* =========================================
+SESIÓN
+========================================= */
+
+let authRespondio =
+    false;
+
+
+setTimeout(
+    () => {
+
+        if (!authRespondio) {
+
+            loading.textContent =
+                "Firebase está tardando en verificar la sesión. Recargá la página.";
+
+            loading.className =
+                "loading error";
+
+        }
+
+    },
+    10000
+);
 
 
 onAuthStateChanged(
     auth,
     async usuario => {
+
+        authRespondio =
+            true;
+
 
         if (!usuario) {
 
@@ -116,10 +284,15 @@ onAuthStateChanged(
             );
 
             return;
+
         }
 
 
         try {
+
+            loading.textContent =
+                "Verificando permisos del comandante...";
+
 
             const datos =
                 await comprobarComandante(
@@ -127,26 +300,21 @@ onAuthStateChanged(
                 );
 
 
-            if (!datos) {
-
-                await signOut(auth);
-
-                window.location.replace(
-                    "./login.html"
-                );
-
-                return;
-            }
-
-
             document.getElementById(
                 "admin-welcome"
             ).textContent =
-                `Sesión iniciada como ${datos.nombre || "Comandante"}.`;
+                `Sesión iniciada como ${
+                    datos.nombre
+                    ||
+                    usuario.email
+                    ||
+                    "Comandante"
+                }.`;
 
 
             loading.style.display =
                 "none";
+
 
             adminContent.style.display =
                 "block";
@@ -157,13 +325,18 @@ onAuthStateChanged(
 
         } catch (error) {
 
-            console.error(error);
-
-            await signOut(auth);
-
-            window.location.replace(
-                "./login.html"
+            console.error(
+                "Error verificando administrador:",
+                error
             );
+
+
+            loading.textContent =
+                `Error: ${error.message}`;
+
+
+            loading.className =
+                "loading error";
 
         }
 
@@ -171,16 +344,22 @@ onAuthStateChanged(
 );
 
 
+/* =========================================
+CARGAR INTEGRANTES
+========================================= */
 
 async function cargarIntegrantes() {
 
-    membersGrid.innerHTML =
-        `<div class="empty">Cargando integrantes...</div>`;
+    membersGrid.innerHTML = `
+        <div class="empty">
+            Cargando integrantes...
+        </div>
+    `;
 
 
     try {
 
-        const consulta =
+        const resultado =
             await getDocs(
                 collection(
                     db,
@@ -189,15 +368,20 @@ async function cargarIntegrantes() {
             );
 
 
-        integrantes = [];
+        integrantes =
+            [];
 
 
-        consulta.forEach(
+        resultado.forEach(
             documento => {
 
                 integrantes.push({
-                    id: documento.id,
+
+                    id:
+                        documento.id,
+
                     ...documento.data()
+
                 });
 
             }
@@ -223,11 +407,16 @@ async function cargarIntegrantes() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Error cargando integrantes:",
+            error
+        );
+
 
         membersGrid.innerHTML = `
             <div class="empty">
-                No se pudieron cargar los integrantes.
+                Error cargando integrantes:
+                ${error.message}
             </div>
         `;
 
@@ -236,22 +425,30 @@ async function cargarIntegrantes() {
 }
 
 
+/* =========================================
+RENDER
+========================================= */
 
-function renderIntegrantes(lista) {
+function renderIntegrantes(
+    lista
+) {
 
     membersGrid.innerHTML =
         "";
 
 
-    if (lista.length === 0) {
+    if (
+        lista.length === 0
+    ) {
 
         membersGrid.innerHTML = `
             <div class="empty">
-                No hay integrantes para mostrar.
+                No hay integrantes registrados.
             </div>
         `;
 
         return;
+
     }
 
 
@@ -290,7 +487,13 @@ function renderIntegrantes(lista) {
                         type="checkbox"
                         class="print-checkbox"
                         data-id="${persona.id}"
-                        ${seleccionados.has(persona.id) ? "checked" : ""}
+                        ${
+                            seleccionados.has(
+                                persona.id
+                            )
+                            ? "checked"
+                            : ""
+                        }
                     >
 
                 </div>
@@ -299,9 +502,10 @@ function renderIntegrantes(lista) {
                 <div class="member-main">
 
                     <img
-                        class="member-photo"
                         src="${foto}"
-                        alt="${persona.nombre || persona.id}"
+                        class="member-photo"
+                        alt=""
+                        onerror="this.src='./img/logo.jpg'"
                     >
 
 
@@ -311,13 +515,24 @@ function renderIntegrantes(lista) {
                             ${persona.id}
                         </div>
 
+
                         <h3 class="member-name">
-                            ${persona.nombre || "Sin nombre"}
+                            ${
+                                persona.nombre
+                                ||
+                                "Sin nombre"
+                            }
                         </h3>
 
+
                         <div class="member-role">
-                            ${persona.cargo || "Sin cargo"}
+                            ${
+                                persona.cargo
+                                ||
+                                "Sin cargo"
+                            }
                         </div>
+
 
                         <div class="status ${estado}">
 
@@ -339,6 +554,7 @@ function renderIntegrantes(lista) {
                 <div class="member-actions">
 
                     <button
+                        type="button"
                         class="action-button edit-button"
                         data-edit="${persona.id}"
                     >
@@ -346,16 +562,17 @@ function renderIntegrantes(lista) {
                     </button>
 
 
-                    <a
+                    <button
+                        type="button"
                         class="action-button view-button"
-                        href="./integrantes/${persona.id}"
-                        target="_blank"
+                        data-view="${persona.id}"
                     >
                         Ver ficha
-                    </a>
+                    </button>
 
 
                     <button
+                        type="button"
                         class="action-button print-one-button"
                         data-print="${persona.id}"
                     >
@@ -364,6 +581,7 @@ function renderIntegrantes(lista) {
 
 
                     <button
+                        type="button"
                         class="action-button delete-button"
                         data-delete="${persona.id}"
                     >
@@ -383,13 +601,17 @@ function renderIntegrantes(lista) {
     );
 
 
-    conectarEventosTarjetas();
+    conectarEventos();
 
 }
 
 
+/* =========================================
+EVENTOS CARDS
+========================================= */
 
-function conectarEventosTarjetas() {
+function conectarEventos() {
+
 
     document
         .querySelectorAll(
@@ -406,13 +628,19 @@ function conectarEventosTarjetas() {
                             checkbox.dataset.id;
 
 
-                        if (checkbox.checked) {
+                        if (
+                            checkbox.checked
+                        ) {
 
-                            seleccionados.add(id);
+                            seleccionados.add(
+                                id
+                            );
 
                         } else {
 
-                            seleccionados.delete(id);
+                            seleccionados.delete(
+                                id
+                            );
 
                         }
 
@@ -491,18 +719,37 @@ function conectarEventosTarjetas() {
             }
         );
 
+
+    document
+        .querySelectorAll(
+            "[data-view]"
+        )
+        .forEach(
+            boton => {
+
+                boton.addEventListener(
+                    "click",
+                    () => {
+
+                        window.open(
+                            `./?id=${encodeURIComponent(
+                                boton.dataset.view
+                            )}`,
+                            "_blank"
+                        );
+
+                    }
+                );
+
+            }
+        );
+
 }
 
 
-
-function actualizarContador() {
-
-    selectedCounter.textContent =
-        `${seleccionados.size} seleccionada${seleccionados.size !== 1 ? "s" : ""}`;
-
-}
-
-
+/* =========================================
+BUSCAR
+========================================= */
 
 searchInput.addEventListener(
     "input",
@@ -514,40 +761,21 @@ searchInput.addEventListener(
                 .toLowerCase();
 
 
-        const filtrados =
+        const encontrados =
             integrantes.filter(
                 persona => {
 
-                    return (
+                    const contenido = `
+                        ${persona.id || ""}
+                        ${persona.nombre || ""}
+                        ${persona.cargo || ""}
+                        ${persona.dni || ""}
+                        ${persona.delegacion || ""}
+                    `.toLowerCase();
 
-                        (
-                            persona.id
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
 
-                        ||
-
-                        (
-                            persona.nombre
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
-
-                        ||
-
-                        (
-                            persona.cargo
-                            ||
-                            ""
-                        )
-                            .toLowerCase()
-                            .includes(texto)
-
+                    return contenido.includes(
+                        texto
                     );
 
                 }
@@ -555,12 +783,27 @@ searchInput.addEventListener(
 
 
         renderIntegrantes(
-            filtrados
+            encontrados
         );
 
     }
 );
 
+
+/* =========================================
+SELECCIÓN
+========================================= */
+
+function actualizarContador() {
+
+    selectedCounter.textContent =
+        `${seleccionados.size} seleccionada${
+            seleccionados.size !== 1
+            ? "s"
+            : ""
+        }`;
+
+}
 
 
 document
@@ -571,31 +814,29 @@ document
         "click",
         () => {
 
-            const visibles =
-                document.querySelectorAll(
+            document
+                .querySelectorAll(
                     ".print-checkbox"
+                )
+                .forEach(
+                    checkbox => {
+
+                        checkbox.checked =
+                            true;
+
+
+                        seleccionados.add(
+                            checkbox.dataset.id
+                        );
+
+                    }
                 );
-
-
-            visibles.forEach(
-                checkbox => {
-
-                    checkbox.checked =
-                        true;
-
-                    seleccionados.add(
-                        checkbox.dataset.id
-                    );
-
-                }
-            );
 
 
             actualizarContador();
 
         }
     );
-
 
 
 document
@@ -629,7 +870,6 @@ document
     );
 
 
-
 document
     .getElementById(
         "print-selected"
@@ -661,8 +901,9 @@ document
     );
 
 
-
-function imprimirIds(ids) {
+function imprimirIds(
+    ids
+) {
 
     const personas =
         integrantes.filter(
@@ -689,6 +930,9 @@ function imprimirIds(ids) {
 }
 
 
+/* =========================================
+NUEVO
+========================================= */
 
 document
     .getElementById(
@@ -701,24 +945,31 @@ document
             editandoId =
                 null;
 
+
             fotoActual =
                 "";
+
+
+            memberForm.reset();
+
 
             modalTitle.textContent =
                 "Nuevo integrante";
 
-            memberForm.reset();
 
             document.getElementById(
                 "member-id"
             ).disabled =
                 false;
 
+
             photoPreview.src =
                 "./img/logo.jpg";
 
+
             formMessage.textContent =
                 "";
+
 
             modal.classList.add(
                 "show"
@@ -728,8 +979,13 @@ document
     );
 
 
+/* =========================================
+EDITAR
+========================================= */
 
-function abrirEditar(id) {
+function abrirEditar(
+    id
+) {
 
     const persona =
         integrantes.find(
@@ -739,12 +995,15 @@ function abrirEditar(id) {
 
 
     if (!persona) {
+
         return;
+
     }
 
 
     editandoId =
         id;
+
 
     fotoActual =
         persona.fotoUrl
@@ -764,6 +1023,7 @@ function abrirEditar(id) {
 
     idInput.value =
         id;
+
 
     idInput.disabled =
         true;
@@ -817,20 +1077,22 @@ function abrirEditar(id) {
         Array.isArray(
             persona.especialidades
         )
-            ? persona.especialidades.join(", ")
-            : "";
-
-
-    photoPreview.src =
-        fotoActual
-        ||
-        "./img/logo.jpg";
+        ? persona.especialidades.join(
+            ", "
+        )
+        : "";
 
 
     document.getElementById(
         "member-photo"
     ).value =
         "";
+
+
+    photoPreview.src =
+        fotoActual
+        ||
+        "./img/logo.jpg";
 
 
     formMessage.textContent =
@@ -844,6 +1106,9 @@ function abrirEditar(id) {
 }
 
 
+/* =========================================
+PREVIEW FOTO
+========================================= */
 
 document
     .getElementById(
@@ -858,7 +1123,55 @@ document
 
 
             if (!archivo) {
+
                 return;
+
+            }
+
+
+            const permitidos = [
+                "image/jpeg",
+                "image/png",
+                "image/webp"
+            ];
+
+
+            if (
+                !permitidos.includes(
+                    archivo.type
+                )
+            ) {
+
+                alert(
+                    "La imagen debe ser JPG, PNG o WEBP."
+                );
+
+
+                event.target.value =
+                    "";
+
+
+                return;
+
+            }
+
+
+            if (
+                archivo.size >
+                5 * 1024 * 1024
+            ) {
+
+                alert(
+                    "La imagen no puede superar 5 MB."
+                );
+
+
+                event.target.value =
+                    "";
+
+
+                return;
+
             }
 
 
@@ -871,6 +1184,9 @@ document
     );
 
 
+/* =========================================
+GUARDAR
+========================================= */
 
 memberForm.addEventListener(
     "submit",
@@ -879,37 +1195,69 @@ memberForm.addEventListener(
         event.preventDefault();
 
 
-        formMessage.textContent =
+        saveButton.disabled =
+            true;
+
+
+        saveButton.textContent =
             "Guardando...";
 
-        formMessage.className =
-            "form-message";
 
-
-        let id =
-            document
-                .getElementById(
-                    "member-id"
-                )
-                .value
-                .trim()
-                .toUpperCase();
-
-
-        if (!id) {
-
-            formMessage.textContent =
-                "Ingresá un ID SAR.";
-
-            formMessage.className =
-                "form-message error";
-
-            return;
-
-        }
+        formMessage.textContent =
+            "";
 
 
         try {
+
+            const id =
+                editandoId
+                ||
+                document
+                    .getElementById(
+                        "member-id"
+                    )
+                    .value
+                    .trim()
+                    .toUpperCase();
+
+
+            if (
+                !/^SAR-\d+$/i.test(
+                    id
+                )
+            ) {
+
+                throw new Error(
+                    "El ID debe tener formato SAR-0001."
+                );
+
+            }
+
+
+            if (!editandoId) {
+
+                const existente =
+                    await getDoc(
+                        doc(
+                            db,
+                            "integrantes",
+                            id
+                        )
+                    );
+
+
+                if (
+                    existente.exists()
+                ) {
+
+                    throw new Error(
+                        `Ya existe ${id}.`
+                    );
+
+                }
+
+            }
+
 
             let fotoUrl =
                 fotoActual;
@@ -929,28 +1277,9 @@ memberForm.addEventListener(
                     "Subiendo fotografía...";
 
 
-                const extension =
-                    archivo.name
-                        .split(".")
-                        .pop();
-
-
-                const fotoRef =
-                    ref(
-                        storage,
-                        `integrantes/${id}/perfil.${extension}`
-                    );
-
-
-                await uploadBytes(
-                    fotoRef,
-                    archivo
-                );
-
-
                 fotoUrl =
-                    await getDownloadURL(
-                        fotoRef
+                    await subirFotoCloudinary(
+                        archivo
                     );
 
             }
@@ -964,8 +1293,8 @@ memberForm.addEventListener(
                     .value
                     .split(",")
                     .map(
-                        item =>
-                            item.trim()
+                        valor =>
+                            valor.trim()
                     )
                     .filter(Boolean);
 
@@ -1031,12 +1360,20 @@ memberForm.addEventListener(
                     especialidades,
 
                 fotoUrl:
-                    fotoUrl,
+                    fotoUrl || "",
 
                 actualizado:
                     serverTimestamp()
 
             };
+
+
+            if (!editandoId) {
+
+                datos.creado =
+                    serverTimestamp();
+
+            }
 
 
             await setDoc(
@@ -1053,36 +1390,48 @@ memberForm.addEventListener(
 
 
             formMessage.textContent =
-                "Cambios guardados correctamente.";
+                "Guardado correctamente.";
+
 
             formMessage.className =
                 "form-message success";
 
 
+            await cargarIntegrantes();
+
+
             setTimeout(
-                async () => {
+                () => {
 
-                    modal.classList.remove(
-                        "show"
-                    );
-
-                    await cargarIntegrantes();
+                    cerrarModal();
 
                 },
-                500
+                600
             );
 
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                error
+            );
 
 
             formMessage.textContent =
-                "No se pudieron guardar los cambios.";
+                error.message;
+
 
             formMessage.className =
                 "form-message error";
+
+        } finally {
+
+            saveButton.disabled =
+                false;
+
+
+            saveButton.textContent =
+                "Guardar cambios";
 
         }
 
@@ -1090,17 +1439,24 @@ memberForm.addEventListener(
 );
 
 
+/* =========================================
+ELIMINAR
+========================================= */
 
-async function eliminarIntegrante(id) {
+async function eliminarIntegrante(
+    id
+) {
 
     const confirmar =
         confirm(
-            `¿Eliminar ${id} del registro?\n\nPara una baja normal conviene ponerlo INACTIVO en lugar de eliminarlo.`
+            `¿Eliminar ${id}?\n\nSi solamente dejó de pertenecer al SAR, conviene ponerlo INACTIVO.`
         );
 
 
     if (!confirmar) {
+
         return;
+
     }
 
 
@@ -1128,10 +1484,13 @@ async function eliminarIntegrante(id) {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         alert(
-            "No se pudo eliminar el integrante."
+            `No se pudo eliminar: ${error.message}`
         );
 
     }
@@ -1139,6 +1498,9 @@ async function eliminarIntegrante(id) {
 }
 
 
+/* =========================================
+MODAL
+========================================= */
 
 function cerrarModal() {
 
@@ -1146,8 +1508,28 @@ function cerrarModal() {
         "show"
     );
 
-}
 
+    memberForm.reset();
+
+
+    editandoId =
+        null;
+
+
+    fotoActual =
+        "";
+
+
+    document.getElementById(
+        "member-id"
+    ).disabled =
+        false;
+
+
+    photoPreview.src =
+        "./img/logo.jpg";
+
+}
 
 
 document
@@ -1160,7 +1542,6 @@ document
     );
 
 
-
 document
     .getElementById(
         "cancel-button"
@@ -1169,7 +1550,6 @@ document
         "click",
         cerrarModal
     );
-
 
 
 modal.addEventListener(
@@ -1188,28 +1568,9 @@ modal.addEventListener(
 );
 
 
-
-document
-    .getElementById(
-        "logout-button"
-    )
-    .addEventListener(
-        "click",
-        async () => {
-
-            await signOut(
-                auth
-            );
-
-
-            window.location.replace(
-                "./login.html"
-            );
-
-        }
-    );
-
-
+/* =========================================
+VER SITIO
+========================================= */
 
 document
     .getElementById(
