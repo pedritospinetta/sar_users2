@@ -22,6 +22,7 @@ const printArea =
     );
 
 
+
 async function comprobarComandante(
     usuario
 ) {
@@ -34,13 +35,13 @@ async function comprobarComandante(
         );
 
 
-    const documento =
+    const resultado =
         await getDoc(
             referencia
         );
 
 
-    if (!documento.exists()) {
+    if (!resultado.exists()) {
 
         return false;
 
@@ -48,16 +49,21 @@ async function comprobarComandante(
 
 
     const datos =
-        documento.data();
+        resultado.data();
 
 
     return (
+
         datos.rol === "comandante"
+
         &&
+
         datos.activo === true
+
     );
 
 }
+
 
 
 onAuthStateChanged(
@@ -119,6 +125,7 @@ onAuthStateChanged(
 );
 
 
+
 function cargarCredenciales() {
 
     const guardado =
@@ -129,11 +136,9 @@ function cargarCredenciales() {
 
     if (!guardado) {
 
-        printArea.innerHTML = `
-            <div class="empty">
-                No hay credenciales seleccionadas.
-            </div>
-        `;
+        mostrarVacio(
+            "No hay credenciales seleccionadas."
+        );
 
         return;
 
@@ -150,13 +155,11 @@ function cargarCredenciales() {
                 guardado
             );
 
-    } catch (error) {
+    } catch {
 
-        printArea.innerHTML = `
-            <div class="empty">
-                No se pudieron leer las credenciales.
-            </div>
-        `;
+        mostrarVacio(
+            "No se pudieron leer las credenciales."
+        );
 
         return;
 
@@ -165,15 +168,47 @@ function cargarCredenciales() {
 
     if (
         !Array.isArray(integrantes)
-        ||
+    ) {
+
+        mostrarVacio(
+            "No hay credenciales seleccionadas."
+        );
+
+        return;
+
+    }
+
+
+    /*
+    SOLO PERMITIMOS IMPRIMIR
+    INTEGRANTES ACTIVOS
+    */
+
+    integrantes =
+        integrantes.filter(
+            persona =>
+
+                String(
+                    persona.estado
+                    ||
+                    ""
+                )
+                    .toLowerCase()
+                    .trim()
+
+                === "activo"
+        );
+
+
+    if (
         integrantes.length === 0
     ) {
 
-        printArea.innerHTML = `
-            <div class="empty">
-                No hay credenciales seleccionadas.
-            </div>
-        `;
+        mostrarVacio(
+
+            "No hay integrantes activos seleccionados para imprimir."
+
+        );
 
         return;
 
@@ -229,6 +264,7 @@ function cargarCredenciales() {
 }
 
 
+
 function crearCredencial(
     persona
 ) {
@@ -239,17 +275,17 @@ function crearCredencial(
         "./img/logo.jpg";
 
 
-    const card =
+    const tarjeta =
         document.createElement(
             "article"
         );
 
 
-    card.className =
+    tarjeta.className =
         "credential";
 
 
-    card.innerHTML = `
+    tarjeta.innerHTML = `
 
         <div class="credential-left">
 
@@ -264,7 +300,6 @@ function crearCredencial(
                 src="${foto}"
                 alt=""
                 class="credential-photo"
-                onerror="this.src='./img/logo.jpg'"
             >
 
 
@@ -277,23 +312,24 @@ function crearCredencial(
 
         <div class="credential-content">
 
+
             <div class="institution">
                 CUERPO ARGENTINO DE RESCATE
             </div>
 
 
             <div class="credential-name">
-                ${persona.nombre || ""}
+                ${escapar(persona.nombre || "")}
             </div>
 
 
             <div class="credential-role">
-                ${persona.cargo || ""}
+                ${escapar(persona.cargo || "")}
             </div>
 
 
             <div class="credential-id">
-                ${persona.id || ""}
+                ${escapar(persona.id || "")}
             </div>
 
 
@@ -301,20 +337,26 @@ function crearCredencial(
 
                 ${
                     persona.dni
-                        ? `DNI: ${persona.dni}<br>`
-                        : ""
+                        ?
+                        `DNI: ${escapar(persona.dni)}<br>`
+                        :
+                        ""
                 }
 
                 ${
                     persona.grupoSanguineo
-                        ? `Grupo sanguíneo: ${persona.grupoSanguineo}<br>`
-                        : ""
+                        ?
+                        `Grupo sanguíneo: ${escapar(persona.grupoSanguineo)}<br>`
+                        :
+                        ""
                 }
 
                 ${
                     persona.delegacion
-                        ? `Delegación: ${persona.delegacion}`
-                        : ""
+                        ?
+                        `Delegación: ${escapar(persona.delegacion)}`
+                        :
+                        ""
                 }
 
             </div>
@@ -326,35 +368,47 @@ function crearCredencial(
                     VERIFICACIÓN DE ESTADO
                 </strong>
 
-                Para verificar el estado actual
-                del personal, escanee el código QR.
+                Para verificar la vigencia
+                y estado actual del personal,
+                escanee el código QR.
 
             </div>
 
 
-            <div
-                class="qr-container"
-            ></div>
+            <div class="qr-container"></div>
 
         </div>
 
     `;
 
 
+    const imagen =
+        tarjeta.querySelector(
+            ".credential-photo"
+        );
+
+
+    imagen.addEventListener(
+        "error",
+        () => {
+
+            imagen.src =
+                "./img/logo.jpg";
+
+        },
+        {
+            once: true
+        }
+    );
+
+
     setTimeout(
         () => {
 
             const qr =
-                card.querySelector(
+                tarjeta.querySelector(
                     ".qr-container"
                 );
-
-
-            if (!qr) {
-
-                return;
-
-            }
 
 
             const url =
@@ -381,10 +435,62 @@ function crearCredencial(
             );
 
         },
-        20
+        30
     );
 
 
-    return card;
+    return tarjeta;
+
+}
+
+
+
+function mostrarVacio(
+    mensaje
+) {
+
+    printArea.innerHTML = `
+
+        <div class="empty">
+
+            ${mensaje}
+
+        </div>
+
+    `;
+
+}
+
+
+
+function escapar(
+    valor
+) {
+
+    return String(
+        valor
+        ??
+        ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 
 }
