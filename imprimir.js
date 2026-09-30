@@ -23,9 +23,11 @@ const printArea =
 
 
 
-async function comprobarComandante(usuario) {
+async function comprobarComandante(
+    usuario
+) {
 
-    const usuarioRef =
+    const referencia =
         doc(
             db,
             "usuarios",
@@ -33,19 +35,21 @@ async function comprobarComandante(usuario) {
         );
 
 
-    const snap =
+    const documento =
         await getDoc(
-            usuarioRef
+            referencia
         );
 
 
-    if (!snap.exists()) {
+    if (!documento.exists()) {
+
         return false;
+
     }
 
 
     const datos =
-        snap.data();
+        documento.data();
 
 
     return (
@@ -85,6 +89,7 @@ onAuthStateChanged(
 
                 await signOut(auth);
 
+
                 window.location.replace(
                     "./login.html"
                 );
@@ -100,6 +105,7 @@ onAuthStateChanged(
         } catch (error) {
 
             console.error(error);
+
 
             window.location.replace(
                 "./login.html"
@@ -123,7 +129,7 @@ function cargarCredenciales() {
     if (!guardado) {
 
         printArea.innerHTML = `
-            <div class="empty-message">
+            <div class="empty">
                 No hay credenciales seleccionadas.
             </div>
         `;
@@ -133,10 +139,27 @@ function cargarCredenciales() {
     }
 
 
-    const integrantes =
-        JSON.parse(
-            guardado
-        );
+    let integrantes;
+
+
+    try {
+
+        integrantes =
+            JSON.parse(
+                guardado
+            );
+
+    } catch (error) {
+
+        printArea.innerHTML = `
+            <div class="empty">
+                No se pudieron leer las credenciales.
+            </div>
+        `;
+
+        return;
+
+    }
 
 
     if (
@@ -146,7 +169,7 @@ function cargarCredenciales() {
     ) {
 
         printArea.innerHTML = `
-            <div class="empty-message">
+            <div class="empty">
                 No hay credenciales seleccionadas.
             </div>
         `;
@@ -157,8 +180,8 @@ function cargarCredenciales() {
 
 
     /*
-     * 8 credenciales por hoja A4:
-     * 2 columnas × 4 filas
+     * 8 por A4:
+     * 2 columnas x 4 filas
      */
 
     const porPagina =
@@ -171,13 +194,6 @@ function cargarCredenciales() {
         inicio += porPagina
     ) {
 
-        const grupo =
-            integrantes.slice(
-                inicio,
-                inicio + porPagina
-            );
-
-
         const pagina =
             document.createElement(
                 "section"
@@ -186,6 +202,13 @@ function cargarCredenciales() {
 
         pagina.className =
             "page";
+
+
+        const grupo =
+            integrantes.slice(
+                inicio,
+                inicio + porPagina
+            );
 
 
         grupo.forEach(
@@ -211,7 +234,9 @@ function cargarCredenciales() {
 
 
 
-function crearCredencial(persona) {
+function crearCredencial(
+    persona
+) {
 
     const estado =
         (
@@ -234,7 +259,7 @@ function crearCredencial(persona) {
 
 
     card.className =
-        `credential ${estado}`;
+        "credential";
 
 
     card.innerHTML = `
@@ -243,17 +268,20 @@ function crearCredencial(persona) {
 
             <img
                 src="./img/logo.jpg"
-                class="credential-logo"
                 alt="SAR"
+                class="credential-logo"
             >
+
 
             <img
                 src="${foto}"
+                alt=""
                 class="credential-photo"
-                alt="${persona.nombre || persona.id}"
+                onerror="this.src='./img/logo.jpg'"
             >
 
-            <div class="sar-mini">
+
+            <div class="sar-title">
                 SAR ARGENTINA
             </div>
 
@@ -262,8 +290,8 @@ function crearCredencial(persona) {
 
         <div class="credential-content">
 
-            <div class="credential-title">
-                Cuerpo Argentino de Rescate
+            <div class="institution">
+                CUERPO ARGENTINO DE RESCATE
             </div>
 
 
@@ -278,7 +306,7 @@ function crearCredencial(persona) {
 
 
             <div class="credential-id">
-                ${persona.id}
+                ${persona.id || ""}
             </div>
 
 
@@ -286,20 +314,20 @@ function crearCredencial(persona) {
 
                 ${
                     persona.dni
-                    ? `DNI: ${persona.dni}<br>`
-                    : ""
+                        ? `DNI: ${persona.dni}<br>`
+                        : ""
                 }
 
                 ${
                     persona.grupoSanguineo
-                    ? `Grupo sanguíneo: ${persona.grupoSanguineo}<br>`
-                    : ""
+                        ? `Grupo sanguíneo: ${persona.grupoSanguineo}<br>`
+                        : ""
                 }
 
                 ${
                     persona.delegacion
-                    ? `Delegación: ${persona.delegacion}`
-                    : ""
+                        ? `Delegación: ${persona.delegacion}`
+                        : ""
                 }
 
             </div>
@@ -309,8 +337,8 @@ function crearCredencial(persona) {
 
                 ${
                     estado === "activo"
-                    ? "● ACTIVO"
-                    : "● INACTIVO"
+                        ? "● ACTIVO"
+                        : "● INACTIVO"
                 }
 
             </div>
@@ -319,13 +347,9 @@ function crearCredencial(persona) {
             <div
                 class="qr-container"
                 data-qr="${persona.id}"
-            >
-            </div>
+            ></div>
 
         </div>
-
-
-        <div class="cut-mark"></div>
 
     `;
 
@@ -335,23 +359,29 @@ function crearCredencial(persona) {
 
             const qr =
                 card.querySelector(
-                    `[data-qr="${persona.id}"]`
+                    ".qr-container"
                 );
 
 
             if (!qr) {
+
                 return;
+
             }
+
+
+            const url =
+                `https://sar-members.org/?id=${encodeURIComponent(persona.id)}`;
 
 
             new QRCode(
                 qr,
                 {
-                    text:
-                        `https://sar-members.org/integrantes/${persona.id}`,
+                    text: url,
 
-                    width: 150,
-                    height: 150,
+                    width: 160,
+
+                    height: 160,
 
                     correctLevel:
                         QRCode.CorrectLevel.M
@@ -359,7 +389,7 @@ function crearCredencial(persona) {
             );
 
         },
-        0
+        20
     );
 
 
