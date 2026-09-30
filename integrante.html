@@ -10,23 +10,14 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Verificación | SAR Argentina</title>
-
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
+    <meta
+        name="robots"
+        content="noindex,nofollow"
     >
 
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap"
-        rel="stylesheet"
-    >
+    <title>
+        Credenciales SAR
+    </title>
 
     <style>
 
@@ -37,471 +28,441 @@
         body {
             margin: 0;
 
-            min-height: 100vh;
+            background: #ddd;
 
             font-family:
                 Arial,
                 Helvetica,
                 sans-serif;
-
-            background: #f1f2f4;
-
-            color: #181818;
         }
 
-        .header {
+        .toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+
+            display: flex;
+            justify-content: center;
+
+            gap: 10px;
+
+            padding: 12px;
+
             background: #151515;
 
             border-bottom:
-                5px solid #ff6500;
+                4px solid #ff6500;
         }
 
-        .header-inner {
-            max-width: 900px;
-
-            margin: auto;
-
+        .toolbar button {
             padding:
-                12px
-                18px;
+                10px
+                16px;
 
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            border: 0;
+
+            border-radius: 7px;
+
+            font-weight: 800;
+
+            cursor: pointer;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-
-            gap: 12px;
+        .print {
+            background: #ff6500;
 
             color: white;
-
-            text-decoration: none;
         }
 
-        .brand img {
-            width: 55px;
-            height: 55px;
+        .back {
+            background: #333;
+
+            color: white;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+
+            margin:
+                15px auto;
+
+            padding:
+                13mm
+                12mm;
+
+            display: grid;
+
+            grid-template-columns:
+                85.6mm
+                85.6mm;
+
+            grid-template-rows:
+                repeat(
+                    4,
+                    53.98mm
+                );
+
+            gap:
+                5mm
+                6mm;
+
+            justify-content: center;
+            align-content: start;
+
+            background: white;
+        }
+
+        .credential {
+            position: relative;
+
+            width: 85.6mm;
+            height: 53.98mm;
+
+            overflow: hidden;
+
+            background:
+                repeating-linear-gradient(
+                    135deg,
+                    rgba(0,0,0,.018) 0,
+                    rgba(0,0,0,.018) .5mm,
+                    transparent .5mm,
+                    transparent 2mm
+                ),
+                white;
+
+            border:
+                .35mm solid #161616;
+
+            border-radius:
+                3mm;
+        }
+
+        /* FRANJA ARGENTINA */
+
+        .argentina-band {
+            position: absolute;
+
+            top: -25mm;
+            right: -13mm;
+
+            width: 14mm;
+            height: 105mm;
+
+            transform:
+                rotate(36deg);
+
+            background:
+                linear-gradient(
+                    90deg,
+
+                    #74acdf 0%,
+                    #74acdf 33%,
+
+                    white 33%,
+                    white 66%,
+
+                    #74acdf 66%,
+                    #74acdf 100%
+                );
+
+            opacity: .82;
+
+            z-index: 1;
+        }
+
+        /* MARCA DE AGUA SAR */
+
+        .watermark {
+            position: absolute;
+
+            left: 51%;
+            top: 53%;
+
+            width: 39mm;
+            height: 39mm;
+
+            transform:
+                translate(-50%, -50%);
+
+            object-fit: contain;
+
+            opacity: .045;
+
+            filter:
+                grayscale(100%);
+
+            z-index: 0;
+        }
+
+        /* MICROTEXT */
+
+        .microtext {
+            position: absolute;
+
+            left: 1.5mm;
+            right: 1.5mm;
+            bottom: .8mm;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            color: #333;
+
+            font-size: .85mm;
+
+            letter-spacing: .1mm;
+
+            opacity: .65;
+
+            z-index: 4;
+        }
+
+        .orange-line {
+            position: absolute;
+
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 2mm;
+
+            background: #ff6500;
+
+            z-index: 4;
+        }
+
+        .credential-inner {
+            position: relative;
+
+            z-index: 3;
+
+            height: 100%;
+
+            display: grid;
+
+            grid-template-columns:
+                27mm
+                1fr;
+        }
+
+        .left {
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+
+            padding:
+                5mm
+                2.5mm
+                2mm;
+
+            background:
+                rgba(20,20,20,.96);
+
+            border-right:
+                1.2mm solid #ff6500;
+        }
+
+        .logo {
+            width: 10mm;
+            height: 10mm;
+
+            margin-bottom: 1.8mm;
 
             object-fit: contain;
 
             background: white;
 
-            border-radius: 7px;
+            border-radius: 1mm;
         }
 
-        .brand h1 {
-            margin: 0;
-
-            font-family:
-                "Rajdhani",
-                sans-serif;
-
-            font-size: 23px;
-        }
-
-        .brand p {
-            margin:
-                2px
-                0
-                0;
-
-            color: #ff7c29;
-
-            font-size: 10px;
-
-            font-weight: 800;
-        }
-
-        .back {
-            color: #ccc;
-
-            text-decoration: none;
-
-            font-size: 12px;
-        }
-
-        main {
-            width: 100%;
-            max-width: 850px;
-
-            margin: auto;
-
-            padding:
-                35px
-                16px;
-        }
-
-        .loading,
-        .message-card {
-            padding: 35px;
-
-            background: white;
-
-            border:
-                1px solid #ddd;
-
-            border-radius: 17px;
-
-            text-align: center;
-        }
-
-        .profile {
-            display: none;
-
-            overflow: hidden;
-
-            background: white;
-
-            border:
-                1px solid #ddd;
-
-            border-radius: 18px;
-
-            box-shadow:
-                0 15px 40px
-                rgba(0,0,0,.08);
-        }
-
-        .profile-top {
-            padding:
-                32px
-                20px;
-
-            text-align: center;
-
-            color: white;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #161616,
-                    #292929
-                );
-
-            border-bottom:
-                5px solid #ff6500;
-        }
-
-        .profile-photo {
-            width: 155px;
-            height: 155px;
+        .photo {
+            width: 19mm;
+            height: 23mm;
 
             object-fit: cover;
             object-position: center 20%;
 
-            background: white;
-
             border:
-                5px solid white;
+                .65mm solid white;
 
-            border-radius: 50%;
+            border-radius: 1.5mm;
         }
 
-        .profile-id {
-            margin-top: 15px;
+        .sar {
+            margin-top: 1.5mm;
 
-            color: #ff8b42;
+            color: white;
+
+            font-size: 1.9mm;
+
+            font-weight: 900;
+
+            text-align: center;
+        }
+
+        .right {
+            position: relative;
+
+            padding:
+                5mm
+                3mm
+                3mm
+                3.5mm;
+        }
+
+        .institution {
+            color: #ff6500;
+
+            font-size: 1.8mm;
+
+            font-weight: 900;
+
+            letter-spacing: .15mm;
+        }
+
+        .name {
+            width: 43mm;
+
+            margin-top: 1.8mm;
+
+            font-size: 3.6mm;
+
+            line-height: 1;
 
             font-weight: 900;
         }
 
-        .profile-name {
-            margin:
-                5px
-                0
-                0;
-
-            font-family:
-                "Rajdhani",
-                sans-serif;
-
-            font-size: 34px;
-        }
-
-        .profile-role {
-            margin-top: 4px;
-
-            color: #ccc;
-
-            font-weight: 700;
-        }
-
-        .commander-role {
+        .role {
             display: inline-block;
 
-            margin-top: 10px;
+            margin-top: 1.2mm;
 
+            color: #333;
+
+            font-size: 2.3mm;
+
+            font-weight: 900;
+        }
+
+        .role.commander {
             padding:
-                7px
-                15px;
+                .7mm
+                1.8mm;
 
             background: #ff6500;
 
             color: white;
 
-            border-radius: 25px;
+            border-radius: 1mm;
+
+            letter-spacing: .25mm;
+        }
+
+        .member-id {
+            margin-top: 1.3mm;
+
+            font-size: 2.4mm;
 
             font-weight: 900;
-
-            letter-spacing: 1px;
-        }
-
-        .active {
-            display: inline-flex;
-            align-items: center;
-
-            gap: 7px;
-
-            margin-top: 14px;
-
-            padding:
-                7px
-                12px;
-
-            background: #dff6e8;
-
-            color: #147640;
-
-            border-radius: 30px;
-
-            font-size: 12px;
-
-            font-weight: 900;
-        }
-
-        .active::before {
-            content: "";
-
-            width: 8px;
-            height: 8px;
-
-            background: currentColor;
-
-            border-radius: 50%;
-        }
-
-        .content {
-            padding: 27px;
-        }
-
-        .data-grid {
-            display: grid;
-
-            grid-template-columns:
-                repeat(
-                    2,
-                    1fr
-                );
-
-            gap: 13px;
         }
 
         .data {
-            padding: 15px;
+            margin-top: .9mm;
 
-            background: #fafafa;
+            width: 31mm;
 
-            border:
-                1px solid #e5e5e5;
+            color: #333;
 
-            border-radius: 10px;
+            font-size: 1.75mm;
+
+            line-height: 1.4;
         }
 
-        .label {
-            color: #888;
+        .verification {
+            position: absolute;
 
-            font-size: 10px;
+            left: 3.5mm;
+            bottom: 4.5mm;
 
-            font-weight: 900;
+            width: 30mm;
+
+            color: #444;
+
+            font-size: 1.35mm;
+
+            line-height: 1.25;
         }
 
-        .value {
-            margin-top: 5px;
+        .verification strong {
+            display: block;
 
-            font-weight: 800;
+            color: #ff6500;
+
+            font-size: 1.45mm;
         }
 
-        .section {
-            margin-top: 25px;
+        .qr {
+            position: absolute;
 
-            padding-top: 22px;
+            right: 3mm;
+            bottom: 4mm;
 
-            border-top:
-                1px solid #e5e5e5;
-        }
+            width: 15mm;
+            height: 15mm;
 
-        .section h3 {
-            margin:
-                0
-                0
-                12px;
-
-            font-family:
-                "Rajdhani",
-                sans-serif;
-
-            font-size: 21px;
-        }
-
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-
-            gap: 7px;
-        }
-
-        .tag {
-            padding:
-                7px
-                10px;
-
-            background: #ededed;
-
-            border-radius: 30px;
-
-            font-size: 11px;
-
-            font-weight: 900;
-        }
-
-        .emergency {
-            background: #fff7ec;
-
-            border:
-                1px solid #ffd1a0;
-
-            border-radius: 12px;
-
-            padding: 17px;
-        }
-
-        .emergency h3 {
-            color: #a84a0b;
-        }
-
-        .emergency-line {
-            margin-top: 8px;
-
-            font-size: 13px;
-
-            font-weight: 700;
-        }
-
-        .inactive {
-            display: none;
-
-            overflow: hidden;
+            padding: .8mm;
 
             background: white;
 
             border:
-                2px solid #db9c97;
-
-            border-radius: 18px;
+                .25mm solid #222;
         }
 
-        .inactive-head {
-            padding:
-                35px
-                20px;
+        .qr img,
+        .qr canvas {
+            width: 13.4mm !important;
+            height: 13.4mm !important;
+        }
+
+        .empty {
+            margin: 40px auto;
+
+            max-width: 600px;
+
+            padding: 35px;
 
             text-align: center;
 
-            color: white;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #761d19,
-                    #b42c26
-                );
+            background: white;
         }
 
-        .inactive-head .icon,
-        .not-found .icon {
-            font-size: 58px;
+        @page {
+            size: A4 portrait;
+
+            margin: 0;
         }
 
-        .inactive-head h1 {
-            max-width: 650px;
+        @media print {
 
-            margin:
-                12px auto
-                0;
+            body {
+                background: white;
+            }
 
-            font-family:
-                "Rajdhani",
-                sans-serif;
-
-            font-size: 30px;
-        }
-
-        .inactive-body {
-            padding: 30px;
-
-            text-align: center;
-        }
-
-        .inactive-person {
-            margin:
-                20px auto;
-
-            max-width: 470px;
-
-            padding: 17px;
-
-            background: #fff2f1;
-
-            border-radius: 10px;
-
-            font-weight: 900;
-        }
-
-        .not-found {
-            display: none;
-        }
-
-        .not-found h1 {
-            color: #a22923;
-
-            font-family:
-                "Rajdhani",
-                sans-serif;
-
-            font-size: 31px;
-        }
-
-        .queried-id {
-            display: inline-block;
-
-            margin-top: 15px;
-
-            padding:
-                8px
-                13px;
-
-            background: #eee;
-
-            border-radius: 20px;
-
-            font-weight: 900;
-        }
-
-        @media(max-width:600px) {
-
-            .back {
+            .toolbar {
                 display: none;
             }
 
-            .data-grid {
-                grid-template-columns: 1fr;
+            .page {
+                margin: 0;
+
+                page-break-after: always;
             }
 
-            .profile-name {
-                font-size: 27px;
+            .page:last-child {
+                page-break-after: auto;
             }
 
         }
@@ -514,324 +475,36 @@
 <body>
 
 
-<header class="header">
+<div class="toolbar">
 
-    <div class="header-inner">
-
-        <a
-            href="./"
-            class="brand"
-        >
-
-            <img
-                src="./img/logo.jpg"
-                alt="SAR Argentina"
-            >
-
-            <div>
-
-                <h1>
-                    SAR ARGENTINA
-                </h1>
-
-                <p>
-                    VERIFICACIÓN DE PERSONAL
-                </p>
-
-            </div>
-
-        </a>
-
-        <a
-            href="./"
-            class="back"
-        >
-            ← VOLVER
-        </a>
-
-    </div>
-
-</header>
-
-
-<main>
-
-
-    <div
-        id="loading"
-        class="loading"
+    <button
+        class="back"
+        onclick="history.back()"
     >
-        VERIFICANDO REGISTRO...
-    </div>
+        VOLVER
+    </button>
 
-
-    <!-- NO EXISTE -->
-
-    <section
-        id="not-found"
-        class="message-card not-found"
+    <button
+        class="print"
+        onclick="window.print()"
     >
+        IMPRIMIR
+    </button>
 
-        <div class="icon">
-            ⚠️
-        </div>
+</div>
 
-        <h1>
-            USUARIO NO REGISTRADO
-        </h1>
 
-        <p>
+<div id="print-area"></div>
 
-            No existe ningún integrante
-            asociado a esta identificación.
 
-        </p>
-
-        <div
-            id="not-found-id"
-            class="queried-id"
-        ></div>
-
-    </section>
-
-
-    <!-- INACTIVO -->
-
-    <section
-        id="inactive"
-        class="inactive"
-    >
-
-        <div class="inactive-head">
-
-            <div class="icon">
-                ⛔
-            </div>
-
-            <h1>
-
-                ESTA PERSONA SE ENCUENTRA
-                INACTIVA COMO MIEMBRO DEL SAR
-
-            </h1>
-
-        </div>
-
-
-        <div class="inactive-body">
-
-            <p>
-
-                La credencial consultada
-                no se encuentra vigente.
-
-            </p>
-
-            <div class="inactive-person">
-
-                <div id="inactive-id"></div>
-
-                <div id="inactive-name"></div>
-
-            </div>
-
-            <strong>
-
-                ESTA CREDENCIAL NO DEBE
-                CONSIDERARSE VÁLIDA COMO
-                ACREDITACIÓN DE PERTENENCIA AL SAR.
-
-            </strong>
-
-        </div>
-
-    </section>
-
-
-    <!-- ACTIVO -->
-
-    <article
-        id="profile"
-        class="profile"
-    >
-
-        <div class="profile-top">
-
-            <img
-                id="profile-photo"
-                class="profile-photo"
-                src="./img/logo.jpg"
-                alt=""
-            >
-
-            <div
-                id="profile-id"
-                class="profile-id"
-            ></div>
-
-            <h1
-                id="profile-name"
-                class="profile-name"
-            ></h1>
-
-            <div
-                id="profile-role"
-                class="profile-role"
-            ></div>
-
-            <div class="active">
-                MIEMBRO ACTIVO
-            </div>
-
-        </div>
-
-
-        <div class="content">
-
-            <div class="data-grid">
-
-                <div
-                    id="dni-box"
-                    class="data"
-                >
-
-                    <div class="label">
-                        DNI
-                    </div>
-
-                    <div
-                        id="dni"
-                        class="value"
-                    ></div>
-
-                </div>
-
-
-                <div
-                    id="blood-box"
-                    class="data"
-                >
-
-                    <div class="label">
-                        GRUPO SANGUÍNEO
-                    </div>
-
-                    <div
-                        id="blood"
-                        class="value"
-                    ></div>
-
-                </div>
-
-
-                <div
-                    id="delegation-box"
-                    class="data"
-                >
-
-                    <div class="label">
-                        DELEGACIÓN
-                    </div>
-
-                    <div
-                        id="delegation"
-                        class="value"
-                    ></div>
-
-                </div>
-
-
-                <div
-                    id="entry-box"
-                    class="data"
-                >
-
-                    <div class="label">
-                        INGRESO
-                    </div>
-
-                    <div
-                        id="entry"
-                        class="value"
-                    ></div>
-
-                </div>
-
-            </div>
-
-
-            <section
-                id="specialties-section"
-                class="section"
-            >
-
-                <h3>
-                    ESPECIALIDADES
-                </h3>
-
-                <div
-                    id="specialties"
-                    class="tags"
-                ></div>
-
-            </section>
-
-
-            <section
-                id="affiliations-section"
-                class="section"
-            >
-
-                <h3>
-                    AFILIACIONES / PERTENENCIAS
-                </h3>
-
-                <div
-                    id="affiliations"
-                    class="tags"
-                ></div>
-
-            </section>
-
-
-            <section
-                id="emergency-section"
-                class="section emergency"
-            >
-
-                <h3>
-                    DATOS DE EMERGENCIA
-                </h3>
-
-                <div
-                    id="allergies-line"
-                    class="emergency-line"
-                ></div>
-
-                <div
-                    id="blood-donor-line"
-                    class="emergency-line"
-                ></div>
-
-                <div
-                    id="organ-donor-line"
-                    class="emergency-line"
-                ></div>
-
-            </section>
-
-
-        </div>
-
-    </article>
-
-
-</main>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+></script>
 
 
 <script
     type="module"
-    src="./integrante.js?v=80"
+    src="./imprimir.js?v=80"
 ></script>
 
 
