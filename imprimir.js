@@ -361,12 +361,11 @@ function crearCredencial(
                 <div class="verification">
 
                     <strong>
-                        VERIFICACIÓN DIGITAL
+                       VERIFICACIÓN OBLIGATORIA
                     </strong>
 
-                    PARA VERIFICAR LA VIGENCIA
-                    Y EL ESTADO ACTUAL DEL PERSONAL,
-                    ESCANEE EL CÓDIGO QR.
+                   ESTA CREDENCIAL SOLO DEBE CONSIDERARSE VIGENTE SI SU ESTADO ACTUAL ES CONFIRMADO MEDIANTE EL CÓDIGO QR.
+POR SEGURIDAD, VERIFIQUE SIEMPRE ANTES DE ACEPTARLA
 
                 </div>
 
