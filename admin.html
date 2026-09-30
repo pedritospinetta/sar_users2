@@ -15,7 +15,9 @@
         content="noindex,nofollow"
     >
 
-    <title>Administración | SAR Argentina</title>
+    <title>
+        Administración | SAR Argentina
+    </title>
 
 
     <style>
@@ -26,12 +28,14 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --orange: #ff6500;
-            --orange-dark: #d95400;
 
-            --dark: #141414;
-            --dark2: #222222;
+        :root {
+
+            --orange: #ff6500;
+            --orange-dark: #d95600;
+
+            --dark: #151515;
+            --dark2: #242424;
 
             --background: #f2f3f5;
 
@@ -40,19 +44,18 @@
             --border: #e1e3e6;
 
             --text: #191919;
-            --muted: #6d737c;
+            --muted: #6e747d;
 
             --green: #168447;
             --green-bg: #e1f6e9;
 
             --red: #b02a37;
             --red-bg: #ffe5e8;
-
-            --blue: #2468d3;
         }
 
 
         body {
+
             min-height: 100vh;
 
             font-family:
@@ -69,11 +72,12 @@
         /* HEADER */
 
         .admin-header {
+
             position: sticky;
 
             top: 0;
 
-            z-index: 900;
+            z-index: 1000;
 
             background: var(--dark);
 
@@ -83,11 +87,12 @@
                 5px solid var(--orange);
 
             box-shadow:
-                0 5px 20px rgba(0,0,0,.16);
+                0 5px 20px rgba(0,0,0,.15);
         }
 
 
         .header-inner {
+
             max-width: 1300px;
 
             margin: auto;
@@ -107,6 +112,7 @@
 
 
         .brand {
+
             display: flex;
 
             align-items: center;
@@ -116,6 +122,7 @@
 
 
         .brand img {
+
             width: 58px;
             height: 58px;
 
@@ -126,11 +133,13 @@
 
 
         .brand h1 {
+
             font-size: 20px;
         }
 
 
         .brand p {
+
             margin-top: 4px;
 
             color: #aaa;
@@ -140,15 +149,17 @@
 
 
         .header-actions {
+
             display: flex;
 
-            gap: 9px;
-
             align-items: center;
+
+            gap: 8px;
         }
 
 
         .header-button {
+
             padding:
                 10px
                 14px;
@@ -157,13 +168,14 @@
 
             border-radius: 8px;
 
-            font-weight: 700;
+            font-weight: bold;
 
             cursor: pointer;
         }
 
 
         .public-button {
+
             background: #333;
 
             color: white;
@@ -171,15 +183,17 @@
 
 
         .logout-button {
-            background: #3a2020;
 
-            color: #ffb4b4;
+            background: #432121;
+
+            color: #ffbcbc;
         }
 
 
-        /* GENERAL */
+        /* MAIN */
 
         .container {
+
             width: 100%;
 
             max-width: 1300px;
@@ -193,6 +207,7 @@
 
 
         .loading {
+
             padding: 15px;
 
             margin-bottom: 25px;
@@ -206,6 +221,7 @@
 
 
         .page-header {
+
             display: flex;
 
             justify-content: space-between;
@@ -219,6 +235,7 @@
 
 
         .page-label {
+
             margin-bottom: 7px;
 
             color: var(--orange);
@@ -232,6 +249,7 @@
 
 
         .page-header h2 {
+
             margin-bottom: 7px;
 
             font-size: 32px;
@@ -239,11 +257,13 @@
 
 
         .page-header p {
+
             color: var(--muted);
         }
 
 
         .new-button {
+
             padding:
                 13px
                 18px;
@@ -259,10 +279,13 @@
             font-weight: 800;
 
             cursor: pointer;
+
+            white-space: nowrap;
         }
 
 
         .new-button:hover {
+
             background: var(--orange-dark);
         }
 
@@ -270,6 +293,7 @@
         /* TOOLBAR */
 
         .toolbar {
+
             display: flex;
 
             align-items: center;
@@ -294,6 +318,7 @@
 
 
         .search-input {
+
             flex: 1;
 
             min-width: 250px;
@@ -314,6 +339,7 @@
 
 
         .search-input:focus {
+
             border-color: var(--orange);
 
             box-shadow:
@@ -323,6 +349,7 @@
 
 
         .print-tools {
+
             display: flex;
 
             gap: 8px;
@@ -334,11 +361,13 @@
 
 
         .tool-button {
+
             padding:
                 11px
                 13px;
 
-            border: 1px solid #ddd;
+            border:
+                1px solid #ddd;
 
             border-radius: 8px;
 
@@ -351,26 +380,29 @@
 
 
         .print-button {
-            background: var(--dark);
+
+            background: #1e1e1e;
 
             color: white;
 
-            border-color: var(--dark);
+            border-color: #1e1e1e;
         }
 
 
         .selected-counter {
+
             color: var(--muted);
 
             font-size: 13px;
 
-            font-weight: 700;
+            font-weight: bold;
         }
 
 
-        /* GRID */
+        /* CARDS */
 
         .members-grid {
+
             display: grid;
 
             grid-template-columns:
@@ -384,6 +416,7 @@
 
 
         .member-card {
+
             position: relative;
 
             overflow: hidden;
@@ -401,6 +434,7 @@
 
 
         .select-area {
+
             position: absolute;
 
             top: 14px;
@@ -408,8 +442,8 @@
 
             z-index: 2;
 
-            width: 27px;
-            height: 27px;
+            width: 29px;
+            height: 29px;
 
             display: flex;
 
@@ -418,7 +452,7 @@
 
             border-radius: 7px;
 
-            background: rgba(255,255,255,.93);
+            background: rgba(255,255,255,.95);
 
             box-shadow:
                 0 2px 8px rgba(0,0,0,.13);
@@ -426,6 +460,7 @@
 
 
         .print-checkbox {
+
             width: 18px;
             height: 18px;
 
@@ -436,18 +471,19 @@
 
 
         .member-main {
+
             display: flex;
 
             align-items: center;
 
             gap: 17px;
 
-            padding:
-                22px;
+            padding: 22px;
         }
 
 
         .member-photo {
+
             width: 95px;
             height: 95px;
 
@@ -465,6 +501,7 @@
 
 
         .member-id {
+
             margin-bottom: 5px;
 
             color: var(--orange);
@@ -476,6 +513,7 @@
 
 
         .member-name {
+
             margin-bottom: 5px;
 
             font-size: 19px;
@@ -483,6 +521,7 @@
 
 
         .member-role {
+
             margin-bottom: 10px;
 
             color: var(--muted);
@@ -492,6 +531,7 @@
 
 
         .status {
+
             display: inline-flex;
 
             align-items: center;
@@ -511,6 +551,7 @@
 
 
         .status.activo {
+
             background: var(--green-bg);
 
             color: var(--green);
@@ -518,6 +559,7 @@
 
 
         .status.inactivo {
+
             background: var(--red-bg);
 
             color: var(--red);
@@ -525,6 +567,7 @@
 
 
         .status-dot {
+
             width: 7px;
             height: 7px;
 
@@ -535,6 +578,7 @@
 
 
         .member-actions {
+
             display: grid;
 
             grid-template-columns:
@@ -543,15 +587,13 @@
             gap: 8px;
 
             padding:
-                0
-                22px
-                22px;
+                0 22px 22px;
         }
 
 
         .action-button {
-            padding:
-                10px;
+
+            padding: 10px;
 
             border: 0;
 
@@ -570,6 +612,7 @@
 
 
         .edit-button {
+
             background: var(--orange);
 
             color: white;
@@ -577,32 +620,34 @@
 
 
         .view-button {
+
             background: #ededed;
 
             color: #333;
         }
 
 
+        .print-one-button {
+
+            background: #222;
+
+            color: white;
+        }
+
+
         .delete-button {
+
             background: var(--red-bg);
 
             color: var(--red);
         }
 
 
-        .print-one-button {
-            background: #202020;
-
-            color: white;
-        }
-
-
-        /* EMPTY */
-
         .empty {
+
             grid-column: 1 / -1;
 
-            padding: 50px;
+            padding: 55px;
 
             text-align: center;
 
@@ -617,6 +662,7 @@
         /* MODAL */
 
         .modal-overlay {
+
             position: fixed;
 
             inset: 0;
@@ -636,14 +682,16 @@
 
 
         .modal-overlay.show {
+
             display: flex;
         }
 
 
         .modal {
+
             width: 100%;
 
-            max-width: 750px;
+            max-width: 760px;
 
             max-height: 92vh;
 
@@ -659,11 +707,12 @@
 
 
         .modal-header {
+
             position: sticky;
 
             top: 0;
 
-            z-index: 2;
+            z-index: 3;
 
             display: flex;
 
@@ -685,11 +734,13 @@
 
 
         .modal-header h3 {
+
             font-size: 20px;
         }
 
 
         .close-modal {
+
             width: 38px;
             height: 38px;
 
@@ -708,11 +759,13 @@
 
 
         .modal-content {
+
             padding: 25px;
         }
 
 
         .form-grid {
+
             display: grid;
 
             grid-template-columns:
@@ -723,6 +776,7 @@
 
 
         .form-group {
+
             display: flex;
 
             flex-direction: column;
@@ -730,11 +784,13 @@
 
 
         .form-group.full {
+
             grid-column: 1 / -1;
         }
 
 
         .form-group label {
+
             margin-bottom: 6px;
 
             font-size: 12px;
@@ -746,6 +802,7 @@
         .form-group input,
         .form-group select,
         .form-group textarea {
+
             width: 100%;
 
             padding:
@@ -766,6 +823,7 @@
 
 
         .form-group textarea {
+
             min-height: 85px;
 
             resize: vertical;
@@ -775,18 +833,21 @@
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
+
             border-color: var(--orange);
 
             box-shadow:
-                0 0 0 3px rgba(255,101,0,.10);
+                0 0 0 3px
+                rgba(255,101,0,.10);
         }
 
 
         .photo-preview {
-            width: 125px;
-            height: 125px;
 
-            margin-top: 10px;
+            width: 130px;
+            height: 130px;
+
+            margin-top: 12px;
 
             border-radius: 12px;
 
@@ -796,7 +857,18 @@
         }
 
 
+        .photo-help {
+
+            margin-top: 7px;
+
+            color: #888;
+
+            font-size: 11px;
+        }
+
+
         .modal-actions {
+
             display: flex;
 
             justify-content: flex-end;
@@ -808,6 +880,7 @@
 
 
         .save-button {
+
             padding:
                 12px
                 18px;
@@ -826,7 +899,16 @@
         }
 
 
+        .save-button:disabled {
+
+            opacity: .55;
+
+            cursor: wait;
+        }
+
+
         .cancel-button {
+
             padding:
                 12px
                 18px;
@@ -843,86 +925,112 @@
 
 
         .form-message {
+
             margin-top: 18px;
 
             font-size: 13px;
 
-            font-weight: 700;
+            font-weight: bold;
         }
 
 
         .form-message.error {
+
             color: var(--red);
         }
 
 
         .form-message.success {
+
             color: var(--green);
         }
 
 
-        /* RESPONSIVE */
-
         @media(max-width: 700px) {
 
             .header-inner {
+
                 padding:
                     11px
                     14px;
             }
 
+
             .brand img {
+
                 width: 48px;
                 height: 48px;
             }
 
+
             .brand h1 {
+
                 font-size: 16px;
             }
 
+
             .brand p {
+
                 font-size: 10px;
             }
 
+
             .public-button {
+
                 display: none;
             }
 
+
             .container {
+
                 padding:
                     25px
                     15px;
             }
 
+
             .page-header {
+
                 align-items: flex-start;
 
                 flex-direction: column;
             }
 
+
             .new-button {
+
                 width: 100%;
             }
 
+
             .toolbar {
+
                 align-items: stretch;
 
                 flex-direction: column;
             }
 
+
             .print-tools {
+
                 width: 100%;
             }
 
+
             .tool-button {
+
                 flex: 1;
             }
 
+
             .form-grid {
+
                 grid-template-columns: 1fr;
             }
 
+
             .form-group.full {
+
                 grid-column: auto;
             }
 
@@ -965,15 +1073,17 @@
         <div class="header-actions">
 
             <button
-                class="header-button public-button"
                 id="go-public"
+                class="header-button public-button"
+                type="button"
             >
                 Ver sitio
             </button>
 
             <button
-                class="header-button logout-button"
                 id="logout-button"
+                class="header-button logout-button"
+                type="button"
             >
                 Cerrar sesión
             </button>
@@ -987,11 +1097,12 @@
 
 <main class="container">
 
+
     <div
         id="loading"
         class="loading"
     >
-        Verificando sesión...
+        Verificando sesión y permisos...
     </div>
 
 
@@ -999,6 +1110,7 @@
         id="admin-content"
         style="display:none;"
     >
+
 
         <section class="page-header">
 
@@ -1022,6 +1134,7 @@
             <button
                 id="new-member-button"
                 class="new-button"
+                type="button"
             >
                 + Nuevo integrante
             </button>
@@ -1031,11 +1144,12 @@
 
         <div class="toolbar">
 
+
             <input
                 type="search"
                 id="search-input"
                 class="search-input"
-                placeholder="Buscar por nombre, ID SAR o cargo"
+                placeholder="Buscar por nombre, ID SAR, cargo o DNI"
             >
 
 
@@ -1052,6 +1166,7 @@
                 <button
                     id="select-all"
                     class="tool-button"
+                    type="button"
                 >
                     Seleccionar todas
                 </button>
@@ -1060,6 +1175,7 @@
                 <button
                     id="clear-selection"
                     class="tool-button"
+                    type="button"
                 >
                     Quitar selección
                 </button>
@@ -1068,6 +1184,7 @@
                 <button
                     id="print-selected"
                     class="tool-button print-button"
+                    type="button"
                 >
                     Imprimir seleccionadas
                 </button>
@@ -1088,14 +1205,13 @@
 </main>
 
 
-<!-- MODAL -->
-
 <div
     id="member-modal"
     class="modal-overlay"
 >
 
     <div class="modal">
+
 
         <div class="modal-header">
 
@@ -1106,6 +1222,7 @@
             <button
                 id="close-modal"
                 class="close-modal"
+                type="button"
             >
                 ×
             </button>
@@ -1115,7 +1232,9 @@
 
         <div class="modal-content">
 
+
             <form id="member-form">
+
 
                 <div class="form-grid">
 
@@ -1274,6 +1393,10 @@
                             accept="image/jpeg,image/png,image/webp"
                         >
 
+                        <div class="photo-help">
+                            JPG, PNG o WEBP. La imagen se subirá a Cloudinary.
+                        </div>
+
                         <img
                             id="photo-preview"
                             class="photo-preview"
@@ -1297,23 +1420,27 @@
                 <div class="modal-actions">
 
                     <button
-                        type="button"
                         id="cancel-button"
                         class="cancel-button"
+                        type="button"
                     >
                         Cancelar
                     </button>
 
+
                     <button
-                        type="submit"
+                        id="save-button"
                         class="save-button"
+                        type="submit"
                     >
                         Guardar cambios
                     </button>
 
                 </div>
 
+
             </form>
+
 
         </div>
 
@@ -1324,7 +1451,7 @@
 
 <script
     type="module"
-    src="./admin.js?v=10"
+    src="./admin.js?v=20"
 ></script>
 
 
