@@ -15,8 +15,6 @@ html {
     --dark: #141414;
     --dark-2: #202020;
 
-    --white: #ffffff;
-
     --background: #f3f4f6;
     --surface: #ffffff;
 
@@ -32,7 +30,8 @@ html {
     --red-bg: #ffe4e1;
 
     --shadow:
-        0 10px 30px rgba(0, 0, 0, 0.08);
+        0 10px 30px
+        rgba(0, 0, 0, 0.08);
 }
 
 body {
@@ -48,13 +47,9 @@ body {
     color: var(--text);
 }
 
-
-/* =========================================
-CONTENEDOR GENERAL
-========================================= */
-
 .container {
     width: 100%;
+
     max-width: 1180px;
 
     margin: 0 auto;
@@ -64,9 +59,7 @@ CONTENEDOR GENERAL
 }
 
 
-/* =========================================
-HEADER
-========================================= */
+/* HEADER */
 
 .main-header {
     position: sticky;
@@ -80,9 +73,12 @@ HEADER
     display: flex;
 
     justify-content: space-between;
+
     align-items: center;
 
-    padding: 12px 28px;
+    padding:
+        12px
+        28px;
 
     background: var(--dark);
 
@@ -90,11 +86,13 @@ HEADER
         4px solid var(--orange);
 
     box-shadow:
-        0 4px 20px rgba(0, 0, 0, 0.15);
+        0 4px 20px
+        rgba(0,0,0,.15);
 }
 
 .header-left {
     display: flex;
+
     align-items: center;
 }
 
@@ -105,8 +103,6 @@ HEADER
 
     gap: 15px;
 
-    color: white;
-
     text-decoration: none;
 }
 
@@ -116,31 +112,84 @@ HEADER
 
     object-fit: contain;
 
-    border-radius: 8px;
-
     background: white;
+
+    border-radius: 8px;
 }
 
 .brand-info h1 {
-    font-size: 22px;
+    margin: 0;
 
-    line-height: 1.1;
+    color: white;
 
-    letter-spacing: 0.3px;
+    font-size: 23px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
 }
 
 .brand-info p {
-    margin-top: 5px;
+    margin-top: 4px;
 
-    font-size: 14px;
+    color: #ff7a24;
 
-    color: #bdbdbd;
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: .8px;
+
+    text-transform: uppercase;
 }
 
 
-/* =========================================
-MENU HAMBURGUESA
-========================================= */
+/* LINKS SUPERIORES */
+
+.header-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+.header-link {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding:
+        0
+        14px;
+
+    border-radius: 8px;
+
+    color: #dddddd;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition:
+        background .2s,
+        color .2s;
+}
+
+.header-link:hover {
+    background: #292929;
+
+    color: var(--orange);
+}
+
+
+/* MENU */
 
 .menu-container {
     position: relative;
@@ -167,16 +216,12 @@ MENU HAMBURGUESA
     font-size: 27px;
 
     cursor: pointer;
-
-    transition:
-        background 0.2s,
-        border-color 0.2s;
 }
 
 .menu-toggle:hover {
-    background: #303030;
-
     border-color: var(--orange);
+
+    background: #303030;
 }
 
 .menu-dropdown {
@@ -200,7 +245,8 @@ MENU HAMBURGUESA
     border-radius: 12px;
 
     box-shadow:
-        0 16px 45px rgba(0, 0, 0, 0.22);
+        0 16px 45px
+        rgba(0,0,0,.22);
 }
 
 .menu-dropdown.show {
@@ -240,9 +286,7 @@ MENU HAMBURGUESA
 }
 
 
-/* =========================================
-HERO
-========================================= */
+/* HERO */
 
 .hero {
     padding:
@@ -253,8 +297,8 @@ HERO
     background:
         linear-gradient(
             180deg,
-            #ffffff 0%,
-            #f4f5f7 100%
+            white,
+            #f4f5f7
         );
 
     border-bottom:
@@ -274,12 +318,12 @@ HERO
         7px
         12px;
 
-    border-radius: 20px;
-
     background:
-        rgba(255, 101, 0, 0.10);
+        rgba(255,101,0,.10);
 
     color: #c94f00;
+
+    border-radius: 20px;
 
     font-size: 12px;
 
@@ -297,8 +341,6 @@ HERO
             5vw,
             48px
         );
-
-    line-height: 1.1;
 }
 
 .hero-description {
@@ -316,9 +358,7 @@ HERO
 }
 
 
-/* =========================================
-BUSCADOR
-========================================= */
+/* BUSCADOR */
 
 .search-area {
     max-width: 710px;
@@ -351,8 +391,6 @@ BUSCADOR
 
     transform:
         translateY(-50%);
-
-    pointer-events: none;
 }
 
 .search-box input {
@@ -371,15 +409,9 @@ BUSCADOR
 
     background: white;
 
-    color: #222;
-
     font-size: 16px;
 
     outline: none;
-
-    transition:
-        border-color 0.2s,
-        box-shadow 0.2s;
 }
 
 .search-box input:focus {
@@ -387,7 +419,7 @@ BUSCADOR
 
     box-shadow:
         0 0 0 4px
-        rgba(255, 101, 0, 0.12);
+        rgba(255,101,0,.12);
 }
 
 .search-help {
@@ -399,9 +431,7 @@ BUSCADOR
 }
 
 
-/* =========================================
-RESUMEN
-========================================= */
+/* RESUMEN */
 
 .summary-section {
     padding:
@@ -437,7 +467,8 @@ RESUMEN
     border-radius: 14px;
 
     box-shadow:
-        0 4px 15px rgba(0, 0, 0, 0.04);
+        0 4px 15px
+        rgba(0,0,0,.04);
 }
 
 .summary-icon {
@@ -454,7 +485,7 @@ RESUMEN
     border-radius: 12px;
 
     background:
-        rgba(255, 101, 0, 0.10);
+        rgba(255,101,0,.10);
 
     color: var(--orange);
 
@@ -476,9 +507,7 @@ RESUMEN
 .summary-card strong {
     display: block;
 
-    margin-bottom: 3px;
-
-    color: #222;
+    margin-bottom: 4px;
 
     font-size: 17px;
 }
@@ -490,9 +519,7 @@ RESUMEN
 }
 
 
-/* =========================================
-REGISTRO
-========================================= */
+/* REGISTRO */
 
 .registry-section {
     padding:
@@ -506,9 +533,9 @@ REGISTRO
 
     justify-content: space-between;
 
-    gap: 25px;
-
     align-items: flex-end;
+
+    gap: 25px;
 
     margin-bottom: 28px;
 }
@@ -533,8 +560,6 @@ REGISTRO
 
 .section-header p {
     color: var(--muted);
-
-    line-height: 1.5;
 }
 
 .member-counter {
@@ -554,9 +579,7 @@ REGISTRO
 }
 
 
-/* =========================================
-GRID DE INTEGRANTES
-========================================= */
+/* GRID DE INTEGRANTES */
 
 .members-grid {
     display: grid;
@@ -573,12 +596,11 @@ GRID DE INTEGRANTES
 }
 
 
-/* =========================================
-TARJETA DE INTEGRANTE
-========================================= */
+/* TARJETA */
 
 .member-card {
     width: 100%;
+
     max-width: 340px;
 
     overflow: hidden;
@@ -593,8 +615,8 @@ TARJETA DE INTEGRANTE
     box-shadow: var(--shadow);
 
     transition:
-        transform 0.2s,
-        box-shadow 0.2s;
+        transform .2s,
+        box-shadow .2s;
 }
 
 .member-card:hover {
@@ -602,7 +624,8 @@ TARJETA DE INTEGRANTE
         translateY(-4px);
 
     box-shadow:
-        0 15px 35px rgba(0, 0, 0, 0.11);
+        0 15px 35px
+        rgba(0,0,0,.11);
 }
 
 
@@ -654,9 +677,7 @@ TARJETA DE INTEGRANTE
 }
 
 
-/* =========================================
-ESTADOS
-========================================= */
+/* ESTADO */
 
 .status {
     display: inline-flex;
@@ -682,12 +703,6 @@ ESTADOS
     color: var(--green);
 }
 
-.status.inactivo {
-    background: var(--red-bg);
-
-    color: var(--red);
-}
-
 .status-dot {
     width: 8px;
     height: 8px;
@@ -698,9 +713,7 @@ ESTADOS
 }
 
 
-/* =========================================
-BOTON VER FICHA
-========================================= */
+/* BOTÓN */
 
 .view-button {
     display: block;
@@ -717,34 +730,23 @@ BOTON VER FICHA
 
     text-decoration: none;
 
-    border-radius: 9px;
-
     background: var(--orange);
 
     color: white;
 
+    border-radius: 9px;
+
     font-size: 14px;
 
     font-weight: 700;
-
-    transition:
-        background 0.2s,
-        transform 0.2s;
 }
 
 .view-button:hover {
     background: var(--orange-dark);
 }
 
-.view-button:active {
-    transform:
-        scale(0.98);
-}
 
-
-/* =========================================
-SIN RESULTADOS
-========================================= */
+/* SIN RESULTADOS */
 
 .no-results {
     grid-column:
@@ -766,22 +768,17 @@ SIN RESULTADOS
         1px solid var(--border);
 
     border-radius: 14px;
-
-    box-shadow:
-        0 4px 18px rgba(0,0,0,.03);
 }
 
 
-/* =========================================
-VERIFICACIÓN DIGITAL
-========================================= */
+/* VERIFICACIÓN */
 
 .verification-section {
     padding:
         70px
         0;
 
-    background: #ffffff;
+    background: white;
 
     border-top:
         1px solid var(--border);
@@ -791,8 +788,8 @@ VERIFICACIÓN DIGITAL
     display: grid;
 
     grid-template-columns:
-        minmax(0, 1.4fr)
-        minmax(300px, 0.6fr);
+        minmax(0,1.4fr)
+        minmax(300px,.6fr);
 
     gap: 50px;
 
@@ -802,11 +799,7 @@ VERIFICACIÓN DIGITAL
 .verification-text h2 {
     margin-bottom: 18px;
 
-    color: #161616;
-
     font-size: 32px;
-
-    line-height: 1.1;
 }
 
 .verification-text > p {
@@ -836,7 +829,7 @@ VERIFICACIÓN DIGITAL
 
     gap: 10px;
 
-    color: #333333;
+    color: #333;
 
     font-size: 14px;
 
@@ -860,15 +853,11 @@ VERIFICACIÓN DIGITAL
 
     color: var(--green);
 
-    font-size: 13px;
-
     font-weight: 900;
 }
 
 
-/* =========================================
-TARJETA INSTITUCIONAL
-========================================= */
+/* TARJETA VERIFICACIÓN */
 
 .verification-card {
     padding:
@@ -886,16 +875,14 @@ TARJETA INSTITUCIONAL
 
     color: white;
 
-    border:
-        1px solid #2d2d2d;
+    border-radius: 18px;
 
     border-bottom:
         5px solid var(--orange);
 
-    border-radius: 18px;
-
     box-shadow:
-        0 14px 35px rgba(0, 0, 0, 0.16);
+        0 14px 35px
+        rgba(0,0,0,.16);
 }
 
 .verification-shield {
@@ -914,7 +901,7 @@ TARJETA INSTITUCIONAL
     border-radius: 50%;
 
     background:
-        rgba(255, 101, 0, 0.12);
+        rgba(255,101,0,.12);
 
     font-size: 34px;
 }
@@ -923,8 +910,6 @@ TARJETA INSTITUCIONAL
     margin-bottom: 12px;
 
     font-size: 23px;
-
-    line-height: 1.2;
 }
 
 .verification-card p {
@@ -945,12 +930,13 @@ TARJETA INSTITUCIONAL
         13px;
 
     border:
-        1px solid rgba(255, 255, 255, .15);
+        1px solid
+        rgba(255,255,255,.15);
 
     border-radius: 30px;
 
     background:
-        rgba(255, 255, 255, .06);
+        rgba(255,255,255,.06);
 
     color: #ff914d;
 
@@ -962,9 +948,7 @@ TARJETA INSTITUCIONAL
 }
 
 
-/* =========================================
-FOOTER
-========================================= */
+/* FOOTER */
 
 .main-footer {
     padding:
@@ -973,10 +957,10 @@ FOOTER
 
     background: #151515;
 
-    color: white;
-
     border-top:
         4px solid var(--orange);
+
+    color: white;
 }
 
 .footer-content {
@@ -995,6 +979,10 @@ FOOTER
     align-items: center;
 
     gap: 12px;
+
+    color: white;
+
+    text-decoration: none;
 }
 
 .footer-brand img {
@@ -1003,22 +991,18 @@ FOOTER
 
     object-fit: contain;
 
-    border-radius: 7px;
-
     background: white;
+
+    border-radius: 7px;
 }
 
 .footer-brand strong {
     display: block;
 
     margin-bottom: 3px;
-
-    color: white;
 }
 
 .footer-brand span {
-    display: block;
-
     color: #999;
 
     font-size: 12px;
@@ -1031,28 +1015,31 @@ FOOTER
 }
 
 
-/* =========================================
-RESPONSIVE TABLET
-========================================= */
+/* TABLET */
 
 @media(max-width: 900px) {
 
     .verification-grid {
         grid-template-columns: 1fr;
-
-        gap: 30px;
-    }
-
-    .verification-card {
-        max-width: 600px;
     }
 
 }
 
 
-/* =========================================
-RESPONSIVE CELULAR
-========================================= */
+/* CELULAR */
+
+@media(max-width: 760px) {
+
+    .header-link {
+        display: none;
+    }
+
+    .header-actions {
+        gap: 0;
+    }
+
+}
+
 
 @media(max-width: 800px) {
 
@@ -1061,19 +1048,15 @@ RESPONSIVE CELULAR
     }
 
     .section-header {
-        align-items: flex-start;
-
         flex-direction: column;
+
+        align-items: flex-start;
     }
 
     .verification-section {
         padding:
             50px
             0;
-    }
-
-    .verification-text h2 {
-        font-size: 27px;
     }
 
     .footer-content {
@@ -1092,9 +1075,6 @@ RESPONSIVE CELULAR
         padding-right: 16px;
     }
 
-
-    /* HEADER */
-
     .main-header {
         min-height: 72px;
 
@@ -1108,33 +1088,18 @@ RESPONSIVE CELULAR
         height: 50px;
     }
 
-    .brand-link {
-        gap: 10px;
-    }
-
     .brand-info h1 {
         font-size: 17px;
     }
 
     .brand-info p {
-        font-size: 11px;
+        font-size: 10px;
     }
 
     .menu-toggle {
         width: 43px;
         height: 43px;
-
-        font-size: 23px;
     }
-
-    .menu-dropdown {
-        width: 220px;
-
-        top: 54px;
-    }
-
-
-    /* HERO */
 
     .hero {
         padding:
@@ -1146,13 +1111,6 @@ RESPONSIVE CELULAR
     .hero-description {
         font-size: 15px;
     }
-
-    .search-box input {
-        font-size: 15px;
-    }
-
-
-    /* TARJETAS */
 
     .members-grid {
         grid-template-columns: 1fr;
@@ -1168,32 +1126,14 @@ RESPONSIVE CELULAR
         height: 320px;
     }
 
-
-    /* VERIFICACIÓN */
-
     .verification-card {
         padding:
             28px
             20px;
     }
 
-    .verification-shield {
-        width: 60px;
-        height: 60px;
-
-        font-size: 29px;
-    }
-
-    .verification-card h3 {
-        font-size: 21px;
-    }
-
 }
 
-
-/* =========================================
-PANTALLAS MUY CHICAS
-========================================= */
 
 @media(max-width: 380px) {
 
@@ -1203,14 +1143,6 @@ PANTALLAS MUY CHICAS
 
     .member-photo {
         height: 285px;
-    }
-
-    .hero h2 {
-        font-size: 30px;
-    }
-
-    .section-header h2 {
-        font-size: 26px;
     }
 
 }
