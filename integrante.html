@@ -10,15 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <meta
-        name="description"
-        content="Verificación de integrante SAR Argentina"
-    >
-
-    <title>
-        Verificación | SAR Argentina
-    </title>
-
+    <title>Verificación | SAR Argentina</title>
 
     <link
         rel="preconnect"
@@ -36,36 +28,14 @@
         rel="stylesheet"
     >
 
-
     <style>
 
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
         }
 
-
-        :root {
-
-            --orange: #ff6500;
-
-            --dark: #151515;
-
-            --background: #f2f3f5;
-
-            --green: #177c45;
-            --green-bg: #e4f7eb;
-
-            --red: #aa2b27;
-
-            --border: #e2e4e7;
-
-            --muted: #6e747d;
-        }
-
-
         body {
+            margin: 0;
 
             min-height: 100vh;
 
@@ -74,152 +44,111 @@
                 Helvetica,
                 sans-serif;
 
-            background:
-                var(--background);
+            background: #f1f2f4;
 
-            color: #1a1a1a;
+            color: #181818;
         }
-
 
         .header {
-
-            background:
-                var(--dark);
+            background: #151515;
 
             border-bottom:
-                5px solid
-                var(--orange);
+                5px solid #ff6500;
         }
 
-
         .header-inner {
-
-            max-width: 1050px;
+            max-width: 900px;
 
             margin: auto;
 
             padding:
-                13px
-                20px;
+                12px
+                18px;
 
             display: flex;
-
             align-items: center;
-
-            justify-content:
-                space-between;
-
-            gap: 20px;
+            justify-content: space-between;
         }
 
-
         .brand {
-
             display: flex;
-
             align-items: center;
 
-            gap: 13px;
+            gap: 12px;
 
             color: white;
 
             text-decoration: none;
         }
 
-
         .brand img {
-
-            width: 57px;
-            height: 57px;
+            width: 55px;
+            height: 55px;
 
             object-fit: contain;
 
             background: white;
 
-            border-radius: 8px;
+            border-radius: 7px;
         }
-
 
         .brand h1 {
+            margin: 0;
 
             font-family:
                 "Rajdhani",
-                Arial,
                 sans-serif;
 
-            font-size: 24px;
-
-            letter-spacing: 1px;
+            font-size: 23px;
         }
-
 
         .brand p {
+            margin:
+                2px
+                0
+                0;
 
-            margin-top: 3px;
+            color: #ff7c29;
 
-            color: #ff7a24;
+            font-size: 10px;
 
-            font-family:
-                "Rajdhani",
-                sans-serif;
-
-            font-size: 11px;
-
-            font-weight: 700;
-
-            letter-spacing: .7px;
+            font-weight: 800;
         }
 
-
-        .back-link {
-
+        .back {
             color: #ccc;
 
             text-decoration: none;
 
-            font-size: 13px;
+            font-size: 12px;
         }
 
-
-        .back-link:hover {
-            color: var(--orange);
-        }
-
-
-        .container {
-
+        main {
             width: 100%;
-
-            max-width: 860px;
+            max-width: 850px;
 
             margin: auto;
 
             padding:
-                40px
-                20px;
+                35px
+                16px;
         }
 
-
-        .loading {
-
-            padding: 20px;
-
-            text-align: center;
+        .loading,
+        .message-card {
+            padding: 35px;
 
             background: white;
 
             border:
-                1px solid
-                var(--border);
+                1px solid #ddd;
 
-            border-radius: 12px;
+            border-radius: 17px;
 
-            color: var(--muted);
+            text-align: center;
         }
 
-
         .profile {
-
             display: none;
 
             overflow: hidden;
@@ -227,22 +156,19 @@
             background: white;
 
             border:
-                1px solid
-                var(--border);
+                1px solid #ddd;
 
-            border-radius: 20px;
+            border-radius: 18px;
 
             box-shadow:
-                0 14px 40px
-                rgba(0,0,0,.10);
+                0 15px 40px
+                rgba(0,0,0,.08);
         }
 
-
         .profile-top {
-
             padding:
-                35px
-                30px;
+                32px
+                20px;
 
             text-align: center;
 
@@ -256,87 +182,88 @@
                 );
 
             border-bottom:
-                6px solid
-                var(--orange);
+                5px solid #ff6500;
         }
 
-
         .profile-photo {
-
-            width: 165px;
-            height: 165px;
-
-            margin-bottom: 20px;
+            width: 155px;
+            height: 155px;
 
             object-fit: cover;
-
-            object-position:
-                center 20%;
+            object-position: center 20%;
 
             background: white;
 
             border:
-                6px solid white;
+                5px solid white;
 
             border-radius: 50%;
         }
 
-
         .profile-id {
+            margin-top: 15px;
 
-            margin-bottom: 6px;
+            color: #ff8b42;
 
-            color: #ff914d;
+            font-weight: 900;
+        }
+
+        .profile-name {
+            margin:
+                5px
+                0
+                0;
 
             font-family:
                 "Rajdhani",
                 sans-serif;
 
+            font-size: 34px;
+        }
+
+        .profile-role {
+            margin-top: 4px;
+
+            color: #ccc;
+
             font-weight: 700;
+        }
+
+        .commander-role {
+            display: inline-block;
+
+            margin-top: 10px;
+
+            padding:
+                7px
+                15px;
+
+            background: #ff6500;
+
+            color: white;
+
+            border-radius: 25px;
+
+            font-weight: 900;
 
             letter-spacing: 1px;
         }
 
-
-        .profile-name {
-
-            font-family:
-                "Rajdhani",
-                sans-serif;
-
-            font-size: 36px;
-
-            text-transform: uppercase;
-        }
-
-
-        .profile-role {
-
-            margin-top: 8px;
-
-            color: #ccc;
-        }
-
-
-        .status-box {
-
+        .active {
             display: inline-flex;
-
             align-items: center;
 
             gap: 7px;
 
-            margin-top: 18px;
+            margin-top: 14px;
 
             padding:
-                9px
-                14px;
+                7px
+                12px;
 
-            background:
-                var(--green-bg);
+            background: #dff6e8;
 
-            color:
-                var(--green);
+            color: #147640;
 
             border-radius: 30px;
 
@@ -345,27 +272,22 @@
             font-weight: 900;
         }
 
+        .active::before {
+            content: "";
 
-        .status-dot {
+            width: 8px;
+            height: 8px;
 
-            width: 9px;
-            height: 9px;
+            background: currentColor;
 
             border-radius: 50%;
-
-            background:
-                currentColor;
         }
 
-
-        .profile-content {
-
-            padding: 30px;
+        .content {
+            padding: 27px;
         }
-
 
         .data-grid {
-
             display: grid;
 
             grid-template-columns:
@@ -374,144 +296,101 @@
                     1fr
                 );
 
-            gap: 18px;
+            gap: 13px;
         }
 
-
-        .data-card {
-
-            padding: 18px;
+        .data {
+            padding: 15px;
 
             background: #fafafa;
 
             border:
-                1px solid
-                var(--border);
+                1px solid #e5e5e5;
 
-            border-radius: 12px;
+            border-radius: 10px;
         }
 
-
-        .data-label {
-
-            margin-bottom: 5px;
-
+        .label {
             color: #888;
 
-            font-size: 11px;
+            font-size: 10px;
+
+            font-weight: 900;
+        }
+
+        .value {
+            margin-top: 5px;
 
             font-weight: 800;
-
-            text-transform: uppercase;
         }
 
-
-        .data-value {
-
-            font-size: 16px;
-
-            font-weight: 700;
-        }
-
-
-        .specialties {
-
+        .section {
             margin-top: 25px;
 
-            padding-top: 25px;
+            padding-top: 22px;
 
             border-top:
-                1px solid
-                var(--border);
+                1px solid #e5e5e5;
         }
 
-
-        .specialties h3 {
-
-            margin-bottom: 13px;
+        .section h3 {
+            margin:
+                0
+                0
+                12px;
 
             font-family:
                 "Rajdhani",
                 sans-serif;
+
+            font-size: 21px;
         }
 
-
-        .specialty-list {
-
+        .tags {
             display: flex;
-
             flex-wrap: wrap;
 
-            gap: 8px;
+            gap: 7px;
         }
 
-
-        .specialty {
-
+        .tag {
             padding:
                 7px
                 10px;
 
-            background: #f0f0f0;
+            background: #ededed;
 
-            border-radius: 20px;
+            border-radius: 30px;
 
-            font-size: 12px;
+            font-size: 11px;
+
+            font-weight: 900;
+        }
+
+        .emergency {
+            background: #fff7ec;
+
+            border:
+                1px solid #ffd1a0;
+
+            border-radius: 12px;
+
+            padding: 17px;
+        }
+
+        .emergency h3 {
+            color: #a84a0b;
+        }
+
+        .emergency-line {
+            margin-top: 8px;
+
+            font-size: 13px;
 
             font-weight: 700;
         }
 
-
-        .verification {
-
-            margin-top: 28px;
-
-            padding: 18px;
-
-            text-align: center;
-
-            background: #f8f8f8;
-
-            border:
-                1px solid
-                var(--border);
-
-            border-radius: 12px;
-        }
-
-
-        .verification strong {
-
-            display: block;
-
-            margin-bottom: 7px;
-
-            color:
-                var(--orange);
-
-            font-family:
-                "Rajdhani",
-                sans-serif;
-
-            font-size: 18px;
-        }
-
-
-        .verification p {
-
-            color:
-                var(--muted);
-
-            font-size: 13px;
-
-            line-height: 1.5;
-        }
-
-
-        /* INACTIVO */
-
-        .inactive-box {
-
+        .inactive {
             display: none;
 
             overflow: hidden;
@@ -519,22 +398,15 @@
             background: white;
 
             border:
-                2px solid
-                #e8b5b0;
+                2px solid #db9c97;
 
-            border-radius: 20px;
-
-            box-shadow:
-                0 15px 40px
-                rgba(120,20,15,.12);
+            border-radius: 18px;
         }
 
-
-        .inactive-top {
-
+        .inactive-head {
             padding:
-                38px
-                25px;
+                35px
+                20px;
 
             text-align: center;
 
@@ -543,167 +415,93 @@
             background:
                 linear-gradient(
                     145deg,
-                    #751d19,
-                    #b22e27
+                    #761d19,
+                    #b42c26
                 );
         }
 
-
-        .inactive-icon {
-
-            margin-bottom: 15px;
-
-            font-size: 65px;
+        .inactive-head .icon,
+        .not-found .icon {
+            font-size: 58px;
         }
 
-
-        .inactive-top h1 {
-
+        .inactive-head h1 {
             max-width: 650px;
 
-            margin: auto;
+            margin:
+                12px auto
+                0;
+
+            font-family:
+                "Rajdhani",
+                sans-serif;
+
+            font-size: 30px;
+        }
+
+        .inactive-body {
+            padding: 30px;
+
+            text-align: center;
+        }
+
+        .inactive-person {
+            margin:
+                20px auto;
+
+            max-width: 470px;
+
+            padding: 17px;
+
+            background: #fff2f1;
+
+            border-radius: 10px;
+
+            font-weight: 900;
+        }
+
+        .not-found {
+            display: none;
+        }
+
+        .not-found h1 {
+            color: #a22923;
 
             font-family:
                 "Rajdhani",
                 sans-serif;
 
             font-size: 31px;
-
-            line-height: 1.1;
-
-            text-transform: uppercase;
         }
 
+        .queried-id {
+            display: inline-block;
 
-        .inactive-content {
+            margin-top: 15px;
 
-            padding: 32px;
+            padding:
+                8px
+                13px;
 
-            text-align: center;
-        }
+            background: #eee;
 
-
-        .inactive-content > p {
-
-            max-width: 650px;
-
-            margin:
-                0 auto;
-
-            color: #555;
-
-            line-height: 1.6;
-        }
-
-
-        .inactive-person {
-
-            max-width: 500px;
-
-            margin:
-                25px auto;
-
-            padding: 20px;
-
-            background: #fff4f3;
-
-            border:
-                1px solid #efc3bf;
-
-            border-radius: 12px;
-        }
-
-
-        .inactive-id {
-
-            display: block;
-
-            margin-bottom: 7px;
-
-            color: #991f1b;
+            border-radius: 20px;
 
             font-weight: 900;
         }
 
+        @media(max-width:600px) {
 
-        .inactive-name {
-
-            font-size: 19px;
-
-            font-weight: 800;
-        }
-
-
-        .inactive-warning {
-
-            margin-top: 25px;
-
-            padding: 16px;
-
-            color: #8f211c;
-
-            background: #ffe8e5;
-
-            border-radius: 10px;
-
-            font-weight: 800;
-        }
-
-
-        /* ERROR */
-
-        .error-box {
-
-            display: none;
-
-            padding: 40px;
-
-            text-align: center;
-
-            background: white;
-
-            border:
-                1px solid
-                var(--border);
-
-            border-radius: 16px;
-        }
-
-
-        @media(max-width:650px) {
-
-            .back-link {
+            .back {
                 display: none;
             }
 
-            .container {
-                padding:
-                    25px
-                    14px;
-            }
-
-            .profile-photo {
-                width: 135px;
-                height: 135px;
+            .data-grid {
+                grid-template-columns: 1fr;
             }
 
             .profile-name {
-                font-size: 28px;
-            }
-
-            .profile-content {
-                padding:
-                    22px
-                    18px;
-            }
-
-            .data-grid {
-                grid-template-columns:
-                    1fr;
-            }
-
-            .inactive-top h1 {
-                font-size: 25px;
+                font-size: 27px;
             }
 
         }
@@ -737,19 +535,18 @@
                 </h1>
 
                 <p>
-                    CUERPO ARGENTINO DE RESCATE
+                    VERIFICACIÓN DE PERSONAL
                 </p>
 
             </div>
 
         </a>
 
-
         <a
             href="./"
-            class="back-link"
+            class="back"
         >
-            ← Volver al registro
+            ← VOLVER
         </a>
 
     </div>
@@ -757,91 +554,98 @@
 </header>
 
 
-
-<main class="container">
+<main>
 
 
     <div
         id="loading"
         class="loading"
     >
-        Verificando estado de la credencial...
+        VERIFICANDO REGISTRO...
     </div>
 
 
-    <div
-        id="error-box"
-        class="error-box"
-    ></div>
+    <!-- NO EXISTE -->
 
+    <section
+        id="not-found"
+        class="message-card not-found"
+    >
+
+        <div class="icon">
+            ⚠️
+        </div>
+
+        <h1>
+            USUARIO NO REGISTRADO
+        </h1>
+
+        <p>
+
+            No existe ningún integrante
+            asociado a esta identificación.
+
+        </p>
+
+        <div
+            id="not-found-id"
+            class="queried-id"
+        ></div>
+
+    </section>
 
 
     <!-- INACTIVO -->
 
     <section
-        id="inactive-box"
-        class="inactive-box"
+        id="inactive"
+        class="inactive"
     >
 
-        <div class="inactive-top">
+        <div class="inactive-head">
 
-            <div class="inactive-icon">
+            <div class="icon">
                 ⛔
             </div>
 
-
             <h1>
 
-                Esta persona se encuentra
-                inactiva como miembro del SAR
+                ESTA PERSONA SE ENCUENTRA
+                INACTIVA COMO MIEMBRO DEL SAR
 
             </h1>
 
         </div>
 
 
-        <div class="inactive-content">
+        <div class="inactive-body">
 
             <p>
 
-                La persona asociada a esta identificación
-                ya no figura como miembro activo
-                del Cuerpo Argentino de Rescate.
+                La credencial consultada
+                no se encuentra vigente.
 
             </p>
 
-
             <div class="inactive-person">
 
-                <span
-                    id="inactive-id"
-                    class="inactive-id"
-                ></span>
+                <div id="inactive-id"></div>
 
-
-                <span
-                    id="inactive-name"
-                    class="inactive-name"
-                ></span>
+                <div id="inactive-name"></div>
 
             </div>
 
+            <strong>
 
-            <div class="inactive-warning">
+                ESTA CREDENCIAL NO DEBE
+                CONSIDERARSE VÁLIDA COMO
+                ACREDITACIÓN DE PERTENENCIA AL SAR.
 
-                CREDENCIAL NO VIGENTE
-
-                <br><br>
-
-                Esta credencial no debe considerarse válida
-                como acreditación de pertenencia al SAR.
-
-            </div>
+            </strong>
 
         </div>
 
     </section>
-
 
 
     <!-- ACTIVO -->
@@ -860,146 +664,161 @@
                 alt=""
             >
 
-
             <div
                 id="profile-id"
                 class="profile-id"
             ></div>
-
 
             <h1
                 id="profile-name"
                 class="profile-name"
             ></h1>
 
-
             <div
                 id="profile-role"
                 class="profile-role"
             ></div>
 
-
-            <div class="status-box">
-
-                <span
-                    class="status-dot"
-                ></span>
-
+            <div class="active">
                 MIEMBRO ACTIVO
-
             </div>
 
         </div>
 
 
-        <div class="profile-content">
+        <div class="content">
 
             <div class="data-grid">
 
-
                 <div
-                    id="dni-card"
-                    class="data-card"
+                    id="dni-box"
+                    class="data"
                 >
 
-                    <div class="data-label">
+                    <div class="label">
                         DNI
                     </div>
 
                     <div
-                        id="profile-dni"
-                        class="data-value"
+                        id="dni"
+                        class="value"
                     ></div>
 
                 </div>
 
 
                 <div
-                    id="blood-card"
-                    class="data-card"
+                    id="blood-box"
+                    class="data"
                 >
 
-                    <div class="data-label">
-                        Grupo sanguíneo
+                    <div class="label">
+                        GRUPO SANGUÍNEO
                     </div>
 
                     <div
-                        id="profile-blood"
-                        class="data-value"
+                        id="blood"
+                        class="value"
                     ></div>
 
                 </div>
 
 
                 <div
-                    id="delegation-card"
-                    class="data-card"
+                    id="delegation-box"
+                    class="data"
                 >
 
-                    <div class="data-label">
-                        Delegación
+                    <div class="label">
+                        DELEGACIÓN
                     </div>
 
                     <div
-                        id="profile-delegation"
-                        class="data-value"
+                        id="delegation"
+                        class="value"
                     ></div>
 
                 </div>
 
 
                 <div
-                    id="entry-card"
-                    class="data-card"
+                    id="entry-box"
+                    class="data"
                 >
 
-                    <div class="data-label">
-                        Ingreso
+                    <div class="label">
+                        INGRESO
                     </div>
 
                     <div
-                        id="profile-entry"
-                        class="data-value"
+                        id="entry"
+                        class="value"
                     ></div>
 
                 </div>
-
 
             </div>
 
 
             <section
                 id="specialties-section"
-                class="specialties"
+                class="section"
             >
 
                 <h3>
-                    Especialidades
+                    ESPECIALIDADES
                 </h3>
 
                 <div
-                    id="specialties-list"
-                    class="specialty-list"
+                    id="specialties"
+                    class="tags"
                 ></div>
 
             </section>
 
 
-            <div class="verification">
+            <section
+                id="affiliations-section"
+                class="section"
+            >
 
-                <strong>
-                    VERIFICACIÓN DIGITAL SAR
-                </strong>
+                <h3>
+                    AFILIACIONES / PERTENENCIAS
+                </h3>
 
-                <p>
+                <div
+                    id="affiliations"
+                    class="tags"
+                ></div>
 
-                    Esta consulta verifica el estado
-                    actual del integrante directamente
-                    en el registro digital.
+            </section>
 
-                </p>
 
-            </div>
+            <section
+                id="emergency-section"
+                class="section emergency"
+            >
+
+                <h3>
+                    DATOS DE EMERGENCIA
+                </h3>
+
+                <div
+                    id="allergies-line"
+                    class="emergency-line"
+                ></div>
+
+                <div
+                    id="blood-donor-line"
+                    class="emergency-line"
+                ></div>
+
+                <div
+                    id="organ-donor-line"
+                    class="emergency-line"
+                ></div>
+
+            </section>
 
 
         </div>
@@ -1012,7 +831,7 @@
 
 <script
     type="module"
-    src="./integrante.js?v=70"
+    src="./integrante.js?v=80"
 ></script>
 
 
