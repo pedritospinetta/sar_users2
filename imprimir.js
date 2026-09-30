@@ -370,8 +370,8 @@ function crearCredencial(
             }
 
 
-            const url =
-                `https://sar-members.org/?id=${encodeURIComponent(persona.id)}`;
+const url =
+    `https://sar-members.org/integrante.html?id=${encodeURIComponent(persona.id)}`;
 
 
             new QRCode(
