@@ -22,26 +22,21 @@ const printArea =
     );
 
 
-
 async function comprobarComandante(
     usuario
 ) {
 
-    const referencia =
-        doc(
-            db,
-            "usuarios",
-            usuario.uid
-        );
-
-
-    const resultado =
+    const documento =
         await getDoc(
-            referencia
+            doc(
+                db,
+                "usuarios",
+                usuario.uid
+            )
         );
 
 
-    if (!resultado.exists()) {
+    if (!documento.exists()) {
 
         return false;
 
@@ -49,21 +44,16 @@ async function comprobarComandante(
 
 
     const datos =
-        resultado.data();
+        documento.data();
 
 
     return (
-
         datos.rol === "comandante"
-
         &&
-
         datos.activo === true
-
     );
 
 }
-
 
 
 onAuthStateChanged(
@@ -110,9 +100,7 @@ onAuthStateChanged(
 
         } catch (error) {
 
-            console.error(
-                error
-            );
+            console.error(error);
 
 
             window.location.replace(
@@ -125,7 +113,6 @@ onAuthStateChanged(
 );
 
 
-
 function cargarCredenciales() {
 
     const guardado =
@@ -136,8 +123,8 @@ function cargarCredenciales() {
 
     if (!guardado) {
 
-        mostrarVacio(
-            "No hay credenciales seleccionadas."
+        vacio(
+            "NO HAY CREDENCIALES SELECCIONADAS."
         );
 
         return;
@@ -157,32 +144,14 @@ function cargarCredenciales() {
 
     } catch {
 
-        mostrarVacio(
-            "No se pudieron leer las credenciales."
+        vacio(
+            "NO SE PUDIERON CARGAR LAS CREDENCIALES."
         );
 
         return;
 
     }
 
-
-    if (
-        !Array.isArray(integrantes)
-    ) {
-
-        mostrarVacio(
-            "No hay credenciales seleccionadas."
-        );
-
-        return;
-
-    }
-
-
-    /*
-    SOLO PERMITIMOS IMPRIMIR
-    INTEGRANTES ACTIVOS
-    */
 
     integrantes =
         integrantes.filter(
@@ -200,14 +169,10 @@ function cargarCredenciales() {
         );
 
 
-    if (
-        integrantes.length === 0
-    ) {
+    if (!integrantes.length) {
 
-        mostrarVacio(
-
-            "No hay integrantes activos seleccionados para imprimir."
-
+        vacio(
+            "NO HAY INTEGRANTES ACTIVOS PARA IMPRIMIR."
         );
 
         return;
@@ -235,24 +200,22 @@ function cargarCredenciales() {
             "page";
 
 
-        const grupo =
-            integrantes.slice(
+        integrantes
+            .slice(
                 inicio,
                 inicio + porPagina
+            )
+            .forEach(
+                persona => {
+
+                    pagina.appendChild(
+                        crearCredencial(
+                            persona
+                        )
+                    );
+
+                }
             );
-
-
-        grupo.forEach(
-            persona => {
-
-                pagina.appendChild(
-                    crearCredencial(
-                        persona
-                    )
-                );
-
-            }
-        );
 
 
         printArea.appendChild(
@@ -264,7 +227,6 @@ function cargarCredenciales() {
 }
 
 
-
 function crearCredencial(
     persona
 ) {
@@ -273,6 +235,16 @@ function crearCredencial(
         persona.fotoUrl
         ||
         "./img/logo.jpg";
+
+
+    const cargo =
+        mayusculas(
+            persona.cargo
+        );
+
+
+    const esComandante =
+        cargo === "COMANDANTE";
 
 
     const tarjeta =
@@ -287,119 +259,151 @@ function crearCredencial(
 
     tarjeta.innerHTML = `
 
-        <div class="credential-left">
+        <div class="orange-line"></div>
 
-            <img
-                src="./img/logo.jpg"
-                alt="SAR"
-                class="credential-logo"
-            >
+        <div class="argentina-band"></div>
 
 
-            <img
-                src="${foto}"
-                alt=""
-                class="credential-photo"
-            >
+        <img
+            src="./img/logo.jpg"
+            class="watermark"
+            alt=""
+        >
 
 
-            <div class="sar-title">
-                SAR ARGENTINA
+        <div class="credential-inner">
+
+
+            <div class="left">
+
+                <img
+                    src="./img/logo.jpg"
+                    class="logo"
+                    alt="SAR"
+                >
+
+
+                <img
+                    src="${foto}"
+                    class="photo"
+                    alt=""
+                >
+
+
+                <div class="sar">
+                    SAR ARGENTINA
+                </div>
+
             </div>
+
+
+            <div class="right">
+
+
+                <div class="institution">
+                    CUERPO ARGENTINO DE RESCATE
+                </div>
+
+
+                <div class="name">
+                    ${escapar(
+                        mayusculas(
+                            persona.nombre
+                        )
+                    )}
+                </div>
+
+
+                <div
+                    class="
+                        role
+                        ${esComandante ? "commander" : ""}
+                    "
+                >
+                    ${escapar(cargo)}
+                </div>
+
+
+                <div class="member-id">
+                    ${escapar(persona.id)}
+                </div>
+
+
+                <div class="data">
+
+                    ${
+                        persona.dni
+                            ?
+                            `DNI: ${escapar(mayusculas(persona.dni))}<br>`
+                            :
+                            ""
+                    }
+
+                    ${
+                        persona.grupoSanguineo
+                            ?
+                            `GRUPO SANGUÍNEO: ${escapar(persona.grupoSanguineo)}<br>`
+                            :
+                            ""
+                    }
+
+                    ${
+                        persona.delegacion
+                            ?
+                            `DELEGACIÓN: ${escapar(mayusculas(persona.delegacion))}`
+                            :
+                            ""
+                    }
+
+                </div>
+
+
+                <div class="verification">
+
+                    <strong>
+                        VERIFICACIÓN DIGITAL
+                    </strong>
+
+                    PARA VERIFICAR LA VIGENCIA
+                    Y EL ESTADO ACTUAL DEL PERSONAL,
+                    ESCANEE EL CÓDIGO QR.
+
+                </div>
+
+
+                <div class="qr"></div>
+
+
+            </div>
+
 
         </div>
 
 
-        <div class="credential-content">
+        <div class="microtext">
 
-
-            <div class="institution">
-                CUERPO ARGENTINO DE RESCATE
-            </div>
-
-
-            <div class="credential-name">
-                ${escapar(persona.nombre || "")}
-            </div>
-
-
-            <div class="credential-role">
-                ${escapar(persona.cargo || "")}
-            </div>
-
-
-            <div class="credential-id">
-                ${escapar(persona.id || "")}
-            </div>
-
-
-            <div class="credential-data">
-
-                ${
-                    persona.dni
-                        ?
-                        `DNI: ${escapar(persona.dni)}<br>`
-                        :
-                        ""
-                }
-
-                ${
-                    persona.grupoSanguineo
-                        ?
-                        `Grupo sanguíneo: ${escapar(persona.grupoSanguineo)}<br>`
-                        :
-                        ""
-                }
-
-                ${
-                    persona.delegacion
-                        ?
-                        `Delegación: ${escapar(persona.delegacion)}`
-                        :
-                        ""
-                }
-
-            </div>
-
-
-            <div class="verification-text">
-
-                <strong>
-                    VERIFICACIÓN DE ESTADO
-                </strong>
-
-                Para verificar la vigencia
-                y estado actual del personal,
-                escanee el código QR.
-
-            </div>
-
-
-            <div class="qr-container"></div>
+            SAR ARGENTINA • VERIFICAR SIEMPRE MEDIANTE QR •
+            IDENTIFICACIÓN ${escapar(persona.id)} •
+            SAR ARGENTINA • VERIFICACIÓN DIGITAL •
 
         </div>
 
     `;
 
 
-    const imagen =
+    const fotoElemento =
         tarjeta.querySelector(
-            ".credential-photo"
+            ".photo"
         );
 
 
-    imagen.addEventListener(
-        "error",
+    fotoElemento.onerror =
         () => {
 
-            imagen.src =
+            fotoElemento.src =
                 "./img/logo.jpg";
 
-        },
-        {
-            once: true
-        }
-    );
+        };
 
 
     setTimeout(
@@ -407,7 +411,7 @@ function crearCredencial(
 
             const qr =
                 tarjeta.querySelector(
-                    ".qr-container"
+                    ".qr"
                 );
 
 
@@ -423,10 +427,10 @@ function crearCredencial(
                         url,
 
                     width:
-                        160,
+                        180,
 
                     height:
-                        160,
+                        180,
 
                     correctLevel:
                         QRCode.CorrectLevel.M
@@ -435,7 +439,7 @@ function crearCredencial(
             );
 
         },
-        30
+        20
     );
 
 
@@ -444,23 +448,21 @@ function crearCredencial(
 }
 
 
-
-function mostrarVacio(
-    mensaje
+function mayusculas(
+    valor
 ) {
 
-    printArea.innerHTML = `
-
-        <div class="empty">
-
-            ${mensaje}
-
-        </div>
-
-    `;
+    return String(
+        valor
+        ||
+        ""
+    )
+        .trim()
+        .toLocaleUpperCase(
+            "es-AR"
+        );
 
 }
-
 
 
 function escapar(
@@ -468,29 +470,27 @@ function escapar(
 ) {
 
     return String(
-        valor
-        ??
-        ""
+        valor ?? ""
     )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+function vacio(
+    mensaje
+) {
+
+    printArea.innerHTML = `
+
+        <div class="empty">
+            ${mensaje}
+        </div>
+
+    `;
 
 }
