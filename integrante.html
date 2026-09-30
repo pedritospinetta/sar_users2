@@ -16,11 +16,14 @@
     >
 
     <title>
-        Verificación de integrante | SAR Argentina
+        Verificación | SAR Argentina
     </title>
 
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -44,7 +47,9 @@
 
 
         :root {
+
             --orange: #ff6500;
+
             --dark: #151515;
 
             --background: #f2f3f5;
@@ -53,7 +58,6 @@
             --green-bg: #e4f7eb;
 
             --red: #aa2b27;
-            --red-bg: #ffe6e3;
 
             --border: #e2e4e7;
 
@@ -62,6 +66,7 @@
 
 
         body {
+
             min-height: 100vh;
 
             font-family:
@@ -69,23 +74,26 @@
                 Helvetica,
                 sans-serif;
 
-            background: var(--background);
+            background:
+                var(--background);
 
             color: #1a1a1a;
         }
 
 
         .header {
-            background: var(--dark);
 
-            color: white;
+            background:
+                var(--dark);
 
             border-bottom:
-                5px solid var(--orange);
+                5px solid
+                var(--orange);
         }
 
 
         .header-inner {
+
             max-width: 1050px;
 
             margin: auto;
@@ -98,38 +106,42 @@
 
             align-items: center;
 
-            justify-content: space-between;
+            justify-content:
+                space-between;
 
             gap: 20px;
         }
 
 
         .brand {
+
             display: flex;
 
             align-items: center;
 
             gap: 13px;
 
-            text-decoration: none;
-
             color: white;
+
+            text-decoration: none;
         }
 
 
         .brand img {
+
             width: 57px;
             height: 57px;
 
             object-fit: contain;
 
-            border-radius: 8px;
-
             background: white;
+
+            border-radius: 8px;
         }
 
 
         .brand h1 {
+
             font-family:
                 "Rajdhani",
                 Arial,
@@ -137,35 +149,30 @@
 
             font-size: 24px;
 
-            font-weight: 700;
-
             letter-spacing: 1px;
-
-            text-transform: uppercase;
         }
 
 
         .brand p {
+
             margin-top: 3px;
 
-            color: #aaa;
+            color: #ff7a24;
 
             font-family:
                 "Rajdhani",
-                Arial,
                 sans-serif;
 
-            font-size: 12px;
+            font-size: 11px;
 
-            font-weight: 600;
+            font-weight: 700;
 
-            letter-spacing: .5px;
-
-            text-transform: uppercase;
+            letter-spacing: .7px;
         }
 
 
         .back-link {
+
             color: #ccc;
 
             text-decoration: none;
@@ -180,6 +187,7 @@
 
 
         .container {
+
             width: 100%;
 
             max-width: 860px;
@@ -193,22 +201,25 @@
 
 
         .loading {
-            padding: 18px;
 
-            border-radius: 12px;
+            padding: 20px;
+
+            text-align: center;
 
             background: white;
 
             border:
-                1px solid var(--border);
+                1px solid
+                var(--border);
 
-            text-align: center;
+            border-radius: 12px;
 
             color: var(--muted);
         }
 
 
         .profile {
+
             display: none;
 
             overflow: hidden;
@@ -216,7 +227,8 @@
             background: white;
 
             border:
-                1px solid var(--border);
+                1px solid
+                var(--border);
 
             border-radius: 20px;
 
@@ -227,9 +239,14 @@
 
 
         .profile-top {
+
             padding:
                 35px
                 30px;
+
+            text-align: center;
+
+            color: white;
 
             background:
                 linear-gradient(
@@ -238,45 +255,42 @@
                     #292929
                 );
 
-            color: white;
-
-            text-align: center;
-
             border-bottom:
-                6px solid var(--orange);
+                6px solid
+                var(--orange);
         }
 
 
         .profile-photo {
+
             width: 165px;
             height: 165px;
 
             margin-bottom: 20px;
 
-            border-radius: 50%;
-
             object-fit: cover;
 
-            object-position: center 20%;
+            object-position:
+                center 20%;
+
+            background: white;
 
             border:
                 6px solid white;
 
-            background: white;
+            border-radius: 50%;
         }
 
 
         .profile-id {
+
             margin-bottom: 6px;
 
             color: #ff914d;
 
             font-family:
                 "Rajdhani",
-                Arial,
                 sans-serif;
-
-            font-size: 15px;
 
             font-weight: 700;
 
@@ -285,29 +299,27 @@
 
 
         .profile-name {
+
             font-family:
                 "Rajdhani",
-                Arial,
                 sans-serif;
 
             font-size: 36px;
-
-            font-weight: 700;
 
             text-transform: uppercase;
         }
 
 
         .profile-role {
+
             margin-top: 8px;
 
             color: #ccc;
-
-            font-size: 16px;
         }
 
 
         .status-box {
+
             display: inline-flex;
 
             align-items: center;
@@ -320,6 +332,12 @@
                 9px
                 14px;
 
+            background:
+                var(--green-bg);
+
+            color:
+                var(--green);
+
             border-radius: 30px;
 
             font-size: 12px;
@@ -328,20 +346,26 @@
         }
 
 
-        .status-box.activo {
-            background: var(--green-bg);
+        .status-dot {
 
-            color: var(--green);
+            width: 9px;
+            height: 9px;
+
+            border-radius: 50%;
+
+            background:
+                currentColor;
         }
 
 
         .profile-content {
-            padding:
-                30px;
+
+            padding: 30px;
         }
 
 
         .data-grid {
+
             display: grid;
 
             grid-template-columns:
@@ -355,18 +379,21 @@
 
 
         .data-card {
+
             padding: 18px;
 
+            background: #fafafa;
+
             border:
-                1px solid var(--border);
+                1px solid
+                var(--border);
 
             border-radius: 12px;
-
-            background: #fafafa;
         }
 
 
         .data-label {
+
             margin-bottom: 5px;
 
             color: #888;
@@ -380,6 +407,7 @@
 
 
         .data-value {
+
             font-size: 16px;
 
             font-weight: 700;
@@ -387,30 +415,29 @@
 
 
         .specialties {
+
             margin-top: 25px;
 
             padding-top: 25px;
 
             border-top:
-                1px solid var(--border);
+                1px solid
+                var(--border);
         }
 
 
         .specialties h3 {
+
             margin-bottom: 13px;
 
             font-family:
                 "Rajdhani",
-                Arial,
                 sans-serif;
-
-            font-size: 22px;
-
-            text-transform: uppercase;
         }
 
 
         .specialty-list {
+
             display: flex;
 
             flex-wrap: wrap;
@@ -420,15 +447,14 @@
 
 
         .specialty {
+
             padding:
                 7px
                 10px;
 
-            border-radius: 20px;
-
             background: #f0f0f0;
 
-            color: #444;
+            border-radius: 20px;
 
             font-size: 12px;
 
@@ -437,42 +463,44 @@
 
 
         .verification {
+
             margin-top: 28px;
 
-            padding:
-                18px;
+            padding: 18px;
 
-            border-radius: 12px;
+            text-align: center;
 
             background: #f8f8f8;
 
             border:
-                1px solid var(--border);
+                1px solid
+                var(--border);
 
-            text-align: center;
+            border-radius: 12px;
         }
 
 
         .verification strong {
+
             display: block;
 
-            margin-bottom: 6px;
+            margin-bottom: 7px;
 
-            color: var(--orange);
+            color:
+                var(--orange);
 
             font-family:
                 "Rajdhani",
-                Arial,
                 sans-serif;
 
             font-size: 18px;
-
-            text-transform: uppercase;
         }
 
 
         .verification p {
-            color: var(--muted);
+
+            color:
+                var(--muted);
 
             font-size: 13px;
 
@@ -480,24 +508,10 @@
         }
 
 
-        .error-box {
-            display: none;
-
-            padding:
-                35px;
-
-            text-align: center;
-
-            background: white;
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 16px;
-        }
-
+        /* INACTIVO */
 
         .inactive-box {
+
             display: none;
 
             overflow: hidden;
@@ -505,85 +519,106 @@
             background: white;
 
             border:
-                2px solid #efc0bb;
+                2px solid
+                #e8b5b0;
 
             border-radius: 20px;
 
             box-shadow:
-                0 14px 40px
-                rgba(120, 20, 15, .12);
+                0 15px 40px
+                rgba(120,20,15,.12);
         }
 
 
         .inactive-top {
+
             padding:
-                32px
+                38px
                 25px;
+
+            text-align: center;
+
+            color: white;
 
             background:
                 linear-gradient(
                     145deg,
-                    #7e201c,
-                    #b52d27
+                    #751d19,
+                    #b22e27
                 );
-
-            color: white;
-
-            text-align: center;
         }
 
 
         .inactive-icon {
-            font-size: 60px;
 
-            margin-bottom: 12px;
+            margin-bottom: 15px;
+
+            font-size: 65px;
         }
 
 
         .inactive-top h1 {
+
+            max-width: 650px;
+
+            margin: auto;
+
             font-family:
                 "Rajdhani",
-                Arial,
                 sans-serif;
 
-            font-size: 30px;
-
-            text-transform: uppercase;
+            font-size: 31px;
 
             line-height: 1.1;
+
+            text-transform: uppercase;
         }
 
 
         .inactive-content {
-            padding:
-                30px;
+
+            padding: 32px;
 
             text-align: center;
         }
 
 
-        .inactive-person {
+        .inactive-content > p {
+
+            max-width: 650px;
+
             margin:
-                20px auto;
+                0 auto;
+
+            color: #555;
+
+            line-height: 1.6;
+        }
+
+
+        .inactive-person {
 
             max-width: 500px;
 
-            padding:
-                18px;
+            margin:
+                25px auto;
+
+            padding: 20px;
+
+            background: #fff4f3;
 
             border:
                 1px solid #efc3bf;
 
             border-radius: 12px;
-
-            background: #fff4f3;
         }
 
 
         .inactive-id {
+
             display: block;
 
-            margin-bottom: 6px;
+            margin-bottom: 7px;
 
             color: #991f1b;
 
@@ -592,28 +627,50 @@
 
 
         .inactive-name {
-            font-size: 18px;
 
-            font-weight: 700;
+            font-size: 19px;
+
+            font-weight: 800;
         }
 
 
-        @media(max-width: 650px) {
+        .inactive-warning {
 
-            .header-inner {
-                padding:
-                    11px
-                    14px;
-            }
+            margin-top: 25px;
 
-            .brand img {
-                width: 48px;
-                height: 48px;
-            }
+            padding: 16px;
 
-            .brand h1 {
-                font-size: 19px;
-            }
+            color: #8f211c;
+
+            background: #ffe8e5;
+
+            border-radius: 10px;
+
+            font-weight: 800;
+        }
+
+
+        /* ERROR */
+
+        .error-box {
+
+            display: none;
+
+            padding: 40px;
+
+            text-align: center;
+
+            background: white;
+
+            border:
+                1px solid
+                var(--border);
+
+            border-radius: 16px;
+        }
+
+
+        @media(max-width:650px) {
 
             .back-link {
                 display: none;
@@ -641,7 +698,12 @@
             }
 
             .data-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns:
+                    1fr;
+            }
+
+            .inactive-top h1 {
+                font-size: 25px;
             }
 
         }
@@ -671,11 +733,11 @@
             <div>
 
                 <h1>
-                    SAR Argentina
+                    SAR ARGENTINA
                 </h1>
 
                 <p>
-                    Verificación de integrantes
+                    CUERPO ARGENTINO DE RESCATE
                 </p>
 
             </div>
@@ -695,6 +757,7 @@
 </header>
 
 
+
 <main class="container">
 
 
@@ -702,7 +765,7 @@
         id="loading"
         class="loading"
     >
-        Verificando integrante...
+        Verificando estado de la credencial...
     </div>
 
 
@@ -711,6 +774,9 @@
         class="error-box"
     ></div>
 
+
+
+    <!-- INACTIVO -->
 
     <section
         id="inactive-box"
@@ -723,8 +789,12 @@
                 ⛔
             </div>
 
+
             <h1>
-                Esta persona se encuentra inactiva como miembro del SAR
+
+                Esta persona se encuentra
+                inactiva como miembro del SAR
+
             </h1>
 
         </div>
@@ -733,9 +803,11 @@
         <div class="inactive-content">
 
             <p>
-                La credencial consultada no se encuentra vigente.
-                Esta persona ya no figura como miembro activo del
-                Cuerpo Argentino de Rescate.
+
+                La persona asociada a esta identificación
+                ya no figura como miembro activo
+                del Cuerpo Argentino de Rescate.
+
             </p>
 
 
@@ -744,33 +816,40 @@
                 <span
                     id="inactive-id"
                     class="inactive-id"
-                >
-                </span>
+                ></span>
+
 
                 <span
                     id="inactive-name"
                     class="inactive-name"
-                >
-                </span>
+                ></span>
 
             </div>
 
 
-            <p>
+            <div class="inactive-warning">
+
+                CREDENCIAL NO VIGENTE
+
+                <br><br>
+
                 Esta credencial no debe considerarse válida
                 como acreditación de pertenencia al SAR.
-            </p>
+
+            </div>
 
         </div>
 
     </section>
 
 
+
+    <!-- ACTIVO -->
+
     <article
         id="profile"
         class="profile"
     >
-
 
         <div class="profile-top">
 
@@ -800,16 +879,13 @@
             ></div>
 
 
-            <div
-                id="profile-status"
-                class="status-box activo"
-            >
+            <div class="status-box">
 
-                <span class="status-dot"></span>
+                <span
+                    class="status-dot"
+                ></span>
 
-                <span id="profile-status-text">
-                    MIEMBRO ACTIVO
-                </span>
+                MIEMBRO ACTIVO
 
             </div>
 
@@ -817,7 +893,6 @@
 
 
         <div class="profile-content">
-
 
             <div class="data-grid">
 
@@ -879,7 +954,7 @@
                 >
 
                     <div class="data-label">
-                        Año de ingreso
+                        Ingreso
                     </div>
 
                     <div
@@ -888,6 +963,7 @@
                     ></div>
 
                 </div>
+
 
             </div>
 
@@ -912,27 +988,31 @@
             <div class="verification">
 
                 <strong>
-                    Verificación digital SAR
+                    VERIFICACIÓN DIGITAL SAR
                 </strong>
 
                 <p>
-                    Esta ficha consulta directamente el registro digital.
-                    El estado mostrado corresponde a la información
-                    actualmente registrada.
+
+                    Esta consulta verifica el estado
+                    actual del integrante directamente
+                    en el registro digital.
+
                 </p>
 
             </div>
 
+
         </div>
 
     </article>
+
 
 </main>
 
 
 <script
     type="module"
-    src="./integrante.js?v=10"
+    src="./integrante.js?v=70"
 ></script>
 
 
