@@ -21,15 +21,15 @@ const profile =
     );
 
 
-const inactiveBox =
+const inactive =
     document.getElementById(
-        "inactive-box"
+        "inactive"
     );
 
 
-const errorBox =
+const notFound =
     document.getElementById(
-        "error-box"
+        "not-found"
     );
 
 
@@ -49,12 +49,11 @@ const id =
         .toUpperCase();
 
 
-
-async function cargarIntegrante() {
+async function cargar() {
 
     if (!id) {
 
-        mostrarNoEncontrado();
+        mostrarNoRegistrado();
 
         return;
 
@@ -63,23 +62,19 @@ async function cargarIntegrante() {
 
     try {
 
-        const referencia =
-            doc(
-                db,
-                "integrantes",
-                id
-            );
-
-
         const resultado =
             await getDoc(
-                referencia
+                doc(
+                    db,
+                    "integrantes",
+                    id
+                )
             );
 
 
         if (!resultado.exists()) {
 
-            mostrarNoEncontrado();
+            mostrarNoRegistrado();
 
             return;
 
@@ -126,34 +121,91 @@ async function cargarIntegrante() {
 
     } catch (error) {
 
-        console.error(
-            "Error consultando integrante:",
-            error
-        );
+        console.error(error);
 
-
-        mostrarErrorConsulta();
+        mostrarNoRegistrado();
 
     }
 
 }
 
 
+function ocultarTodo() {
+
+    loading.style.display =
+        "none";
+
+    profile.style.display =
+        "none";
+
+    inactive.style.display =
+        "none";
+
+    notFound.style.display =
+        "none";
+
+}
+
+
+function mostrarNoRegistrado() {
+
+    ocultarTodo();
+
+
+    notFound.style.display =
+        "block";
+
+
+    document.getElementById(
+        "not-found-id"
+    ).textContent =
+        id
+        ||
+        "IDENTIFICACIÓN NO ESPECIFICADA";
+
+
+    document.title =
+        "Usuario no registrado | SAR Argentina";
+
+}
+
+
+function mostrarInactivo(
+    persona
+) {
+
+    ocultarTodo();
+
+
+    inactive.style.display =
+        "block";
+
+
+    document.getElementById(
+        "inactive-id"
+    ).textContent =
+        persona.id;
+
+
+    document.getElementById(
+        "inactive-name"
+    ).textContent =
+        persona.nombre
+        ||
+        "";
+
+
+    document.title =
+        "Credencial no vigente | SAR Argentina";
+
+}
+
 
 function mostrarActivo(
     persona
 ) {
 
-    loading.style.display =
-        "none";
-
-
-    inactiveBox.style.display =
-        "none";
-
-
-    errorBox.style.display =
-        "none";
+    ocultarTodo();
 
 
     profile.style.display =
@@ -177,7 +229,7 @@ function mostrarActivo(
 
 
     imagen.onerror =
-        function() {
+        () => {
 
             imagen.src =
                 "./img/logo.jpg";
@@ -194,273 +246,104 @@ function mostrarActivo(
     document.getElementById(
         "profile-name"
     ).textContent =
-        persona.nombre
-        ||
-        "Sin nombre";
-
-
-    document.getElementById(
-        "profile-role"
-    ).textContent =
-        persona.cargo
-        ||
-        "Sin función";
-
-
-    completarCampo(
-        "profile-dni",
-        "dni-card",
-        persona.dni
-    );
-
-
-    completarCampo(
-        "profile-blood",
-        "blood-card",
-        persona.grupoSanguineo
-    );
-
-
-    completarCampo(
-        "profile-delegation",
-        "delegation-card",
-        persona.delegacion
-    );
-
-
-    completarCampo(
-        "profile-entry",
-        "entry-card",
-        persona.ingreso
-    );
-
-
-    mostrarEspecialidades(
-        persona.especialidades
-    );
-
-
-    document.title =
-        `${persona.nombre || persona.id} | SAR Argentina`;
-
-}
-
-
-
-function mostrarInactivo(
-    persona
-) {
-
-    loading.style.display =
-        "none";
-
-
-    profile.style.display =
-        "none";
-
-
-    errorBox.style.display =
-        "none";
-
-
-    inactiveBox.style.display =
-        "block";
-
-
-    document.getElementById(
-        "inactive-id"
-    ).textContent =
-        persona.id;
-
-
-    document.getElementById(
-        "inactive-name"
-    ).textContent =
-        persona.nombre
-        ||
-        "Integrante";
-
-
-    document.title =
-        "Credencial no vigente | SAR Argentina";
-
-}
-
-
-
-function mostrarNoEncontrado() {
-
-    loading.style.display =
-        "none";
-
-
-    profile.style.display =
-        "none";
-
-
-    inactiveBox.style.display =
-        "none";
-
-
-    errorBox.style.display =
-        "block";
-
-
-    errorBox.innerHTML = `
-
-        <div
-            style="
-                font-size:55px;
-                margin-bottom:20px;
-            "
-        >
-            ⚠️
-        </div>
-
-
-        <h2
-            style="
-                color:#a52a24;
-                margin-bottom:10px;
-            "
-        >
-            Integrante no encontrado
-        </h2>
-
-
-        <p
-            style="
-                color:#6e747d;
-                line-height:1.6;
-            "
-        >
-
-            No se encontraron datos
-            asociados a esta identificación
-            en la base de datos.
-
-        </p>
-
-    `;
-
-}
-
-
-
-function mostrarErrorConsulta() {
-
-    loading.style.display =
-        "none";
-
-
-    profile.style.display =
-        "none";
-
-
-    inactiveBox.style.display =
-        "none";
-
-
-    errorBox.style.display =
-        "block";
-
-
-    errorBox.innerHTML = `
-
-        <h2
-            style="
-                margin-bottom:10px;
-                color:#a52a24;
-            "
-        >
-            No se pudo verificar la credencial
-        </h2>
-
-
-        <p
-            style="
-                color:#6e747d;
-            "
-        >
-
-            Ocurrió un problema al consultar
-            el registro. Intentá nuevamente.
-
-        </p>
-
-    `;
-
-}
-
-
-
-function completarCampo(
-    valorId,
-    tarjetaId,
-    valor
-) {
-
-    const tarjeta =
-        document.getElementById(
-            tarjetaId
+        mayusculas(
+            persona.nombre
         );
 
 
+    const cargo =
+        mayusculas(
+            persona.cargo
+        );
+
+
+    const cargoElemento =
+        document.getElementById(
+            "profile-role"
+        );
+
+
+    cargoElemento.textContent =
+        cargo;
+
+
     if (
-        valor === undefined
-        ||
-        valor === null
-        ||
-        String(valor).trim() === ""
+        cargo === "COMANDANTE"
     ) {
 
-        tarjeta.style.display =
-            "none";
-
-        return;
+        cargoElemento.classList.add(
+            "commander-role"
+        );
 
     }
 
 
-    tarjeta.style.display =
-        "";
+    campo(
+        "dni-box",
+        "dni",
+        persona.dni
+    );
 
 
-    document.getElementById(
-        valorId
-    ).textContent =
-        valor;
+    campo(
+        "blood-box",
+        "blood",
+        persona.grupoSanguineo
+    );
+
+
+    campo(
+        "delegation-box",
+        "delegation",
+        persona.delegacion
+    );
+
+
+    campo(
+        "entry-box",
+        "entry",
+        persona.ingreso
+    );
+
+
+    mostrarTags(
+        "specialties-section",
+        "specialties",
+        persona.especialidades
+    );
+
+
+    mostrarTags(
+        "affiliations-section",
+        "affiliations",
+        persona.afiliaciones
+    );
+
+
+    mostrarEmergencia(
+        persona
+    );
+
+
+    document.title =
+        `${mayusculas(persona.nombre)} | SAR Argentina`;
 
 }
 
 
-
-function mostrarEspecialidades(
-    especialidades
+function mostrarEmergencia(
+    persona
 ) {
 
     const seccion =
         document.getElementById(
-            "specialties-section"
+            "emergency-section"
         );
-
-
-    const lista =
-        document.getElementById(
-            "specialties-list"
-        );
-
-
-    lista.innerHTML =
-        "";
 
 
     if (
-        !Array.isArray(
-            especialidades
-        )
-        ||
-        especialidades.length === 0
+        persona.publicarEmergencia
+        !== true
     ) {
 
         seccion.style.display =
@@ -472,28 +355,115 @@ function mostrarEspecialidades(
 
 
     seccion.style.display =
+        "block";
+
+
+    const alergias =
+        Array.isArray(
+            persona.alergias
+        )
+            ?
+            persona.alergias
+                .map(mayusculas)
+            :
+            [];
+
+
+    document.getElementById(
+        "allergies-line"
+    ).textContent =
+        alergias.length
+            ?
+            `ALERGIAS: ${alergias.join(", ")}`
+            :
+            "ALERGIAS: NO INFORMADAS";
+
+
+    document.getElementById(
+        "blood-donor-line"
+    ).textContent =
+        persona.donanteSangre === true
+            ?
+            "DONANTE DE SANGRE: SÍ"
+            :
+            "DONANTE DE SANGRE: NO / NO INFORMADO";
+
+
+    document.getElementById(
+        "organ-donor-line"
+    ).textContent =
+        persona.donanteOrganos === true
+            ?
+            "DONANTE DE ÓRGANOS / INCUCAI: SÍ"
+            :
+            "DONANTE DE ÓRGANOS / INCUCAI: NO / NO INFORMADO";
+
+}
+
+
+function mostrarTags(
+    sectionId,
+    containerId,
+    valores
+) {
+
+    const seccion =
+        document.getElementById(
+            sectionId
+        );
+
+
+    const contenedor =
+        document.getElementById(
+            containerId
+        );
+
+
+    contenedor.innerHTML =
         "";
 
 
-    especialidades.forEach(
-        especialidad => {
+    if (
+        !Array.isArray(
+            valores
+        )
+        ||
+        valores.length === 0
+    ) {
 
-            const elemento =
+        seccion.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    seccion.style.display =
+        "block";
+
+
+    valores.forEach(
+        valor => {
+
+            const tag =
                 document.createElement(
                     "span"
                 );
 
 
-            elemento.className =
-                "specialty";
+            tag.className =
+                "tag";
 
 
-            elemento.textContent =
-                especialidad;
+            tag.textContent =
+                mayusculas(
+                    valor
+                );
 
 
-            lista.appendChild(
-                elemento
+            contenedor.appendChild(
+                tag
             );
 
         }
@@ -502,5 +472,63 @@ function mostrarEspecialidades(
 }
 
 
+function campo(
+    cajaId,
+    valorId,
+    valor
+) {
 
-cargarIntegrante();
+    const caja =
+        document.getElementById(
+            cajaId
+        );
+
+
+    if (
+        valor === undefined
+        ||
+        valor === null
+        ||
+        String(valor).trim() === ""
+    ) {
+
+        caja.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    caja.style.display =
+        "block";
+
+
+    document.getElementById(
+        valorId
+    ).textContent =
+        mayusculas(
+            valor
+        );
+
+}
+
+
+function mayusculas(
+    valor
+) {
+
+    return String(
+        valor
+        ||
+        ""
+    )
+        .trim()
+        .toLocaleUpperCase(
+            "es-AR"
+        );
+
+}
+
+
+cargar();
