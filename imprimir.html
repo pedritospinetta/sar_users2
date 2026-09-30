@@ -16,9 +16,8 @@
     >
 
     <title>
-        Imprimir credenciales | SAR Argentina
+        Credenciales SAR
     </title>
-
 
     <style>
 
@@ -26,35 +25,28 @@
             box-sizing: border-box;
         }
 
-
         body {
-
             margin: 0;
+
+            background: #ddd;
 
             font-family:
                 Arial,
                 Helvetica,
                 sans-serif;
-
-            background: #e7e7e7;
         }
 
-
         .toolbar {
-
             position: sticky;
-
             top: 0;
-
             z-index: 100;
 
             display: flex;
-
             justify-content: center;
 
             gap: 10px;
 
-            padding: 14px;
+            padding: 12px;
 
             background: #151515;
 
@@ -62,43 +54,35 @@
                 4px solid #ff6500;
         }
 
-
         .toolbar button {
-
             padding:
-                11px
-                17px;
+                10px
+                16px;
 
             border: 0;
 
-            border-radius: 8px;
+            border-radius: 7px;
 
-            font-weight: bold;
+            font-weight: 800;
 
             cursor: pointer;
         }
 
-
-        .back-button {
-
-            background: #333;
-
-            color: white;
-        }
-
-
-        .print-button {
-
+        .print {
             background: #ff6500;
 
             color: white;
         }
 
+        .back {
+            background: #333;
+
+            color: white;
+        }
 
         .page {
-
             width: 210mm;
-            height: 297mm;
+            min-height: 297mm;
 
             margin:
                 15px auto;
@@ -119,26 +103,17 @@
                     53.98mm
                 );
 
-            justify-content: center;
-
-            align-content: start;
-
             gap:
                 5mm
                 6mm;
 
+            justify-content: center;
+            align-content: start;
+
             background: white;
-
-            box-shadow:
-                0 5px 25px
-                rgba(0,0,0,.16);
-
-            page-break-after: always;
         }
 
-
         .credential {
-
             position: relative;
 
             width: 85.6mm;
@@ -146,46 +121,155 @@
 
             overflow: hidden;
 
+            background:
+                repeating-linear-gradient(
+                    135deg,
+                    rgba(0,0,0,.018) 0,
+                    rgba(0,0,0,.018) .5mm,
+                    transparent .5mm,
+                    transparent 2mm
+                ),
+                white;
+
+            border:
+                .35mm solid #161616;
+
+            border-radius:
+                3mm;
+        }
+
+        /* FRANJA ARGENTINA */
+
+        .argentina-band {
+            position: absolute;
+
+            top: -25mm;
+            right: -13mm;
+
+            width: 14mm;
+            height: 105mm;
+
+            transform:
+                rotate(36deg);
+
+            background:
+                linear-gradient(
+                    90deg,
+
+                    #74acdf 0%,
+                    #74acdf 33%,
+
+                    white 33%,
+                    white 66%,
+
+                    #74acdf 66%,
+                    #74acdf 100%
+                );
+
+            opacity: .82;
+
+            z-index: 1;
+        }
+
+        /* MARCA DE AGUA SAR */
+
+        .watermark {
+            position: absolute;
+
+            left: 51%;
+            top: 53%;
+
+            width: 39mm;
+            height: 39mm;
+
+            transform:
+                translate(-50%, -50%);
+
+            object-fit: contain;
+
+            opacity: .045;
+
+            filter:
+                grayscale(100%);
+
+            z-index: 0;
+        }
+
+        /* MICROTEXT */
+
+        .microtext {
+            position: absolute;
+
+            left: 1.5mm;
+            right: 1.5mm;
+            bottom: .8mm;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            color: #333;
+
+            font-size: .85mm;
+
+            letter-spacing: .1mm;
+
+            opacity: .65;
+
+            z-index: 4;
+        }
+
+        .orange-line {
+            position: absolute;
+
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 2mm;
+
+            background: #ff6500;
+
+            z-index: 4;
+        }
+
+        .credential-inner {
+            position: relative;
+
+            z-index: 3;
+
+            height: 100%;
+
             display: grid;
 
             grid-template-columns:
-                28mm
+                27mm
                 1fr;
-
-            background: white;
-
-            border:
-                .3mm solid #222;
-
-            border-radius:
-                2.8mm;
         }
 
-
-        .credential-left {
-
+        .left {
             display: flex;
-
             flex-direction: column;
 
             align-items: center;
-            justify-content: center;
 
-            padding: 3mm;
+            padding:
+                5mm
+                2.5mm
+                2mm;
 
-            background: #161616;
+            background:
+                rgba(20,20,20,.96);
 
             border-right:
-                1.4mm solid #ff6500;
+                1.2mm solid #ff6500;
         }
 
+        .logo {
+            width: 10mm;
+            height: 10mm;
 
-        .credential-logo {
-
-            width: 11mm;
-            height: 11mm;
-
-            margin-bottom: 2mm;
+            margin-bottom: 1.8mm;
 
             object-fit: contain;
 
@@ -194,179 +278,172 @@
             border-radius: 1mm;
         }
 
-
-        .credential-photo {
-
-            width: 20mm;
-            height: 24mm;
+        .photo {
+            width: 19mm;
+            height: 23mm;
 
             object-fit: cover;
-
-            object-position:
-                center 20%;
+            object-position: center 20%;
 
             border:
-                .7mm solid white;
+                .65mm solid white;
 
-            border-radius:
-                2mm;
+            border-radius: 1.5mm;
         }
 
-
-        .sar-title {
-
-            margin-top: 2mm;
+        .sar {
+            margin-top: 1.5mm;
 
             color: white;
 
-            font-size: 2mm;
+            font-size: 1.9mm;
 
             font-weight: 900;
+
+            text-align: center;
         }
 
-
-        .credential-content {
-
+        .right {
             position: relative;
 
-            padding: 4mm;
-
-            overflow: hidden;
+            padding:
+                5mm
+                3mm
+                3mm
+                3.5mm;
         }
-
 
         .institution {
-
             color: #ff6500;
 
-            font-size: 2.1mm;
+            font-size: 1.8mm;
 
             font-weight: 900;
+
+            letter-spacing: .15mm;
         }
 
+        .name {
+            width: 43mm;
 
-        .credential-name {
+            margin-top: 1.8mm;
 
-            margin-top: 1.5mm;
-
-            max-width: 47mm;
-
-            font-size: 3.9mm;
-
-            font-weight: 900;
+            font-size: 3.6mm;
 
             line-height: 1;
-        }
-
-
-        .credential-role {
-
-            margin-top: 1mm;
-
-            color: #555;
-
-            font-size: 2.5mm;
-
-            font-weight: bold;
-        }
-
-
-        .credential-id {
-
-            margin-top: 1.5mm;
-
-            font-size: 2.7mm;
 
             font-weight: 900;
         }
 
+        .role {
+            display: inline-block;
 
-        .credential-data {
-
-            margin-top: 1mm;
-
-            max-width: 34mm;
+            margin-top: 1.2mm;
 
             color: #333;
 
-            font-size: 2mm;
+            font-size: 2.3mm;
+
+            font-weight: 900;
+        }
+
+        .role.commander {
+            padding:
+                .7mm
+                1.8mm;
+
+            background: #ff6500;
+
+            color: white;
+
+            border-radius: 1mm;
+
+            letter-spacing: .25mm;
+        }
+
+        .member-id {
+            margin-top: 1.3mm;
+
+            font-size: 2.4mm;
+
+            font-weight: 900;
+        }
+
+        .data {
+            margin-top: .9mm;
+
+            width: 31mm;
+
+            color: #333;
+
+            font-size: 1.75mm;
 
             line-height: 1.4;
         }
 
-
-        .verification-text {
-
+        .verification {
             position: absolute;
 
-            left: 4mm;
+            left: 3.5mm;
+            bottom: 4.5mm;
 
-            bottom: 3mm;
-
-            width: 34mm;
-
-            font-size: 1.65mm;
-
-            line-height: 1.25;
+            width: 30mm;
 
             color: #444;
+
+            font-size: 1.35mm;
+
+            line-height: 1.25;
         }
 
-
-        .verification-text strong {
-
+        .verification strong {
             display: block;
 
             color: #ff6500;
 
-            font-size: 1.7mm;
+            font-size: 1.45mm;
         }
 
-
-        .qr-container {
-
+        .qr {
             position: absolute;
 
             right: 3mm;
-
-            bottom: 3mm;
+            bottom: 4mm;
 
             width: 15mm;
             height: 15mm;
+
+            padding: .8mm;
+
+            background: white;
+
+            border:
+                .25mm solid #222;
         }
 
-
-        .qr-container img,
-        .qr-container canvas {
-
-            width: 15mm !important;
-            height: 15mm !important;
+        .qr img,
+        .qr canvas {
+            width: 13.4mm !important;
+            height: 13.4mm !important;
         }
-
 
         .empty {
+            margin: 40px auto;
 
             max-width: 600px;
 
-            margin: 50px auto;
-
-            padding: 40px;
+            padding: 35px;
 
             text-align: center;
 
             background: white;
-
-            border-radius: 12px;
         }
 
-
         @page {
-
             size: A4 portrait;
 
             margin: 0;
         }
-
 
         @media print {
 
@@ -379,10 +456,9 @@
             }
 
             .page {
-
                 margin: 0;
 
-                box-shadow: none;
+                page-break-after: always;
             }
 
             .page:last-child {
@@ -402,20 +478,17 @@
 <div class="toolbar">
 
     <button
-        class="back-button"
-        type="button"
+        class="back"
         onclick="history.back()"
     >
-        Volver
+        VOLVER
     </button>
 
-
     <button
-        class="print-button"
-        type="button"
+        class="print"
         onclick="window.print()"
     >
-        Imprimir
+        IMPRIMIR
     </button>
 
 </div>
@@ -431,7 +504,7 @@
 
 <script
     type="module"
-    src="./imprimir.js?v=70"
+    src="./imprimir.js?v=80"
 ></script>
 
 
