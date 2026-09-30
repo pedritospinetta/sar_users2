@@ -48,6 +48,11 @@ body {
     color: var(--text);
 }
 
+
+/* =========================================
+CONTENEDOR GENERAL
+========================================= */
+
 .container {
     width: 100%;
     max-width: 1180px;
@@ -58,7 +63,10 @@ body {
     padding-right: 24px;
 }
 
-/* HEADER */
+
+/* =========================================
+HEADER
+========================================= */
 
 .main-header {
     position: sticky;
@@ -109,6 +117,8 @@ body {
     object-fit: contain;
 
     border-radius: 8px;
+
+    background: white;
 }
 
 .brand-info h1 {
@@ -127,7 +137,10 @@ body {
     color: #bdbdbd;
 }
 
-/* MENU */
+
+/* =========================================
+MENU HAMBURGUESA
+========================================= */
 
 .menu-container {
     position: relative;
@@ -142,7 +155,8 @@ body {
     align-items: center;
     justify-content: center;
 
-    border: 1px solid #3a3a3a;
+    border:
+        1px solid #3a3a3a;
 
     border-radius: 10px;
 
@@ -153,6 +167,16 @@ body {
     font-size: 27px;
 
     cursor: pointer;
+
+    transition:
+        background 0.2s,
+        border-color 0.2s;
+}
+
+.menu-toggle:hover {
+    background: #303030;
+
+    border-color: var(--orange);
 }
 
 .menu-dropdown {
@@ -170,7 +194,8 @@ body {
 
     background: white;
 
-    border: 1px solid #ededed;
+    border:
+        1px solid #ededed;
 
     border-radius: 12px;
 
@@ -211,10 +236,13 @@ body {
 .menu-dropdown .admin-menu-link {
     color: #9e3c00;
 
-    font-weight: 600;
+    font-weight: 700;
 }
 
-/* HERO */
+
+/* =========================================
+HERO
+========================================= */
 
 .hero {
     padding:
@@ -255,12 +283,14 @@ body {
 
     font-size: 12px;
 
-    font-weight: 700;
+    font-weight: 800;
 
     letter-spacing: 1px;
 }
 
 .hero h2 {
+    margin-bottom: 15px;
+
     font-size:
         clamp(
             32px,
@@ -268,7 +298,7 @@ body {
             48px
         );
 
-    margin-bottom: 15px;
+    line-height: 1.1;
 }
 
 .hero-description {
@@ -285,7 +315,10 @@ body {
     line-height: 1.6;
 }
 
-/* BUSCADOR */
+
+/* =========================================
+BUSCADOR
+========================================= */
 
 .search-area {
     max-width: 710px;
@@ -338,9 +371,15 @@ body {
 
     background: white;
 
+    color: #222;
+
     font-size: 16px;
 
     outline: none;
+
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
 }
 
 .search-box input:focus {
@@ -359,7 +398,10 @@ body {
     font-size: 12px;
 }
 
-/* SUMMARY */
+
+/* =========================================
+RESUMEN
+========================================= */
 
 .summary-section {
     padding:
@@ -395,7 +437,7 @@ body {
     border-radius: 14px;
 
     box-shadow:
-        0 4px 15px rgba(0,0,0,.04);
+        0 4px 15px rgba(0, 0, 0, 0.04);
 }
 
 .summary-icon {
@@ -412,17 +454,31 @@ body {
     border-radius: 12px;
 
     background:
-        rgba(255,101,0,.10);
+        rgba(255, 101, 0, 0.10);
 
     color: var(--orange);
 
     font-weight: 800;
 }
 
+.status-summary {
+    background: var(--green-bg);
+
+    color: var(--green);
+}
+
+.qr-summary {
+    background: #ececec;
+
+    color: #333;
+}
+
 .summary-card strong {
     display: block;
 
     margin-bottom: 3px;
+
+    color: #222;
 
     font-size: 17px;
 }
@@ -433,7 +489,10 @@ body {
     font-size: 13px;
 }
 
-/* REGISTRO */
+
+/* =========================================
+REGISTRO
+========================================= */
 
 .registry-section {
     padding:
@@ -479,6 +538,8 @@ body {
 }
 
 .member-counter {
+    flex-shrink: 0;
+
     padding:
         8px
         13px;
@@ -492,7 +553,10 @@ body {
     font-size: 13px;
 }
 
-/* TARJETAS */
+
+/* =========================================
+GRID DE INTEGRANTES
+========================================= */
 
 .members-grid {
     display: grid;
@@ -507,6 +571,11 @@ body {
 
     justify-content: center;
 }
+
+
+/* =========================================
+TARJETA DE INTEGRANTE
+========================================= */
 
 .member-card {
     width: 100%;
@@ -533,8 +602,11 @@ body {
         translateY(-4px);
 
     box-shadow:
-        0 15px 35px rgba(0,0,0,.11);
+        0 15px 35px rgba(0, 0, 0, 0.11);
 }
+
+
+/* FOTO CORREGIDA */
 
 .member-photo {
     display: block;
@@ -566,14 +638,25 @@ body {
 .member-name {
     margin-bottom: 5px;
 
+    color: #111;
+
     font-size: 21px;
+
+    line-height: 1.15;
 }
 
 .member-role {
     margin-bottom: 16px;
 
     color: var(--muted);
+
+    font-size: 14px;
 }
+
+
+/* =========================================
+ESTADOS
+========================================= */
 
 .status {
     display: inline-flex;
@@ -614,12 +697,21 @@ body {
     background: currentColor;
 }
 
+
+/* =========================================
+BOTON VER FICHA
+========================================= */
+
 .view-button {
     display: block;
 
+    width: 100%;
+
     margin-top: 18px;
 
-    padding: 12px;
+    padding:
+        12px
+        14px;
 
     text-align: center;
 
@@ -631,20 +723,38 @@ body {
 
     color: white;
 
+    font-size: 14px;
+
     font-weight: 700;
+
+    transition:
+        background 0.2s,
+        transform 0.2s;
 }
 
 .view-button:hover {
     background: var(--orange-dark);
 }
 
-/* NO RESULTS */
+.view-button:active {
+    transform:
+        scale(0.98);
+}
+
+
+/* =========================================
+SIN RESULTADOS
+========================================= */
 
 .no-results {
     grid-column:
         1 / -1;
 
-    padding: 55px;
+    width: 100%;
+
+    padding:
+        55px
+        25px;
 
     text-align: center;
 
@@ -656,18 +766,217 @@ body {
         1px solid var(--border);
 
     border-radius: 14px;
+
+    box-shadow:
+        0 4px 18px rgba(0,0,0,.03);
 }
 
-/* FOOTER */
+
+/* =========================================
+VERIFICACIÓN DIGITAL
+========================================= */
+
+.verification-section {
+    padding:
+        70px
+        0;
+
+    background: #ffffff;
+
+    border-top:
+        1px solid var(--border);
+}
+
+.verification-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.4fr)
+        minmax(300px, 0.6fr);
+
+    gap: 50px;
+
+    align-items: center;
+}
+
+.verification-text h2 {
+    margin-bottom: 18px;
+
+    color: #161616;
+
+    font-size: 32px;
+
+    line-height: 1.1;
+}
+
+.verification-text > p {
+    max-width: 680px;
+
+    margin-bottom: 13px;
+
+    color: var(--muted);
+
+    font-size: 15px;
+
+    line-height: 1.65;
+}
+
+.verification-points {
+    display: grid;
+
+    gap: 11px;
+
+    margin-top: 25px;
+}
+
+.verification-points div {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: #333333;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+.verification-points span {
+    width: 25px;
+    height: 25px;
+
+    flex-shrink: 0;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--green-bg);
+
+    color: var(--green);
+
+    font-size: 13px;
+
+    font-weight: 900;
+}
+
+
+/* =========================================
+TARJETA INSTITUCIONAL
+========================================= */
+
+.verification-card {
+    padding:
+        35px
+        28px;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #171717,
+            #272727
+        );
+
+    color: white;
+
+    border:
+        1px solid #2d2d2d;
+
+    border-bottom:
+        5px solid var(--orange);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 14px 35px rgba(0, 0, 0, 0.16);
+}
+
+.verification-shield {
+    width: 72px;
+    height: 72px;
+
+    margin:
+        0 auto
+        20px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 101, 0, 0.12);
+
+    font-size: 34px;
+}
+
+.verification-card h3 {
+    margin-bottom: 12px;
+
+    font-size: 23px;
+
+    line-height: 1.2;
+}
+
+.verification-card p {
+    margin-bottom: 22px;
+
+    color: #c5c5c5;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+.verification-secure {
+    display: inline-block;
+
+    padding:
+        8px
+        13px;
+
+    border:
+        1px solid rgba(255, 255, 255, .15);
+
+    border-radius: 30px;
+
+    background:
+        rgba(255, 255, 255, .06);
+
+    color: #ff914d;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: .8px;
+}
+
+
+/* =========================================
+FOOTER
+========================================= */
 
 .main-footer {
+    padding:
+        28px
+        0;
+
     background: #151515;
 
     color: white;
 
-    padding:
-        30px
-        0;
+    border-top:
+        4px solid var(--orange);
 }
 
 .footer-content {
@@ -677,7 +986,7 @@ body {
 
     align-items: center;
 
-    gap: 30px;
+    gap: 25px;
 }
 
 .footer-brand {
@@ -689,22 +998,26 @@ body {
 }
 
 .footer-brand img {
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
 
     object-fit: contain;
 
-    border-radius: 6px;
+    border-radius: 7px;
+
+    background: white;
 }
 
 .footer-brand strong {
     display: block;
+
+    margin-bottom: 3px;
+
+    color: white;
 }
 
 .footer-brand span {
     display: block;
-
-    margin-top: 3px;
 
     color: #999;
 
@@ -717,7 +1030,32 @@ body {
     font-size: 12px;
 }
 
+
+/* =========================================
+RESPONSIVE TABLET
+========================================= */
+
+@media(max-width: 900px) {
+
+    .verification-grid {
+        grid-template-columns: 1fr;
+
+        gap: 30px;
+    }
+
+    .verification-card {
+        max-width: 600px;
+    }
+
+}
+
+
+/* =========================================
+RESPONSIVE CELULAR
+========================================= */
+
 @media(max-width: 800px) {
+
     .summary-grid {
         grid-template-columns: 1fr;
     }
@@ -728,18 +1066,34 @@ body {
         flex-direction: column;
     }
 
+    .verification-section {
+        padding:
+            50px
+            0;
+    }
+
+    .verification-text h2 {
+        font-size: 27px;
+    }
+
     .footer-content {
         flex-direction: column;
 
         align-items: flex-start;
     }
+
 }
 
+
 @media(max-width: 600px) {
+
     .container {
         padding-left: 16px;
         padding-right: 16px;
     }
+
+
+    /* HEADER */
 
     .main-header {
         min-height: 72px;
@@ -754,6 +1108,10 @@ body {
         height: 50px;
     }
 
+    .brand-link {
+        gap: 10px;
+    }
+
     .brand-info h1 {
         font-size: 17px;
     }
@@ -765,7 +1123,18 @@ body {
     .menu-toggle {
         width: 43px;
         height: 43px;
+
+        font-size: 23px;
     }
+
+    .menu-dropdown {
+        width: 220px;
+
+        top: 54px;
+    }
+
+
+    /* HERO */
 
     .hero {
         padding:
@@ -774,15 +1143,74 @@ body {
             40px;
     }
 
-    .member-card {
-        max-width: 100%;
+    .hero-description {
+        font-size: 15px;
     }
+
+    .search-box input {
+        font-size: 15px;
+    }
+
+
+    /* TARJETAS */
 
     .members-grid {
         grid-template-columns: 1fr;
+
+        justify-items: center;
+    }
+
+    .member-card {
+        max-width: 100%;
     }
 
     .member-photo {
         height: 320px;
     }
+
+
+    /* VERIFICACIÓN */
+
+    .verification-card {
+        padding:
+            28px
+            20px;
+    }
+
+    .verification-shield {
+        width: 60px;
+        height: 60px;
+
+        font-size: 29px;
+    }
+
+    .verification-card h3 {
+        font-size: 21px;
+    }
+
+}
+
+
+/* =========================================
+PANTALLAS MUY CHICAS
+========================================= */
+
+@media(max-width: 380px) {
+
+    .brand-info p {
+        display: none;
+    }
+
+    .member-photo {
+        height: 285px;
+    }
+
+    .hero h2 {
+        font-size: 30px;
+    }
+
+    .section-header h2 {
+        font-size: 26px;
+    }
+
 }
