@@ -5,7 +5,8 @@ import {
 
 
 import {
-    onAuthStateChanged
+    onAuthStateChanged,
+    signOut
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 
@@ -32,63 +33,21 @@ const UPLOAD_PRESET =
     "sar_integrantes";
 
 
-async function subirFotoCloudinary(
-    archivo
-) {
+/* =========================================
+VARIABLES
+========================================= */
 
-    const formData =
-        new FormData();
+let integrantes = [];
 
+let integranteEditando = null;
 
-    formData.append(
-        "file",
-        archivo
-    );
+let fotoActual = "";
 
+let especialidadesActuales = [];
 
-    formData.append(
-        "upload_preset",
-        UPLOAD_PRESET
-    );
+let alergiasActuales = [];
 
-
-    const respuesta =
-        await fetch(
-            `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-            {
-                method: "POST",
-                body: formData
-            }
-        );
-
-
-    const datos =
-        await respuesta.json();
-
-
-    if (!respuesta.ok) {
-
-        throw new Error(
-            datos?.error?.message
-            ||
-            "No se pudo subir la fotografía."
-        );
-
-    }
-
-
-    if (!datos.secure_url) {
-
-        throw new Error(
-            "Cloudinary no devolvió la URL de la fotografía."
-        );
-
-    }
-
-
-    return datos.secure_url;
-
-}
+let afiliacionesActuales = [];
 
 
 /* =========================================
@@ -113,25 +72,13 @@ const membersGrid =
     );
 
 
-const searchInput =
-    document.getElementById(
-        "search-input"
-    );
-
-
-const selectedCounter =
-    document.getElementById(
-        "selected-counter"
-    );
-
-
 const modal =
     document.getElementById(
         "member-modal"
     );
 
 
-const memberForm =
+const form =
     document.getElementById(
         "member-form"
     );
@@ -162,27 +109,168 @@ const saveButton =
 
 
 /* =========================================
-VARIABLES
+VALIDAR ELEMENTOS
 ========================================= */
 
-let integrantes =
-    [];
+const elementosObligatorios = [
+
+    "loading",
+    "admin-content",
+    "members-grid",
+
+    "new-member",
+    "admin-search",
+
+    "select-all",
+    "clear-selection",
+    "print-selected",
+
+    "view-site",
+    "logout-button",
+
+    "member-modal",
+    "modal-title",
+    "close-modal",
+
+    "member-form",
+
+    "member-id",
+    "member-status",
+    "member-name",
+    "member-dni",
+    "member-role",
+    "member-delegation",
+    "member-blood",
+    "member-entry",
+
+    "specialty-input",
+    "add-specialty",
+    "specialty-tags",
+
+    "allergy-input",
+    "add-allergy",
+    "allergy-tags",
+
+    "affiliation-input",
+    "add-affiliation",
+    "affiliation-tags",
+
+    "member-blood-donor",
+    "member-organ-donor",
+    "member-public-emergency",
+
+    "member-photo",
+    "photo-preview",
+
+    "form-message",
+    "cancel-button",
+    "save-button"
+
+];
 
 
-let seleccionados =
-    new Set();
+for (
+    const id
+    of elementosObligatorios
+) {
 
+    if (
+        !document.getElementById(id)
+    ) {
 
-let editandoId =
-    null;
+        throw new Error(
+            `FALTA EL ELEMENTO HTML #${id}`
+        );
 
+    }
 
-let fotoActual =
-    "";
+}
 
 
 /* =========================================
-VERIFICAR COMANDANTE
+UTILIDADES
+========================================= */
+
+function mayusculas(
+    valor
+) {
+
+    return String(
+        valor
+        ||
+        ""
+    )
+        .trim()
+        .toLocaleUpperCase(
+            "es-AR"
+        );
+
+}
+
+
+function escapar(
+    valor
+) {
+
+    return String(
+        valor
+        ??
+        ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================
+MAYÚSCULAS AUTOMÁTICAS
+========================================= */
+
+document
+    .querySelectorAll(
+        ".uppercase-input"
+    )
+    .forEach(
+        input => {
+
+            input.addEventListener(
+                "input",
+                () => {
+
+                    input.value =
+                        input.value
+                            .toLocaleUpperCase(
+                                "es-AR"
+                            );
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================
+AUTENTICACIÓN
 ========================================= */
 
 async function comprobarComandante(
@@ -203,10 +291,12 @@ async function comprobarComandante(
         );
 
 
-    if (!documento.exists()) {
+    if (
+        !documento.exists()
+    ) {
 
         throw new Error(
-            "No existe el registro administrativo de este usuario."
+            "NO EXISTE EL REGISTRO ADMINISTRATIVO DE ESTE USUARIO."
         );
 
     }
@@ -217,22 +307,24 @@ async function comprobarComandante(
 
 
     if (
-        datos.rol !== "comandante"
+        datos.rol !==
+        "comandante"
     ) {
 
         throw new Error(
-            "El usuario no tiene rol de comandante."
+            "ESTE USUARIO NO TIENE ROL DE COMANDANTE."
         );
 
     }
 
 
     if (
-        datos.activo !== true
+        datos.activo !==
+        true
     ) {
 
         throw new Error(
-            "La cuenta administrativa está inactiva."
+            "LA CUENTA ADMINISTRATIVA ESTÁ INACTIVA."
         );
 
     }
@@ -243,10 +335,6 @@ async function comprobarComandante(
 }
 
 
-/* =========================================
-SESIÓN
-========================================= */
-
 let authRespondio =
     false;
 
@@ -254,13 +342,16 @@ let authRespondio =
 setTimeout(
     () => {
 
-        if (!authRespondio) {
+        if (
+            !authRespondio
+        ) {
 
             loading.textContent =
-                "Firebase está tardando en verificar la sesión. Recargá la página.";
+                "FIREBASE ESTÁ TARDANDO EN VERIFICAR LA SESIÓN. RECARGÁ LA PÁGINA.";
+
 
             loading.className =
-                "loading error";
+                "error";
 
         }
 
@@ -277,7 +368,9 @@ onAuthStateChanged(
             true;
 
 
-        if (!usuario) {
+        if (
+            !usuario
+        ) {
 
             window.location.replace(
                 "./login.html"
@@ -291,25 +384,12 @@ onAuthStateChanged(
         try {
 
             loading.textContent =
-                "Verificando permisos del comandante...";
+                "VERIFICANDO PERMISOS DEL COMANDANTE...";
 
 
-            const datos =
-                await comprobarComandante(
-                    usuario
-                );
-
-
-            document.getElementById(
-                "admin-welcome"
-            ).textContent =
-                `Sesión iniciada como ${
-                    datos.nombre
-                    ||
-                    usuario.email
-                    ||
-                    "Comandante"
-                }.`;
+            await comprobarComandante(
+                usuario
+            );
 
 
             loading.style.display =
@@ -326,22 +406,55 @@ onAuthStateChanged(
         } catch (error) {
 
             console.error(
-                "Error verificando administrador:",
                 error
             );
 
 
+            loading.style.display =
+                "block";
+
+
             loading.textContent =
-                `Error: ${error.message}`;
+                `ERROR: ${error.message}`;
 
 
             loading.className =
-                "loading error";
+                "error";
 
         }
 
     }
 );
+
+
+/* =========================================
+CERRAR SESIÓN
+========================================= */
+
+document
+    .getElementById(
+        "logout-button"
+    )
+    .addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                await signOut(
+                    auth
+                );
+
+            } finally {
+
+                window.location.replace(
+                    "./login.html"
+                );
+
+            }
+
+        }
+    );
 
 
 /* =========================================
@@ -351,9 +464,13 @@ CARGAR INTEGRANTES
 async function cargarIntegrantes() {
 
     membersGrid.innerHTML = `
+
         <div class="empty">
-            Cargando integrantes...
+
+            CARGANDO INTEGRANTES...
+
         </div>
+
     `;
 
 
@@ -369,38 +486,42 @@ async function cargarIntegrantes() {
 
 
         integrantes =
-            [];
-
-
-        resultado.forEach(
-            documento => {
-
-                integrantes.push({
+            resultado.docs.map(
+                documento => ({
 
                     id:
                         documento.id,
 
                     ...documento.data()
 
-                });
-
-            }
-        );
+                })
+            );
 
 
         integrantes.sort(
             (a, b) =>
-                a.id.localeCompare(
-                    b.id,
-                    undefined,
-                    {
-                        numeric: true
-                    }
+
+                String(
+                    a.id
                 )
+                    .localeCompare(
+
+                        String(
+                            b.id
+                        ),
+
+                        undefined,
+
+                        {
+                            numeric:
+                                true
+                        }
+
+                    )
         );
 
 
-        renderIntegrantes(
+        mostrarIntegrantes(
             integrantes
         );
 
@@ -414,10 +535,19 @@ async function cargarIntegrantes() {
 
 
         membersGrid.innerHTML = `
+
             <div class="empty">
-                Error cargando integrantes:
-                ${error.message}
+
+                ERROR AL CARGAR INTEGRANTES:
+
+                <br><br>
+
+                ${escapar(
+                    error.message
+                )}
+
             </div>
+
         `;
 
     }
@@ -426,10 +556,10 @@ async function cargarIntegrantes() {
 
 
 /* =========================================
-RENDER
+RENDER DE INTEGRANTES
 ========================================= */
 
-function renderIntegrantes(
+function mostrarIntegrantes(
     lista
 ) {
 
@@ -442,9 +572,13 @@ function renderIntegrantes(
     ) {
 
         membersGrid.innerHTML = `
+
             <div class="empty">
-                No hay integrantes registrados.
+
+                NO HAY INTEGRANTES REGISTRADOS.
+
             </div>
+
         `;
 
         return;
@@ -455,294 +589,221 @@ function renderIntegrantes(
     lista.forEach(
         persona => {
 
-            const estado =
-                (
-                    persona.estado
-                    ||
-                    "inactivo"
-                ).toLowerCase();
-
-
             const foto =
                 persona.fotoUrl
                 ||
                 "./img/logo.jpg";
 
 
-            const card =
+            const estado =
+                String(
+                    persona.estado
+                    ||
+                    "inactivo"
+                )
+                    .toLowerCase()
+                    .trim();
+
+
+            const tarjeta =
                 document.createElement(
                     "article"
                 );
 
 
-            card.className =
-                "member-card";
+            tarjeta.className =
+                "admin-card";
 
 
-            card.innerHTML = `
+            tarjeta.innerHTML = `
 
-                <div class="select-area">
-
-                    <input
-                        type="checkbox"
-                        class="print-checkbox"
-                        data-id="${persona.id}"
-                        ${
-                            seleccionados.has(
-                                persona.id
-                            )
-                            ? "checked"
-                            : ""
-                        }
-                    >
-
-                </div>
+                <img
+                    src="${foto}"
+                    class="admin-photo"
+                    alt=""
+                >
 
 
-                <div class="member-main">
+                <div class="admin-card-body">
 
-                    <img
-                        src="${foto}"
-                        class="member-photo"
-                        alt=""
-                        onerror="this.src='./img/logo.jpg'"
-                    >
+                    <div class="member-id">
 
-
-                    <div>
-
-                        <div class="member-id">
-                            ${persona.id}
-                        </div>
-
-
-                        <h3 class="member-name">
-                            ${
-                                persona.nombre
-                                ||
-                                "Sin nombre"
-                            }
-                        </h3>
-
-
-                        <div class="member-role">
-                            ${
-                                persona.cargo
-                                ||
-                                "Sin cargo"
-                            }
-                        </div>
-
-
-                        <div class="status ${estado}">
-
-                            <span class="status-dot"></span>
-
-                            ${
-                                estado === "activo"
-                                ? "ACTIVO"
-                                : "INACTIVO"
-                            }
-
-                        </div>
+                        ${escapar(
+                            persona.id
+                        )}
 
                     </div>
 
-                </div>
+
+                    <h3>
+
+                        ${escapar(
+                            mayusculas(
+                                persona.nombre
+                                ||
+                                "SIN NOMBRE"
+                            )
+                        )}
+
+                    </h3>
 
 
-                <div class="member-actions">
+                    <div class="member-role">
 
-                    <button
-                        type="button"
-                        class="action-button edit-button"
-                        data-edit="${persona.id}"
+                        ${escapar(
+                            mayusculas(
+                                persona.cargo
+                                ||
+                                "SIN CARGO"
+                            )
+                        )}
+
+                    </div>
+
+
+                    <div
+                        class="status ${estado}"
                     >
-                        Editar
-                    </button>
+
+                        ${estado.toUpperCase()}
+
+                    </div>
 
 
-                    <button
-                        type="button"
-                        class="action-button view-button"
-                        data-view="${persona.id}"
-                    >
-                        Ver ficha
-                    </button>
+                    <div class="card-actions">
 
 
-                    <button
-                        type="button"
-                        class="action-button print-one-button"
-                        data-print="${persona.id}"
-                    >
-                        Imprimir
-                    </button>
+                        <button
+                            type="button"
+                            data-edit="${persona.id}"
+                        >
+                            EDITAR
+                        </button>
 
 
-                    <button
-                        type="button"
-                        class="action-button delete-button"
-                        data-delete="${persona.id}"
-                    >
-                        Eliminar
-                    </button>
+                        <a
+                            href="./integrante.html?id=${encodeURIComponent(persona.id)}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            VER FICHA
+                        </a>
+
+
+                        <button
+                            type="button"
+                            data-print="${persona.id}"
+                        >
+                            IMPRIMIR
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="delete-button"
+                            data-delete="${persona.id}"
+                        >
+                            ELIMINAR
+                        </button>
+
+
+                    </div>
+
+
+                    <label class="select-row">
+
+                        <input
+                            type="checkbox"
+                            class="print-check"
+                            value="${persona.id}"
+                        >
+
+                        SELECCIONAR PARA IMPRIMIR
+
+                    </label>
+
 
                 </div>
 
             `;
 
 
-            membersGrid.appendChild(
-                card
-            );
-
-        }
-    );
-
-
-    conectarEventos();
-
-}
-
-
-/* =========================================
-EVENTOS CARDS
-========================================= */
-
-function conectarEventos() {
-
-
-    document
-        .querySelectorAll(
-            ".print-checkbox"
-        )
-        .forEach(
-            checkbox => {
-
-                checkbox.addEventListener(
-                    "change",
-                    () => {
-
-                        const id =
-                            checkbox.dataset.id;
-
-
-                        if (
-                            checkbox.checked
-                        ) {
-
-                            seleccionados.add(
-                                id
-                            );
-
-                        } else {
-
-                            seleccionados.delete(
-                                id
-                            );
-
-                        }
-
-
-                        actualizarContador();
-
-                    }
+            const imagen =
+                tarjeta.querySelector(
+                    ".admin-photo"
                 );
 
-            }
-        );
+
+            imagen.addEventListener(
+                "error",
+                () => {
+
+                    imagen.src =
+                        "./img/logo.jpg";
+
+                },
+                {
+                    once: true
+                }
+            );
 
 
-    document
-        .querySelectorAll(
-            "[data-edit]"
-        )
-        .forEach(
-            boton => {
-
-                boton.addEventListener(
+            tarjeta
+                .querySelector(
+                    "[data-edit]"
+                )
+                .addEventListener(
                     "click",
                     () => {
 
                         abrirEditar(
-                            boton.dataset.edit
+                            persona
                         );
 
                     }
                 );
 
-            }
-        );
 
-
-    document
-        .querySelectorAll(
-            "[data-delete]"
-        )
-        .forEach(
-            boton => {
-
-                boton.addEventListener(
+            tarjeta
+                .querySelector(
+                    "[data-delete]"
+                )
+                .addEventListener(
                     "click",
                     () => {
 
                         eliminarIntegrante(
-                            boton.dataset.delete
+                            persona
                         );
 
                     }
                 );
 
-            }
-        );
 
-
-    document
-        .querySelectorAll(
-            "[data-print]"
-        )
-        .forEach(
-            boton => {
-
-                boton.addEventListener(
+            tarjeta
+                .querySelector(
+                    "[data-print]"
+                )
+                .addEventListener(
                     "click",
                     () => {
 
-                        imprimirIds([
-                            boton.dataset.print
-                        ]);
-
-                    }
-                );
-
-            }
-        );
-
-
-    document
-        .querySelectorAll(
-            "[data-view]"
-        )
-        .forEach(
-            boton => {
-
-                boton.addEventListener(
-                    "click",
-                    () => {
-
-                        window.open(
-                            `./?id=${encodeURIComponent(
-                                boton.dataset.view
-                            )}`,
-                            "_blank"
+                        imprimirPersonas(
+                            [
+                                persona
+                            ]
                         );
 
                     }
                 );
 
-            }
-        );
+
+            membersGrid.appendChild(
+                tarjeta
+            );
+
+        }
+    );
 
 }
 
@@ -751,231 +812,444 @@ function conectarEventos() {
 BUSCAR
 ========================================= */
 
-searchInput.addEventListener(
-    "input",
-    () => {
-
-        const texto =
-            searchInput.value
-                .trim()
-                .toLowerCase();
-
-
-        const encontrados =
-            integrantes.filter(
-                persona => {
-
-                    const contenido = `
-                        ${persona.id || ""}
-                        ${persona.nombre || ""}
-                        ${persona.cargo || ""}
-                        ${persona.dni || ""}
-                        ${persona.delegacion || ""}
-                    `.toLowerCase();
-
-
-                    return contenido.includes(
-                        texto
-                    );
-
-                }
-            );
-
-
-        renderIntegrantes(
-            encontrados
-        );
-
-    }
-);
-
-
-/* =========================================
-SELECCIÓN
-========================================= */
-
-function actualizarContador() {
-
-    selectedCounter.textContent =
-        `${seleccionados.size} seleccionada${
-            seleccionados.size !== 1
-            ? "s"
-            : ""
-        }`;
-
-}
-
-
 document
     .getElementById(
-        "select-all"
+        "admin-search"
     )
     .addEventListener(
-        "click",
-        () => {
+        "input",
+        evento => {
 
-            document
-                .querySelectorAll(
-                    ".print-checkbox"
-                )
-                .forEach(
-                    checkbox => {
-
-                        checkbox.checked =
-                            true;
+            const texto =
+                mayusculas(
+                    evento.target.value
+                );
 
 
-                        seleccionados.add(
-                            checkbox.dataset.id
+            const filtrados =
+                integrantes.filter(
+                    persona => {
+
+                        const contenido =
+                            [
+
+                                persona.id,
+                                persona.nombre,
+                                persona.cargo,
+                                persona.dni,
+                                persona.delegacion,
+
+                                Array.isArray(
+                                    persona.especialidades
+                                )
+                                    ?
+                                    persona.especialidades.join(
+                                        " "
+                                    )
+                                    :
+                                    ""
+
+                            ]
+                                .join(
+                                    " "
+                                )
+                                .toLocaleUpperCase(
+                                    "es-AR"
+                                );
+
+
+                        return contenido.includes(
+                            texto
                         );
 
                     }
                 );
 
 
-            actualizarContador();
-
-        }
-    );
-
-
-document
-    .getElementById(
-        "clear-selection"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            seleccionados.clear();
-
-
-            document
-                .querySelectorAll(
-                    ".print-checkbox"
-                )
-                .forEach(
-                    checkbox => {
-
-                        checkbox.checked =
-                            false;
-
-                    }
-                );
-
-
-            actualizarContador();
-
-        }
-    );
-
-
-document
-    .getElementById(
-        "print-selected"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            if (
-                seleccionados.size === 0
-            ) {
-
-                alert(
-                    "Seleccioná al menos una credencial."
-                );
-
-                return;
-
-            }
-
-
-            imprimirIds(
-                Array.from(
-                    seleccionados
-                )
+            mostrarIntegrantes(
+                filtrados
             );
 
         }
     );
 
 
-function imprimirIds(
-    ids
+/* =========================================
+TAGS
+========================================= */
+
+function renderTags(
+    contenedorId,
+    valores,
+    setter
 ) {
 
-    const personas =
-        integrantes.filter(
-            persona =>
-                ids.includes(
-                    persona.id
-                )
+    const contenedor =
+        document.getElementById(
+            contenedorId
         );
 
 
-    sessionStorage.setItem(
-        "credencialesImprimir",
-        JSON.stringify(
-            personas
-        )
+    contenedor.innerHTML =
+        "";
+
+
+    valores.forEach(
+        valor => {
+
+            const tag =
+                document.createElement(
+                    "span"
+                );
+
+
+            tag.className =
+                "tag-item";
+
+
+            const texto =
+                document.createElement(
+                    "span"
+                );
+
+
+            texto.textContent =
+                valor;
+
+
+            const boton =
+                document.createElement(
+                    "button"
+                );
+
+
+            boton.type =
+                "button";
+
+
+            boton.textContent =
+                "×";
+
+
+            boton.addEventListener(
+                "click",
+                () => {
+
+                    const nuevo =
+                        valores.filter(
+                            item =>
+                                item !== valor
+                        );
+
+
+                    setter(
+                        nuevo
+                    );
+
+
+                    renderTags(
+                        contenedorId,
+                        nuevo,
+                        setter
+                    );
+
+                }
+            );
+
+
+            tag.appendChild(
+                texto
+            );
+
+
+            tag.appendChild(
+                boton
+            );
+
+
+            contenedor.appendChild(
+                tag
+            );
+
+        }
+    );
+
+}
+
+
+function configurarTagInput(
+    inputId,
+    buttonId,
+    containerId,
+    getter,
+    setter
+) {
+
+    const input =
+        document.getElementById(
+            inputId
+        );
+
+
+    const boton =
+        document.getElementById(
+            buttonId
+        );
+
+
+    function agregar() {
+
+        const valor =
+            mayusculas(
+                input.value
+            );
+
+
+        if (
+            !valor
+        ) {
+
+            return;
+
+        }
+
+
+        const actuales =
+            [
+                ...getter()
+            ];
+
+
+        if (
+            !actuales.includes(
+                valor
+            )
+        ) {
+
+            actuales.push(
+                valor
+            );
+
+        }
+
+
+        setter(
+            actuales
+        );
+
+
+        input.value =
+            "";
+
+
+        renderTags(
+            containerId,
+            actuales,
+            setter
+        );
+
+
+        input.focus();
+
+    }
+
+
+    boton.addEventListener(
+        "click",
+        agregar
     );
 
 
-    window.open(
-        "./imprimir.html",
-        "_blank"
+    input.addEventListener(
+        "keydown",
+        evento => {
+
+            if (
+                evento.key ===
+                "Enter"
+            ) {
+
+                evento.preventDefault();
+
+                agregar();
+
+            }
+
+        }
+    );
+
+}
+
+
+configurarTagInput(
+
+    "specialty-input",
+
+    "add-specialty",
+
+    "specialty-tags",
+
+    () =>
+        especialidadesActuales,
+
+    nuevo =>
+        especialidadesActuales =
+            nuevo
+
+);
+
+
+configurarTagInput(
+
+    "allergy-input",
+
+    "add-allergy",
+
+    "allergy-tags",
+
+    () =>
+        alergiasActuales,
+
+    nuevo =>
+        alergiasActuales =
+            nuevo
+
+);
+
+
+configurarTagInput(
+
+    "affiliation-input",
+
+    "add-affiliation",
+
+    "affiliation-tags",
+
+    () =>
+        afiliacionesActuales,
+
+    nuevo =>
+        afiliacionesActuales =
+            nuevo
+
+);
+
+
+/* =========================================
+RENDER TODOS LOS TAGS
+========================================= */
+
+function renderTodoTags() {
+
+    renderTags(
+
+        "specialty-tags",
+
+        especialidadesActuales,
+
+        nuevo =>
+            especialidadesActuales =
+                nuevo
+
+    );
+
+
+    renderTags(
+
+        "allergy-tags",
+
+        alergiasActuales,
+
+        nuevo =>
+            alergiasActuales =
+                nuevo
+
+    );
+
+
+    renderTags(
+
+        "affiliation-tags",
+
+        afiliacionesActuales,
+
+        nuevo =>
+            afiliacionesActuales =
+                nuevo
+
     );
 
 }
 
 
 /* =========================================
-NUEVO
+NUEVO INTEGRANTE
 ========================================= */
+
+function abrirNuevo() {
+
+    integranteEditando =
+        null;
+
+
+    fotoActual =
+        "";
+
+
+    especialidadesActuales =
+        [];
+
+
+    alergiasActuales =
+        [];
+
+
+    afiliacionesActuales =
+        [];
+
+
+    form.reset();
+
+
+    document.getElementById(
+        "member-id"
+    ).disabled =
+        false;
+
+
+    modalTitle.textContent =
+        "NUEVO INTEGRANTE";
+
+
+    photoPreview.src =
+        "./img/logo.jpg";
+
+
+    formMessage.textContent =
+        "";
+
+
+    formMessage.className =
+        "form-message";
+
+
+    renderTodoTags();
+
+
+    modal.classList.add(
+        "open"
+    );
+
+}
+
 
 document
     .getElementById(
-        "new-member-button"
+        "new-member"
     )
     .addEventListener(
         "click",
-        () => {
-
-            editandoId =
-                null;
-
-
-            fotoActual =
-                "";
-
-
-            memberForm.reset();
-
-
-            modalTitle.textContent =
-                "Nuevo integrante";
-
-
-            document.getElementById(
-                "member-id"
-            ).disabled =
-                false;
-
-
-            photoPreview.src =
-                "./img/logo.jpg";
-
-
-            formMessage.textContent =
-                "";
-
-
-            modal.classList.add(
-                "show"
-            );
-
-        }
+        abrirNuevo
     );
 
 
@@ -984,25 +1258,11 @@ EDITAR
 ========================================= */
 
 function abrirEditar(
-    id
+    persona
 ) {
 
-    const persona =
-        integrantes.find(
-            integrante =>
-                integrante.id === id
-        );
-
-
-    if (!persona) {
-
-        return;
-
-    }
-
-
-    editandoId =
-        id;
+    integranteEditando =
+        persona.id;
 
 
     fotoActual =
@@ -1011,76 +1271,136 @@ function abrirEditar(
         "";
 
 
+    especialidadesActuales =
+        Array.isArray(
+            persona.especialidades
+        )
+            ?
+            persona.especialidades
+                .map(
+                    mayusculas
+                )
+            :
+            [];
+
+
+    alergiasActuales =
+        Array.isArray(
+            persona.alergias
+        )
+            ?
+            persona.alergias
+                .map(
+                    mayusculas
+                )
+            :
+            [];
+
+
+    afiliacionesActuales =
+        Array.isArray(
+            persona.afiliaciones
+        )
+            ?
+            persona.afiliaciones
+                .map(
+                    mayusculas
+                )
+            :
+            [];
+
+
     modalTitle.textContent =
-        `Editar ${id}`;
+        `EDITAR ${persona.id}`;
 
 
-    const idInput =
-        document.getElementById(
-            "member-id"
-        );
+    document.getElementById(
+        "member-id"
+    ).value =
+        persona.id;
 
 
-    idInput.value =
-        id;
-
-
-    idInput.disabled =
+    document.getElementById(
+        "member-id"
+    ).disabled =
         true;
-
-
-    document.getElementById(
-        "member-name"
-    ).value =
-        persona.nombre || "";
-
-
-    document.getElementById(
-        "member-dni"
-    ).value =
-        persona.dni || "";
-
-
-    document.getElementById(
-        "member-role"
-    ).value =
-        persona.cargo || "";
 
 
     document.getElementById(
         "member-status"
     ).value =
-        persona.estado || "activo";
+        persona.estado
+        ||
+        "activo";
+
+
+    document.getElementById(
+        "member-name"
+    ).value =
+        mayusculas(
+            persona.nombre
+        );
+
+
+    document.getElementById(
+        "member-dni"
+    ).value =
+        mayusculas(
+            persona.dni
+        );
+
+
+    document.getElementById(
+        "member-role"
+    ).value =
+        mayusculas(
+            persona.cargo
+        );
 
 
     document.getElementById(
         "member-delegation"
     ).value =
-        persona.delegacion || "";
+        mayusculas(
+            persona.delegacion
+        );
 
 
     document.getElementById(
         "member-blood"
     ).value =
-        persona.grupoSanguineo || "";
+        persona.grupoSanguineo
+        ||
+        "";
 
 
     document.getElementById(
         "member-entry"
     ).value =
-        persona.ingreso || "";
+        mayusculas(
+            persona.ingreso
+        );
 
 
     document.getElementById(
-        "member-specialties"
-    ).value =
-        Array.isArray(
-            persona.especialidades
-        )
-        ? persona.especialidades.join(
-            ", "
-        )
-        : "";
+        "member-blood-donor"
+    ).checked =
+        persona.donanteSangre ===
+        true;
+
+
+    document.getElementById(
+        "member-organ-donor"
+    ).checked =
+        persona.donanteOrganos ===
+        true;
+
+
+    document.getElementById(
+        "member-public-emergency"
+    ).checked =
+        persona.publicarEmergencia ===
+        true;
 
 
     document.getElementById(
@@ -1099,425 +1419,52 @@ function abrirEditar(
         "";
 
 
+    formMessage.className =
+        "form-message";
+
+
+    renderTodoTags();
+
+
     modal.classList.add(
-        "show"
+        "open"
     );
 
 }
 
 
 /* =========================================
-PREVIEW FOTO
-========================================= */
-
-document
-    .getElementById(
-        "member-photo"
-    )
-    .addEventListener(
-        "change",
-        event => {
-
-            const archivo =
-                event.target.files[0];
-
-
-            if (!archivo) {
-
-                return;
-
-            }
-
-
-            const permitidos = [
-                "image/jpeg",
-                "image/png",
-                "image/webp"
-            ];
-
-
-            if (
-                !permitidos.includes(
-                    archivo.type
-                )
-            ) {
-
-                alert(
-                    "La imagen debe ser JPG, PNG o WEBP."
-                );
-
-
-                event.target.value =
-                    "";
-
-
-                return;
-
-            }
-
-
-            if (
-                archivo.size >
-                5 * 1024 * 1024
-            ) {
-
-                alert(
-                    "La imagen no puede superar 5 MB."
-                );
-
-
-                event.target.value =
-                    "";
-
-
-                return;
-
-            }
-
-
-            photoPreview.src =
-                URL.createObjectURL(
-                    archivo
-                );
-
-        }
-    );
-
-
-/* =========================================
-GUARDAR
-========================================= */
-
-memberForm.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-
-        saveButton.disabled =
-            true;
-
-
-        saveButton.textContent =
-            "Guardando...";
-
-
-        formMessage.textContent =
-            "";
-
-
-        try {
-
-            const id =
-                editandoId
-                ||
-                document
-                    .getElementById(
-                        "member-id"
-                    )
-                    .value
-                    .trim()
-                    .toUpperCase();
-
-
-            if (
-                !/^SAR-\d+$/i.test(
-                    id
-                )
-            ) {
-
-                throw new Error(
-                    "El ID debe tener formato SAR-0001."
-                );
-
-            }
-
-
-            if (!editandoId) {
-
-                const existente =
-                    await getDoc(
-                        doc(
-                            db,
-                            "integrantes",
-                            id
-                        )
-                    );
-
-
-                if (
-                    existente.exists()
-                ) {
-
-                    throw new Error(
-                        `Ya existe ${id}.`
-                    );
-
-                }
-
-            }
-
-
-            let fotoUrl =
-                fotoActual;
-
-
-            const archivo =
-                document
-                    .getElementById(
-                        "member-photo"
-                    )
-                    .files[0];
-
-
-            if (archivo) {
-
-                formMessage.textContent =
-                    "Subiendo fotografía...";
-
-
-                fotoUrl =
-                    await subirFotoCloudinary(
-                        archivo
-                    );
-
-            }
-
-
-            const especialidades =
-                document
-                    .getElementById(
-                        "member-specialties"
-                    )
-                    .value
-                    .split(",")
-                    .map(
-                        valor =>
-                            valor.trim()
-                    )
-                    .filter(Boolean);
-
-
-            const datos = {
-
-                nombre:
-                    document
-                        .getElementById(
-                            "member-name"
-                        )
-                        .value
-                        .trim(),
-
-                dni:
-                    document
-                        .getElementById(
-                            "member-dni"
-                        )
-                        .value
-                        .trim(),
-
-                cargo:
-                    document
-                        .getElementById(
-                            "member-role"
-                        )
-                        .value
-                        .trim(),
-
-                estado:
-                    document
-                        .getElementById(
-                            "member-status"
-                        )
-                        .value,
-
-                delegacion:
-                    document
-                        .getElementById(
-                            "member-delegation"
-                        )
-                        .value
-                        .trim(),
-
-                grupoSanguineo:
-                    document
-                        .getElementById(
-                            "member-blood"
-                        )
-                        .value
-                        .trim(),
-
-                ingreso:
-                    document
-                        .getElementById(
-                            "member-entry"
-                        )
-                        .value
-                        .trim(),
-
-                especialidades:
-                    especialidades,
-
-                fotoUrl:
-                    fotoUrl || "",
-
-                actualizado:
-                    serverTimestamp()
-
-            };
-
-
-            if (!editandoId) {
-
-                datos.creado =
-                    serverTimestamp();
-
-            }
-
-
-            await setDoc(
-                doc(
-                    db,
-                    "integrantes",
-                    id
-                ),
-                datos,
-                {
-                    merge: true
-                }
-            );
-
-
-            formMessage.textContent =
-                "Guardado correctamente.";
-
-
-            formMessage.className =
-                "form-message success";
-
-
-            await cargarIntegrantes();
-
-
-            setTimeout(
-                () => {
-
-                    cerrarModal();
-
-                },
-                600
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-
-
-            formMessage.textContent =
-                error.message;
-
-
-            formMessage.className =
-                "form-message error";
-
-        } finally {
-
-            saveButton.disabled =
-                false;
-
-
-            saveButton.textContent =
-                "Guardar cambios";
-
-        }
-
-    }
-);
-
-
-/* =========================================
-ELIMINAR
-========================================= */
-
-async function eliminarIntegrante(
-    id
-) {
-
-    const confirmar =
-        confirm(
-            `¿Eliminar ${id}?\n\nSi solamente dejó de pertenecer al SAR, conviene ponerlo INACTIVO.`
-        );
-
-
-    if (!confirmar) {
-
-        return;
-
-    }
-
-
-    try {
-
-        await deleteDoc(
-            doc(
-                db,
-                "integrantes",
-                id
-            )
-        );
-
-
-        seleccionados.delete(
-            id
-        );
-
-
-        await cargarIntegrantes();
-
-
-        actualizarContador();
-
-
-    } catch (error) {
-
-        console.error(
-            error
-        );
-
-
-        alert(
-            `No se pudo eliminar: ${error.message}`
-        );
-
-    }
-
-}
-
-
-/* =========================================
-MODAL
+CERRAR MODAL
 ========================================= */
 
 function cerrarModal() {
 
     modal.classList.remove(
-        "show"
+        "open"
     );
 
 
-    memberForm.reset();
+    form.reset();
 
 
-    editandoId =
+    integranteEditando =
         null;
 
 
     fotoActual =
         "";
+
+
+    especialidadesActuales =
+        [];
+
+
+    alergiasActuales =
+        [];
+
+
+    afiliacionesActuales =
+        [];
 
 
     document.getElementById(
@@ -1528,6 +1475,13 @@ function cerrarModal() {
 
     photoPreview.src =
         "./img/logo.jpg";
+
+
+    formMessage.textContent =
+        "";
+
+
+    renderTodoTags();
 
 }
 
@@ -1554,10 +1508,11 @@ document
 
 modal.addEventListener(
     "click",
-    event => {
+    evento => {
 
         if (
-            event.target === modal
+            evento.target ===
+            modal
         ) {
 
             cerrarModal();
@@ -1569,12 +1524,677 @@ modal.addEventListener(
 
 
 /* =========================================
+PREVIEW FOTO
+========================================= */
+
+document
+    .getElementById(
+        "member-photo"
+    )
+    .addEventListener(
+        "change",
+        evento => {
+
+            const archivo =
+                evento.target
+                    .files[0];
+
+
+            if (
+                !archivo
+            ) {
+
+                return;
+
+            }
+
+
+            const tipos =
+                [
+
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp"
+
+                ];
+
+
+            if (
+                !tipos.includes(
+                    archivo.type
+                )
+            ) {
+
+                alert(
+                    "LA FOTO DEBE SER JPG, PNG O WEBP."
+                );
+
+
+                evento.target.value =
+                    "";
+
+                return;
+
+            }
+
+
+            if (
+                archivo.size >
+                5 * 1024 * 1024
+            ) {
+
+                alert(
+                    "LA FOTO NO PUEDE SUPERAR 5 MB."
+                );
+
+
+                evento.target.value =
+                    "";
+
+                return;
+
+            }
+
+
+            photoPreview.src =
+                URL.createObjectURL(
+                    archivo
+                );
+
+        }
+    );
+
+
+/* =========================================
+CLOUDINARY
+========================================= */
+
+async function subirFotoCloudinary(
+    archivo
+) {
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "file",
+        archivo
+    );
+
+
+    formData.append(
+        "upload_preset",
+        UPLOAD_PRESET
+    );
+
+
+    const respuesta =
+        await fetch(
+
+            `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+
+            {
+
+                method:
+                    "POST",
+
+                body:
+                    formData
+
+            }
+
+        );
+
+
+    const datos =
+        await respuesta.json();
+
+
+    if (
+        !respuesta.ok
+    ) {
+
+        throw new Error(
+
+            datos?.error?.message
+
+            ||
+
+            "NO SE PUDO SUBIR LA FOTO."
+
+        );
+
+    }
+
+
+    if (
+        !datos.secure_url
+    ) {
+
+        throw new Error(
+            "CLOUDINARY NO DEVOLVIÓ LA URL DE LA FOTO."
+        );
+
+    }
+
+
+    return datos.secure_url;
+
+}
+
+
+/* =========================================
+GUARDAR
+========================================= */
+
+form.addEventListener(
+    "submit",
+    async evento => {
+
+        evento.preventDefault();
+
+
+        saveButton.disabled =
+            true;
+
+
+        saveButton.textContent =
+            "GUARDANDO...";
+
+
+        formMessage.textContent =
+            "";
+
+
+        formMessage.className =
+            "form-message";
+
+
+        try {
+
+            const id =
+                integranteEditando
+                ||
+                mayusculas(
+                    document.getElementById(
+                        "member-id"
+                    ).value
+                );
+
+
+            if (
+                !/^SAR-\d+$/.test(
+                    id
+                )
+            ) {
+
+                throw new Error(
+                    "EL ID DEBE TENER FORMATO SAR-001."
+                );
+
+            }
+
+
+            if (
+                !integranteEditando
+            ) {
+
+                const existente =
+                    await getDoc(
+                        doc(
+                            db,
+                            "integrantes",
+                            id
+                        )
+                    );
+
+
+                if (
+                    existente.exists()
+                ) {
+
+                    throw new Error(
+                        `YA EXISTE EL INTEGRANTE ${id}.`
+                    );
+
+                }
+
+            }
+
+
+            let fotoUrl =
+                fotoActual;
+
+
+            const archivo =
+                document.getElementById(
+                    "member-photo"
+                )
+                    .files[0];
+
+
+            if (
+                archivo
+            ) {
+
+                formMessage.textContent =
+                    "SUBIENDO FOTO...";
+
+
+                fotoUrl =
+                    await subirFotoCloudinary(
+                        archivo
+                    );
+
+            }
+
+
+            const datos = {
+
+                nombre:
+                    mayusculas(
+                        document.getElementById(
+                            "member-name"
+                        ).value
+                    ),
+
+                dni:
+                    mayusculas(
+                        document.getElementById(
+                            "member-dni"
+                        ).value
+                    ),
+
+                cargo:
+                    mayusculas(
+                        document.getElementById(
+                            "member-role"
+                        ).value
+                    ),
+
+                estado:
+                    document.getElementById(
+                        "member-status"
+                    ).value,
+
+                delegacion:
+                    mayusculas(
+                        document.getElementById(
+                            "member-delegation"
+                        ).value
+                    ),
+
+                grupoSanguineo:
+                    document.getElementById(
+                        "member-blood"
+                    ).value,
+
+                ingreso:
+                    mayusculas(
+                        document.getElementById(
+                            "member-entry"
+                        ).value
+                    ),
+
+                especialidades:
+                    especialidadesActuales
+                        .map(
+                            mayusculas
+                        ),
+
+                alergias:
+                    alergiasActuales
+                        .map(
+                            mayusculas
+                        ),
+
+                afiliaciones:
+                    afiliacionesActuales
+                        .map(
+                            mayusculas
+                        ),
+
+                donanteSangre:
+                    document.getElementById(
+                        "member-blood-donor"
+                    ).checked,
+
+                donanteOrganos:
+                    document.getElementById(
+                        "member-organ-donor"
+                    ).checked,
+
+                publicarEmergencia:
+                    document.getElementById(
+                        "member-public-emergency"
+                    ).checked,
+
+                fotoUrl:
+                    fotoUrl
+                    ||
+                    "",
+
+                actualizado:
+                    serverTimestamp()
+
+            };
+
+
+            if (
+                !integranteEditando
+            ) {
+
+                datos.creado =
+                    serverTimestamp();
+
+            }
+
+
+            await setDoc(
+
+                doc(
+                    db,
+                    "integrantes",
+                    id
+                ),
+
+                datos,
+
+                {
+                    merge:
+                        true
+                }
+
+            );
+
+
+            formMessage.textContent =
+                "GUARDADO CORRECTAMENTE.";
+
+
+            formMessage.className =
+                "form-message success";
+
+
+            await cargarIntegrantes();
+
+
+            setTimeout(
+                cerrarModal,
+                500
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+
+            formMessage.textContent =
+                error.message
+                ||
+                "ERROR AL GUARDAR.";
+
+
+            formMessage.className =
+                "form-message error";
+
+
+        } finally {
+
+            saveButton.disabled =
+                false;
+
+
+            saveButton.textContent =
+                "GUARDAR";
+
+        }
+
+    }
+);
+
+
+/* =========================================
+ELIMINAR
+========================================= */
+
+async function eliminarIntegrante(
+    persona
+) {
+
+    const confirmar =
+        confirm(
+
+            `¿ELIMINAR DEFINITIVAMENTE A ${persona.nombre}?\n\n` +
+
+            "SI SOLAMENTE DEJÓ DE PERTENECER AL SAR, " +
+
+            "ES MEJOR CAMBIAR SU ESTADO A INACTIVO."
+
+        );
+
+
+    if (
+        !confirmar
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        await deleteDoc(
+            doc(
+                db,
+                "integrantes",
+                persona.id
+            )
+        );
+
+
+        await cargarIntegrantes();
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        alert(
+            `NO SE PUDO ELIMINAR: ${error.message}`
+        );
+
+    }
+
+}
+
+
+/* =========================================
+SELECCIONAR TODOS
+========================================= */
+
+document
+    .getElementById(
+        "select-all"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            document
+                .querySelectorAll(
+                    ".print-check"
+                )
+                .forEach(
+                    check => {
+
+                        check.checked =
+                            true;
+
+                    }
+                );
+
+        }
+    );
+
+
+/* =========================================
+LIMPIAR SELECCIÓN
+========================================= */
+
+document
+    .getElementById(
+        "clear-selection"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            document
+                .querySelectorAll(
+                    ".print-check"
+                )
+                .forEach(
+                    check => {
+
+                        check.checked =
+                            false;
+
+                    }
+                );
+
+        }
+    );
+
+
+/* =========================================
+IMPRIMIR VARIOS
+========================================= */
+
+document
+    .getElementById(
+        "print-selected"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            const ids =
+                [
+                    ...document.querySelectorAll(
+                        ".print-check:checked"
+                    )
+                ]
+                    .map(
+                        check =>
+                            check.value
+                    );
+
+
+            const seleccionados =
+                integrantes.filter(
+                    persona =>
+                        ids.includes(
+                            persona.id
+                        )
+                );
+
+
+            if (
+                seleccionados.length ===
+                0
+            ) {
+
+                alert(
+                    "SELECCIONÁ AL MENOS UN INTEGRANTE."
+                );
+
+                return;
+
+            }
+
+
+            imprimirPersonas(
+                seleccionados
+            );
+
+        }
+    );
+
+
+/* =========================================
+IMPRIMIR
+========================================= */
+
+function imprimirPersonas(
+    personas
+) {
+
+    const activas =
+        personas.filter(
+            persona =>
+
+                String(
+                    persona.estado
+                    ||
+                    ""
+                )
+                    .toLowerCase()
+                    .trim()
+
+                ===
+                "activo"
+        );
+
+
+    if (
+        activas.length ===
+        0
+    ) {
+
+        alert(
+            "NO HAY INTEGRANTES ACTIVOS PARA IMPRIMIR."
+        );
+
+        return;
+
+    }
+
+
+    sessionStorage.setItem(
+
+        "credencialesImprimir",
+
+        JSON.stringify(
+            activas
+        )
+
+    );
+
+
+    window.open(
+        "./imprimir.html",
+        "_blank"
+    );
+
+}
+
+
+/* =========================================
 VER SITIO
 ========================================= */
 
 document
     .getElementById(
-        "go-public"
+        "view-site"
     )
     .addEventListener(
         "click",
