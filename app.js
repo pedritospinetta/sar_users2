@@ -2,6 +2,7 @@ import {
     db
 } from "./firebase-config.js";
 
+
 import {
     collection,
     getDocs
@@ -12,24 +13,38 @@ let integrantes = [];
 
 
 const lista =
-    document.getElementById("lista-integrantes");
+    document.getElementById(
+        "lista-integrantes"
+    );
+
 
 const buscador =
-    document.getElementById("buscador");
+    document.getElementById(
+        "buscador"
+    );
+
 
 const cantidad =
-    document.getElementById("cantidad");
+    document.getElementById(
+        "cantidad"
+    );
+
 
 const totalIntegrantes =
-    document.getElementById("total-integrantes");
+    document.getElementById(
+        "total-integrantes"
+    );
+
 
 
 async function cargarIntegrantes() {
 
     lista.innerHTML = `
+
         <div class="no-results">
             Cargando integrantes...
         </div>
+
     `;
 
 
@@ -51,51 +66,65 @@ async function cargarIntegrantes() {
             documento => {
 
                 todos.push({
-                    id: documento.id,
+
+                    id:
+                        documento.id,
+
                     ...documento.data()
+
                 });
 
             }
         );
 
 
-        /*
-        SOLO LOS ACTIVOS APARECEN
-        EN LA PÁGINA PÚBLICA
-        */
+        /* =========================================
+        SOLO ACTIVOS EN LA PÁGINA PÚBLICA
+        ========================================= */
+
 
         integrantes =
             todos.filter(
-                persona =>
-                    (
-                        persona.estado
-                        ||
-                        ""
-                    )
-                        .toLowerCase()
-                        .trim()
-                    === "activo"
+                persona => {
+
+                    const estado =
+                        String(
+                            persona.estado
+                            ||
+                            ""
+                        )
+                            .toLowerCase()
+                            .trim();
+
+
+                    return (
+                        estado === "activo"
+                    );
+
+                }
             );
 
 
         integrantes.sort(
             (a, b) =>
-                a.id.localeCompare(
-                    b.id,
-                    undefined,
-                    {
-                        numeric: true
-                    }
-                )
+
+                String(a.id)
+                    .localeCompare(
+
+                        String(b.id),
+
+                        undefined,
+
+                        {
+                            numeric: true
+                        }
+
+                    )
         );
 
 
-        if (totalIntegrantes) {
-
-            totalIntegrantes.textContent =
-                integrantes.length;
-
-        }
+        totalIntegrantes.textContent =
+            integrantes.length;
 
 
         mostrarIntegrantes(
@@ -112,40 +141,40 @@ async function cargarIntegrantes() {
 
 
         lista.innerHTML = `
+
             <div class="no-results">
-                No se pudo cargar el registro de integrantes.
+
+                No se pudo cargar
+                el registro de integrantes.
+
             </div>
+
         `;
 
 
-        if (cantidad) {
-
-            cantidad.textContent =
-                "Error de conexión";
-
-        }
+        cantidad.textContent =
+            "Error";
 
     }
 
 }
 
 
-function mostrarIntegrantes(datos) {
+
+function mostrarIntegrantes(
+    datos
+) {
 
     lista.innerHTML =
         "";
 
 
-    if (cantidad) {
-
-        cantidad.textContent =
-            `${datos.length} integrante${
-                datos.length !== 1
-                    ? "s"
-                    : ""
-            }`;
-
-    }
+    cantidad.textContent =
+        `${datos.length} integrante${
+            datos.length !== 1
+                ? "s"
+                : ""
+        }`;
 
 
     if (
@@ -153,9 +182,14 @@ function mostrarIntegrantes(datos) {
     ) {
 
         lista.innerHTML = `
+
             <div class="no-results">
-                No se encontraron integrantes activos.
+
+                No se encontraron
+                integrantes activos.
+
             </div>
+
         `;
 
         return;
@@ -165,12 +199,6 @@ function mostrarIntegrantes(datos) {
 
     datos.forEach(
         persona => {
-
-            const foto =
-                persona.fotoUrl
-                ||
-                "./img/logo.jpg";
-
 
             const tarjeta =
                 document.createElement(
@@ -182,37 +210,57 @@ function mostrarIntegrantes(datos) {
                 "member-card";
 
 
+            const foto =
+                persona.fotoUrl
+                ||
+                "./img/logo.jpg";
+
+
             tarjeta.innerHTML = `
 
                 <img
                     class="member-photo"
                     src="${foto}"
-                    alt="${persona.nombre || persona.id}"
+                    alt=""
                     loading="lazy"
-                    onerror="this.src='./img/logo.jpg'"
                 >
 
 
                 <div class="member-info">
 
+
                     <div class="member-id">
-                        ${persona.id}
+                        ${escapar(persona.id)}
                     </div>
 
 
                     <h3 class="member-name">
-                        ${persona.nombre || "Sin nombre"}
+
+                        ${escapar(
+                            persona.nombre
+                            ||
+                            "Sin nombre"
+                        )}
+
                     </h3>
 
 
                     <div class="member-role">
-                        ${persona.cargo || "Sin cargo"}
+
+                        ${escapar(
+                            persona.cargo
+                            ||
+                            "Sin función"
+                        )}
+
                     </div>
 
 
                     <div class="status activo">
 
-                        <span class="status-dot"></span>
+                        <span
+                            class="status-dot"
+                        ></span>
 
                         MIEMBRO ACTIVO
 
@@ -226,9 +274,30 @@ function mostrarIntegrantes(datos) {
                         Ver ficha
                     </a>
 
+
                 </div>
 
             `;
+
+
+            const imagen =
+                tarjeta.querySelector(
+                    ".member-photo"
+                );
+
+
+            imagen.addEventListener(
+                "error",
+                () => {
+
+                    imagen.src =
+                        "./img/logo.jpg";
+
+                },
+                {
+                    once: true
+                }
+            );
 
 
             lista.appendChild(
@@ -239,6 +308,7 @@ function mostrarIntegrantes(datos) {
     );
 
 }
+
 
 
 buscador.addEventListener(
@@ -267,7 +337,7 @@ buscador.addEventListener(
 
                     return (
 
-                        (
+                        String(
                             persona.nombre
                             ||
                             ""
@@ -277,7 +347,7 @@ buscador.addEventListener(
 
                         ||
 
-                        (
+                        String(
                             persona.id
                             ||
                             ""
@@ -287,7 +357,7 @@ buscador.addEventListener(
 
                         ||
 
-                        (
+                        String(
                             persona.cargo
                             ||
                             ""
@@ -297,7 +367,7 @@ buscador.addEventListener(
 
                         ||
 
-                        (
+                        String(
                             persona.delegacion
                             ||
                             ""
@@ -323,6 +393,41 @@ buscador.addEventListener(
 
     }
 );
+
+
+
+function escapar(
+    valor
+) {
+
+    return String(
+        valor
+        ??
+        ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
 
 
 cargarIntegrantes();
