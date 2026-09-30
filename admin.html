@@ -10,11 +10,20 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <meta name="robots" content="noindex,nofollow">
+    <meta
+        name="robots"
+        content="noindex,nofollow"
+    >
 
-    <title>Administración | SAR Argentina</title>
+    <title>
+        Administración | SAR Argentina
+    </title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -26,6 +35,7 @@
         href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap"
         rel="stylesheet"
     >
+
 
     <style>
 
@@ -51,6 +61,11 @@
         select {
             font: inherit;
         }
+
+
+        /* =====================================
+        HEADER
+        ===================================== */
 
         .topbar {
             position: sticky;
@@ -162,8 +177,13 @@
         }
 
         .logout {
-            background: #9f2924;
+            background: #a42b25;
         }
+
+
+        /* =====================================
+        CONTENIDO
+        ===================================== */
 
         .wrapper {
             width: 100%;
@@ -182,9 +202,24 @@
 
             background: white;
 
+            border:
+                1px solid #e1e1e1;
+
             border-radius: 12px;
 
             text-align: center;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,.04);
+        }
+
+        #loading.error {
+            color: #9d2722;
+
+            border-color: #e6b5b1;
+
+            background: #fff4f3;
         }
 
         #admin-content {
@@ -238,6 +273,30 @@
             cursor: pointer;
         }
 
+        .primary:hover {
+            background: #dd5700;
+        }
+
+        .secondary {
+            padding:
+                10px
+                13px;
+
+            border:
+                1px solid #ccc;
+
+            border-radius: 8px;
+
+            background: white;
+
+            cursor: pointer;
+        }
+
+
+        /* =====================================
+        TOOLBAR
+        ===================================== */
+
         .toolbar {
             display: grid;
 
@@ -263,20 +322,10 @@
             border-radius: 8px;
         }
 
-        .secondary {
-            padding:
-                10px
-                13px;
 
-            border:
-                1px solid #ccc;
-
-            border-radius: 8px;
-
-            background: white;
-
-            cursor: pointer;
-        }
+        /* =====================================
+        TARJETAS
+        ===================================== */
 
         .members-grid {
             display: grid;
@@ -327,7 +376,7 @@
             font-size: 19px;
         }
 
-        .id {
+        .member-id {
             color: #ff6500;
 
             font-size: 12px;
@@ -335,7 +384,7 @@
             font-weight: 900;
         }
 
-        .role {
+        .member-role {
             color: #666;
 
             font-size: 13px;
@@ -359,11 +408,13 @@
 
         .status.activo {
             background: #def5e8;
+
             color: #14723e;
         }
 
         .status.inactivo {
             background: #ffe4e1;
+
             color: #a22b25;
         }
 
@@ -398,6 +449,10 @@
             cursor: pointer;
         }
 
+        .delete-button {
+            color: #9b211c !important;
+        }
+
         .select-row {
             display: flex;
             align-items: center;
@@ -409,7 +464,25 @@
             font-size: 12px;
         }
 
-        /* MODAL */
+        .empty {
+            grid-column:
+                1 / -1;
+
+            padding: 35px;
+
+            background: white;
+
+            border-radius: 12px;
+
+            text-align: center;
+
+            color: #777;
+        }
+
+
+        /* =====================================
+        MODAL
+        ===================================== */
 
         .modal {
             position: fixed;
@@ -547,6 +620,11 @@
             border-radius: 10px;
         }
 
+
+        /* =====================================
+        TAGS
+        ===================================== */
+
         .tag-input-row {
             display: flex;
 
@@ -622,6 +700,11 @@
             cursor: pointer;
         }
 
+
+        /* =====================================
+        CHECKBOXES
+        ===================================== */
+
         .checkboxes {
             display: flex;
             flex-wrap: wrap;
@@ -664,7 +747,19 @@
         .form-message {
             margin-top: 14px;
 
+            min-height: 20px;
+
             font-size: 13px;
+
+            font-weight: 700;
+        }
+
+        .form-message.error {
+            color: #a52621;
+        }
+
+        .form-message.success {
+            color: #14723e;
         }
 
         .form-footer {
@@ -690,6 +785,11 @@
             color: #ff6500;
         }
 
+
+        /* =====================================
+        MOBILE
+        ===================================== */
+
         @media(max-width:750px) {
 
             .topbar {
@@ -706,6 +806,7 @@
 
             .page-header {
                 align-items: flex-start;
+
                 flex-direction: column;
             }
 
@@ -763,6 +864,7 @@
             INICIO
         </a>
 
+
         <a
             href="https://www.sar-argentina.org.ar"
             target="_blank"
@@ -772,6 +874,7 @@
             QUIÉNES SOMOS
         </a>
 
+
         <button
             id="view-site"
             class="top-button"
@@ -779,6 +882,7 @@
         >
             VER SITIO
         </button>
+
 
         <button
             id="logout-button"
@@ -795,12 +899,14 @@
 
 <main class="wrapper">
 
+
     <div id="loading">
         VERIFICANDO SESIÓN Y PERMISOS...
     </div>
 
 
     <section id="admin-content">
+
 
         <div class="page-header">
 
@@ -815,6 +921,7 @@
                 </p>
 
             </div>
+
 
             <button
                 id="new-member"
@@ -835,6 +942,7 @@
                 placeholder="BUSCAR INTEGRANTE..."
             >
 
+
             <button
                 id="select-all"
                 class="secondary"
@@ -843,6 +951,7 @@
                 SELECCIONAR TODOS
             </button>
 
+
             <button
                 id="clear-selection"
                 class="secondary"
@@ -850,6 +959,7 @@
             >
                 LIMPIAR
             </button>
+
 
             <button
                 id="print-selected"
@@ -866,6 +976,7 @@
             id="members-grid"
             class="members-grid"
         ></div>
+
 
     </section>
 
@@ -884,8 +995,8 @@
 
     </footer>
 
-</main>
 
+</main>
 
 
 <!-- =========================================
@@ -899,11 +1010,13 @@ MODAL
 
     <div class="modal-box">
 
+
         <div class="modal-header">
 
             <h2 id="modal-title">
                 NUEVO INTEGRANTE
             </h2>
+
 
             <button
                 id="close-modal"
@@ -920,6 +1033,7 @@ MODAL
             id="member-form"
             class="member-form"
         >
+
 
             <div class="form-grid">
 
@@ -1040,17 +1154,37 @@ MODAL
                             SELECCIONAR
                         </option>
 
-                        <option value="O+">O+</option>
-                        <option value="O-">O-</option>
+                        <option value="O+">
+                            O+
+                        </option>
 
-                        <option value="A+">A+</option>
-                        <option value="A-">A-</option>
+                        <option value="O-">
+                            O-
+                        </option>
 
-                        <option value="B+">B+</option>
-                        <option value="B-">B-</option>
+                        <option value="A+">
+                            A+
+                        </option>
 
-                        <option value="AB+">AB+</option>
-                        <option value="AB-">AB-</option>
+                        <option value="A-">
+                            A-
+                        </option>
+
+                        <option value="B+">
+                            B+
+                        </option>
+
+                        <option value="B-">
+                            B-
+                        </option>
+
+                        <option value="AB+">
+                            AB+
+                        </option>
+
+                        <option value="AB-">
+                            AB-
+                        </option>
 
                     </select>
 
@@ -1081,6 +1215,7 @@ MODAL
                         ESPECIALIDADES
                     </label>
 
+
                     <div class="tag-input-row">
 
                         <input
@@ -1100,6 +1235,7 @@ MODAL
 
                     </div>
 
+
                     <div
                         id="specialty-tags"
                         class="tag-container"
@@ -1115,6 +1251,7 @@ MODAL
                     <label>
                         ALERGIAS
                     </label>
+
 
                     <div class="tag-input-row">
 
@@ -1135,6 +1272,7 @@ MODAL
 
                     </div>
 
+
                     <div
                         id="allergy-tags"
                         class="tag-container"
@@ -1150,6 +1288,7 @@ MODAL
                     <label>
                         AFILIACIONES / PERTENENCIAS
                     </label>
+
 
                     <div class="tag-input-row">
 
@@ -1170,6 +1309,7 @@ MODAL
 
                     </div>
 
+
                     <div
                         id="affiliation-tags"
                         class="tag-container"
@@ -1178,7 +1318,10 @@ MODAL
                 </div>
 
 
+                <!-- OPCIONES -->
+
                 <div class="form-group full">
+
 
                     <div class="checkboxes">
 
@@ -1219,6 +1362,7 @@ MODAL
 
                     </div>
 
+
                     <div class="privacy-note">
 
                         Los datos de alergias y condición de donante
@@ -1229,6 +1373,8 @@ MODAL
 
                 </div>
 
+
+                <!-- FOTO -->
 
                 <div class="form-group full">
 
@@ -1271,6 +1417,7 @@ MODAL
                     CANCELAR
                 </button>
 
+
                 <button
                     id="save-button"
                     class="primary"
@@ -1284,46 +1431,15 @@ MODAL
 
         </form>
 
+
     </div>
 
 </div>
 
 
-<script type="module">
-
-    import {
-        auth
-    } from "./firebase-config.js";
-
-
-    import {
-        signOut
-    } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-
-
-    document
-        .getElementById(
-            "logout-button"
-        )
-        .addEventListener(
-            "click",
-            async () => {
-
-                await signOut(auth);
-
-                window.location.replace(
-                    "./login.html"
-                );
-
-            }
-        );
-
-</script>
-
-
 <script
     type="module"
-    src="./admin.js?v=80"
+    src="./admin.js?v=91"
 ></script>
 
 
