@@ -22,7 +22,6 @@ const printArea =
     );
 
 
-
 async function comprobarComandante(
     usuario
 ) {
@@ -61,7 +60,6 @@ async function comprobarComandante(
 }
 
 
-
 onAuthStateChanged(
     auth,
     async usuario => {
@@ -87,7 +85,9 @@ onAuthStateChanged(
 
             if (!autorizado) {
 
-                await signOut(auth);
+                await signOut(
+                    auth
+                );
 
 
                 window.location.replace(
@@ -104,7 +104,9 @@ onAuthStateChanged(
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                error
+            );
 
 
             window.location.replace(
@@ -115,7 +117,6 @@ onAuthStateChanged(
 
     }
 );
-
 
 
 function cargarCredenciales() {
@@ -179,11 +180,6 @@ function cargarCredenciales() {
     }
 
 
-    /*
-     * 8 por A4:
-     * 2 columnas x 4 filas
-     */
-
     const porPagina =
         8;
 
@@ -233,18 +229,9 @@ function cargarCredenciales() {
 }
 
 
-
 function crearCredencial(
     persona
 ) {
-
-    const estado =
-        (
-            persona.estado
-            ||
-            "inactivo"
-        ).toLowerCase();
-
 
     const foto =
         persona.fotoUrl
@@ -333,20 +320,20 @@ function crearCredencial(
             </div>
 
 
-            <div class="credential-status ${estado}">
+            <div class="verification-text">
 
-                ${
-                    estado === "activo"
-                        ? "● ACTIVO"
-                        : "● INACTIVO"
-                }
+                <strong>
+                    VERIFICACIÓN DE ESTADO
+                </strong>
+
+                Para verificar el estado actual
+                del personal, escanee el código QR.
 
             </div>
 
 
             <div
                 class="qr-container"
-                data-qr="${persona.id}"
             ></div>
 
         </div>
@@ -370,21 +357,26 @@ function crearCredencial(
             }
 
 
-const url =
-    `https://sar-members.org/integrante.html?id=${encodeURIComponent(persona.id)}`;
+            const url =
+                `https://sar-members.org/integrante.html?id=${encodeURIComponent(persona.id)}`;
 
 
             new QRCode(
                 qr,
                 {
-                    text: url,
 
-                    width: 160,
+                    text:
+                        url,
 
-                    height: 160,
+                    width:
+                        160,
+
+                    height:
+                        160,
 
                     correctLevel:
                         QRCode.CorrectLevel.M
+
                 }
             );
 
