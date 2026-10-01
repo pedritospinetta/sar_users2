@@ -29,7 +29,7 @@ if (logoutButton) {
 
 
                 window.location.replace(
-                    "./login.html"
+                    "./"
                 );
 
 
