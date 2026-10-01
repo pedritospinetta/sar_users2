@@ -464,6 +464,47 @@
 
 
         /* =====================================
+        REENVÍO
+        ===================================== */
+
+        .resend-container {
+            margin-top: 10px;
+
+            text-align: center;
+        }
+
+        .resend-button {
+            padding:
+                8px
+                12px;
+
+            border: 0;
+
+            background: transparent;
+
+            color: #555;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+        }
+
+        .resend-button:hover:not(:disabled) {
+            color: #ff6500;
+
+            text-decoration: underline;
+        }
+
+        .resend-button:disabled {
+            color: #999;
+
+            cursor: default;
+        }
+
+
+        /* =====================================
         MENSAJES
         ===================================== */
 
@@ -788,6 +829,20 @@
                 ></div>
 
 
+                <div class="resend-container">
+
+                    <button
+                        id="resend-reset"
+                        class="resend-button"
+                        type="button"
+                        disabled
+                    >
+                        REENVIAR CORREO
+                    </button>
+
+                </div>
+
+
                 <button
                     id="back-to-login"
                     class="secondary-button"
@@ -835,7 +890,7 @@
 
 <script
     type="module"
-    src="./login.js?v=120"
+    src="./login.js?v=130"
 ></script>
 
 
