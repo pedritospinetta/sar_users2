@@ -6,6 +6,7 @@ import {
 
 import {
     signInWithEmailAndPassword,
+    sendPasswordResetEmail,
     signOut
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
@@ -21,31 +22,135 @@ import {
 } from "./sistema.js";
 
 
-/* =========================================
-ELEMENTOS
-========================================= */
+/* =========================================================
+ELEMENTOS LOGIN
+========================================================= */
 
-const form =
+const loginForm =
     document.getElementById(
         "login-form"
     );
 
 
-const message =
+const emailInput =
+    document.getElementById(
+        "email"
+    );
+
+
+const passwordInput =
+    document.getElementById(
+        "password"
+    );
+
+
+const loginButton =
+    document.getElementById(
+        "login-button"
+    );
+
+
+const loginMessage =
     document.getElementById(
         "login-message"
     );
 
 
-/* =========================================
+const loginPanel =
+    document.getElementById(
+        "login-panel"
+    );
+
+
+/* =========================================================
+ELEMENTOS RECUPERACIÓN
+========================================================= */
+
+const forgotPasswordButton =
+    document.getElementById(
+        "forgot-password"
+    );
+
+
+const resetPanel =
+    document.getElementById(
+        "reset-panel"
+    );
+
+
+const resetForm =
+    document.getElementById(
+        "reset-form"
+    );
+
+
+const resetEmailInput =
+    document.getElementById(
+        "reset-email"
+    );
+
+
+const resetButton =
+    document.getElementById(
+        "reset-button"
+    );
+
+
+const resetMessage =
+    document.getElementById(
+        "reset-message"
+    );
+
+
+const backToLoginButton =
+    document.getElementById(
+        "back-to-login"
+    );
+
+
+/* =========================================================
+UTILIDADES
+========================================================= */
+
+function limpiarMensaje(
+    elemento
+) {
+
+    elemento.textContent =
+        "";
+
+
+    elemento.className =
+        "message";
+
+}
+
+
+function mostrarMensaje(
+    elemento,
+    texto,
+    tipo = "info"
+) {
+
+    elemento.textContent =
+        texto;
+
+
+    elemento.className =
+        `message ${tipo}`;
+
+}
+
+
+/* =========================================================
 OBTENER USUARIO ADMINISTRATIVO
-========================================= */
+========================================================= */
 
 async function obtenerUsuarioAdministrativo(
     usuario
 ) {
 
-    const usuarioRef =
+    const referencia =
         doc(
             db,
             "usuarios",
@@ -53,41 +158,37 @@ async function obtenerUsuarioAdministrativo(
         );
 
 
-    const usuarioSnap =
+    const resultado =
         await getDoc(
-            usuarioRef
+            referencia
         );
 
 
     if (
-        !usuarioSnap.exists()
+        !resultado.exists()
     ) {
 
-        return null;
+        throw new Error(
+            "NO EXISTE EL REGISTRO ADMINISTRATIVO DE ESTE USUARIO."
+        );
 
     }
 
 
     const datos =
-        usuarioSnap.data();
+        resultado.data();
 
-
-    /* =====================================
-    CUENTA INACTIVA
-    ===================================== */
 
     if (
         datos.activo !== true
     ) {
 
-        return null;
+        throw new Error(
+            "LA CUENTA ADMINISTRATIVA ESTÁ INACTIVA."
+        );
 
     }
 
-
-    /* =====================================
-    SOLO COMANDANTE O DEVELOPER
-    ===================================== */
 
     if (
         datos.rol !== "comandante"
@@ -95,7 +196,9 @@ async function obtenerUsuarioAdministrativo(
         datos.rol !== "developer"
     ) {
 
-        return null;
+        throw new Error(
+            "ESTE USUARIO NO TIENE PERMISOS ADMINISTRATIVOS."
+        );
 
     }
 
@@ -106,7 +209,7 @@ async function obtenerUsuarioAdministrativo(
             usuario.uid,
 
         email:
-            usuario.email,
+            usuario.email || "",
 
         nombre:
             datos.nombre || "",
@@ -122,47 +225,123 @@ async function obtenerUsuarioAdministrativo(
 }
 
 
-/* =========================================
-LOGIN
-========================================= */
+/* =========================================================
+ERRORES LOGIN
+========================================================= */
 
-form.addEventListener(
+function obtenerMensajeLogin(
+    error
+) {
+
+    console.error(
+        "ERROR LOGIN:",
+        error
+    );
+
+
+    switch (
+        error.code
+    ) {
+
+        case "auth/invalid-email":
+
+            return "EL CORREO ELECTRÓNICO NO ES VÁLIDO.";
+
+
+        case "auth/invalid-credential":
+
+        case "auth/wrong-password":
+
+        case "auth/user-not-found":
+
+            return "CORREO O CONTRASEÑA INCORRECTOS.";
+
+
+        case "auth/user-disabled":
+
+            return "ESTA CUENTA FUE DESHABILITADA.";
+
+
+        case "auth/too-many-requests":
+
+            return "SE REALIZARON DEMASIADOS INTENTOS. ESPERÁ UN MOMENTO E INTENTÁ NUEVAMENTE.";
+
+
+        case "auth/network-request-failed":
+
+            return "NO SE PUDO CONECTAR CON FIREBASE. REVISÁ TU CONEXIÓN.";
+
+
+        default:
+
+            return error.message
+                ||
+                "NO SE PUDO INICIAR SESIÓN.";
+
+    }
+
+}
+
+
+/* =========================================================
+INICIAR SESIÓN
+========================================================= */
+
+loginForm.addEventListener(
     "submit",
-    async event => {
+    async evento => {
 
-        event.preventDefault();
-
-
-        message.textContent =
-            "VERIFICANDO ACCESO...";
+        evento.preventDefault();
 
 
-        message.className =
-            "login-message";
+        limpiarMensaje(
+            loginMessage
+        );
 
 
         const email =
-            document
-                .getElementById(
-                    "email"
-                )
+            emailInput
                 .value
-                .trim();
+                .trim()
+                .toLowerCase();
 
 
         const password =
-            document
-                .getElementById(
-                    "password"
-                )
+            passwordInput
                 .value;
+
+
+        if (
+            !email
+            ||
+            !password
+        ) {
+
+            mostrarMensaje(
+                loginMessage,
+                "INGRESÁ TU CORREO Y CONTRASEÑA.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        loginButton.disabled =
+            true;
+
+
+        loginButton.textContent =
+            "VERIFICANDO...";
 
 
         try {
 
-            /* =================================
-            INICIAR SESIÓN FIREBASE
-            ================================= */
+
+            /* =========================================
+            LOGIN FIREBASE
+            ========================================= */
 
             const credencial =
                 await signInWithEmailAndPassword(
@@ -172,66 +351,44 @@ form.addEventListener(
                 );
 
 
-            const usuarioFirebase =
+            const usuario =
                 credencial.user;
 
 
-            /* =================================
-            LEER ROL FIRESTORE
-            ================================= */
+            /* =========================================
+            VERIFICAR ROL
+            ========================================= */
 
-            const usuario =
+            const usuarioSistema =
                 await obtenerUsuarioAdministrativo(
-                    usuarioFirebase
-                );
-
-
-            if (
-                !usuario
-            ) {
-
-                await signOut(
-                    auth
-                );
-
-
-                message.textContent =
-                    "ESTA CUENTA NO TIENE PERMISOS ADMINISTRATIVOS.";
-
-
-                message.className =
-                    "login-message error";
-
-
-                return;
-
-            }
-
-
-            /* =================================
-            INTENTAR TOMAR CONTROL
-            ================================= */
-
-            message.textContent =
-                "COMPROBANDO ESTADO DEL SISTEMA...";
-
-
-            const control =
-                await tomarControlSistema(
                     usuario
                 );
 
 
-            /* =================================
-            COMANDANTE BLOQUEADO POR DEVELOPER
-            ================================= */
+            /* =========================================
+            TOMAR CONTROL DEL SISTEMA
+            ========================================= */
+
+            const control =
+                await tomarControlSistema(
+                    usuarioSistema
+                );
+
+
+            /*
+            SI ES COMANDANTE Y HAY UN
+            DEVELOPER TRABAJANDO, NO ENTRA.
+            */
 
             if (
-                usuario.rol === "comandante"
+                usuarioSistema.rol ===
+                    "comandante"
                 &&
-                control.permitido === false
+                control.permitido ===
+                    false
                 &&
-                control.modo === "developer"
+                control.modo ===
+                    "developer"
             ) {
 
                 await signOut(
@@ -249,154 +406,364 @@ form.addEventListener(
             }
 
 
-            /* =================================
-            DEVELOPER
-            ================================= */
+            /* =========================================
+            DATOS DE SESIÓN
+            ========================================= */
 
-            if (
-                usuario.rol === "developer"
-            ) {
-
-                message.textContent =
-                    "ACCESO DE DESARROLLADOR AUTORIZADO.";
-
-
-                message.className =
-                    "login-message success";
-
-
-                sessionStorage.setItem(
-                    "sarRol",
-                    "developer"
-                );
-
-
-                sessionStorage.setItem(
-                    "sarNombre",
-                    usuario.nombre
-                    ||
-                    "DEVELOPER"
-                );
-
-
-                setTimeout(
-                    () => {
-
-                        window.location.replace(
-                            "./admin.html"
-                        );
-
-                    },
-                    500
-                );
-
-
-                return;
-
-            }
-
-
-            /* =================================
-            COMANDANTE
-            ================================= */
-
-            if (
-                usuario.rol === "comandante"
-            ) {
-
-                message.textContent =
-                    "ACCESO ADMINISTRATIVO AUTORIZADO.";
-
-
-                message.className =
-                    "login-message success";
-
-
-                sessionStorage.setItem(
-                    "sarRol",
-                    "comandante"
-                );
-
-
-                sessionStorage.setItem(
-                    "sarNombre",
-                    usuario.nombre
-                    ||
-                    "COMANDANTE"
-                );
-
-
-                setTimeout(
-                    () => {
-
-                        window.location.replace(
-                            "./admin.html"
-                        );
-
-                    },
-                    500
-                );
-
-
-                return;
-
-            }
-
-
-            /* =================================
-            SEGURIDAD EXTRA
-            ================================= */
-
-            await signOut(
-                auth
+            sessionStorage.setItem(
+                "sar_admin_role",
+                usuarioSistema.rol
             );
 
 
-            message.textContent =
-                "NO SE PUDO AUTORIZAR EL ACCESO.";
+            sessionStorage.setItem(
+                "sar_admin_name",
+                usuarioSistema.nombre
+            );
 
 
-            message.className =
-                "login-message error";
+            /* =========================================
+            ENTRAR AL PANEL
+            ========================================= */
+
+            window.location.replace(
+                "./admin.html"
+            );
 
 
         } catch (error) {
 
-            console.error(
-                "ERROR DE INICIO DE SESIÓN:",
-                error
-            );
 
+            /*
+            SI ALCANZÓ A INICIAR SESIÓN
+            PERO FALLÓ LA AUTORIZACIÓN,
+            CERRAMOS LA SESIÓN.
+            */
 
-            try {
+            if (
+                auth.currentUser
+            ) {
 
-                if (
-                    auth.currentUser
-                ) {
+                try {
 
                     await signOut(
                         auth
                     );
 
-                }
+                } catch {}
 
-            } catch (
-                logoutError
+            }
+
+
+            mostrarMensaje(
+                loginMessage,
+                obtenerMensajeLogin(
+                    error
+                ),
+                "error"
+            );
+
+
+        } finally {
+
+
+            loginButton.disabled =
+                false;
+
+
+            loginButton.textContent =
+                "INICIAR SESIÓN";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+ABRIR RECUPERACIÓN
+========================================================= */
+
+forgotPasswordButton.addEventListener(
+    "click",
+    () => {
+
+
+        limpiarMensaje(
+            loginMessage
+        );
+
+
+        limpiarMensaje(
+            resetMessage
+        );
+
+
+        /*
+        SI YA ESCRIBIÓ UN CORREO EN LOGIN,
+        LO COPIAMOS AUTOMÁTICAMENTE.
+        */
+
+        const emailActual =
+            emailInput
+                .value
+                .trim()
+                .toLowerCase();
+
+
+        if (
+            emailActual
+        ) {
+
+            resetEmailInput.value =
+                emailActual;
+
+        }
+
+
+        loginPanel.classList.add(
+            "hidden"
+        );
+
+
+        resetPanel.classList.add(
+            "visible"
+        );
+
+
+        document.title =
+            "Recuperar contraseña | SAR Argentina";
+
+
+        setTimeout(
+            () => {
+
+                resetEmailInput.focus();
+
+            },
+            100
+        );
+
+    }
+);
+
+
+/* =========================================================
+VOLVER AL LOGIN
+========================================================= */
+
+backToLoginButton.addEventListener(
+    "click",
+    () => {
+
+
+        limpiarMensaje(
+            resetMessage
+        );
+
+
+        resetPanel.classList.remove(
+            "visible"
+        );
+
+
+        loginPanel.classList.remove(
+            "hidden"
+        );
+
+
+        document.title =
+            "Acceso Administrativo | SAR Argentina";
+
+
+        /*
+        SI ESCRIBIÓ EL EMAIL EN RECUPERACIÓN,
+        LO PASAMOS AL LOGIN.
+        */
+
+        const emailRecuperacion =
+            resetEmailInput
+                .value
+                .trim()
+                .toLowerCase();
+
+
+        if (
+            emailRecuperacion
+        ) {
+
+            emailInput.value =
+                emailRecuperacion;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+ENVIAR CORREO DE RECUPERACIÓN
+========================================================= */
+
+resetForm.addEventListener(
+    "submit",
+    async evento => {
+
+
+        evento.preventDefault();
+
+
+        limpiarMensaje(
+            resetMessage
+        );
+
+
+        const email =
+            resetEmailInput
+                .value
+                .trim()
+                .toLowerCase();
+
+
+        if (
+            !email
+        ) {
+
+            mostrarMensaje(
+                resetMessage,
+                "INGRESÁ TU CORREO ELECTRÓNICO.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        resetButton.disabled =
+            true;
+
+
+        resetButton.textContent =
+            "ENVIANDO...";
+
+
+        try {
+
+
+            /*
+            FIREBASE ENVÍA AUTOMÁTICAMENTE
+            EL EMAIL USANDO LA PLANTILLA
+            QUE CONFIGURASTE EN LA CONSOLA.
+            */
+
+            await sendPasswordResetEmail(
+                auth,
+                email
+            );
+
+
+            /*
+            POR SEGURIDAD NO CONFIRMAMOS
+            SI EL CORREO EXISTE O NO.
+            */
+
+            mostrarMensaje(
+                resetMessage,
+                "SI EL CORREO ESTÁ ASOCIADO A UNA CUENTA, RECIBIRÁS UN MENSAJE CON EL ENLACE PARA RESTABLECER TU CONTRASEÑA.",
+                "success"
+            );
+
+
+            resetButton.textContent =
+                "CORREO SOLICITADO";
+
+
+        } catch (error) {
+
+
+            console.error(
+                "ERROR RECUPERACIÓN:",
+                error
+            );
+
+
+            /*
+            EN MUCHOS CASOS CONVIENE MOSTRAR
+            EL MISMO MENSAJE PARA NO REVELAR
+            QUÉ CORREOS ESTÁN REGISTRADOS.
+            */
+
+            if (
+                error.code ===
+                "auth/invalid-email"
             ) {
 
-                console.error(
-                    logoutError
+                mostrarMensaje(
+                    resetMessage,
+                    "EL CORREO ELECTRÓNICO NO ES VÁLIDO.",
+                    "error"
+                );
+
+            }
+
+            else if (
+                error.code ===
+                "auth/too-many-requests"
+            ) {
+
+                mostrarMensaje(
+                    resetMessage,
+                    "SE REALIZARON DEMASIADAS SOLICITUDES. ESPERÁ UN MOMENTO E INTENTÁ NUEVAMENTE.",
+                    "error"
+                );
+
+            }
+
+            else if (
+                error.code ===
+                "auth/network-request-failed"
+            ) {
+
+                mostrarMensaje(
+                    resetMessage,
+                    "NO SE PUDO CONECTAR CON FIREBASE. REVISÁ TU CONEXIÓN.",
+                    "error"
+                );
+
+            }
+
+            else {
+
+                /*
+                NO REVELAMOS SI EL EMAIL EXISTE.
+                */
+
+                mostrarMensaje(
+                    resetMessage,
+                    "SI EL CORREO ESTÁ ASOCIADO A UNA CUENTA, RECIBIRÁS UN MENSAJE CON EL ENLACE PARA RESTABLECER TU CONTRASEÑA.",
+                    "success"
                 );
 
             }
 
 
-            message.textContent =
-                "CORREO ELECTRÓNICO O CONTRASEÑA INCORRECTOS.";
+        } finally {
 
 
-            message.className =
-                "login-message error";
+            resetButton.disabled =
+                false;
+
+
+            if (
+                resetButton.textContent !==
+                "CORREO SOLICITADO"
+            ) {
+
+                resetButton.textContent =
+                    "ENVIAR CORREO DE RECUPERACIÓN";
+
+            }
 
         }
 
