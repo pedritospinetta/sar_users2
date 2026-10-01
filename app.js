@@ -9,11 +9,27 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 
+import {
+    obtenerEstadoSistema,
+    escucharSistema
+} from "./sistema.js";
+
+
+/* =========================================
+CONFIGURACIÓN DEL SISTEMA
+========================================= */
+
+const TIEMPO_VENCIMIENTO =
+    5 * 60 * 1000;
+
+
 /* =========================================
 VARIABLES
 ========================================= */
 
 let integrantes = [];
+
+let redireccionando = false;
 
 
 /* =========================================
@@ -95,20 +111,216 @@ function escapar(valor) {
 
 
 /* =========================================
+COMPROBAR SI EL BLOQUEO SIGUE VIGENTE
+========================================= */
+
+function bloqueoVigente(datos) {
+
+    if (!datos) {
+
+        return false;
+
+    }
+
+
+    if (
+        datos.modo === "online"
+    ) {
+
+        return false;
+
+    }
+
+
+    const ultimaActividad =
+        datos.ultimaActividad
+            ?.toMillis?.();
+
+
+    if (!ultimaActividad) {
+
+        return false;
+
+    }
+
+
+    return (
+        Date.now() - ultimaActividad
+        <=
+        TIEMPO_VENCIMIENTO
+    );
+
+}
+
+
+/* =========================================
+REDIRECCIÓN SEGÚN MODO
+========================================= */
+
+function aplicarEstadoSistema(datos) {
+
+    if (redireccionando) {
+
+        return false;
+
+    }
+
+
+    if (
+        !bloqueoVigente(datos)
+    ) {
+
+        return true;
+
+    }
+
+
+    /* =====================================
+    DEVELOPER
+    ===================================== */
+
+    if (
+        datos.modo === "developer"
+    ) {
+
+        redireccionando =
+            true;
+
+
+        window.location.replace(
+            "./mantenimiento.html"
+        );
+
+
+        return false;
+
+    }
+
+
+    /* =====================================
+    COMANDANTE
+    ===================================== */
+
+    if (
+        datos.modo === "comandante"
+    ) {
+
+        redireccionando =
+            true;
+
+
+        window.location.replace(
+            "./actualizacion.html"
+        );
+
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+/* =========================================
+COMPROBAR ESTADO INICIAL
+========================================= */
+
+async function verificarSistema() {
+
+    try {
+
+        const estado =
+            await obtenerEstadoSistema();
+
+
+        return aplicarEstadoSistema(
+            estado
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "ERROR CONSULTANDO ESTADO DEL SISTEMA:",
+            error
+        );
+
+
+        /*
+        SI FIREBASE NO PUEDE CONSULTAR
+        EL ESTADO, NO MOSTRAMOS DATOS
+        HASTA SABER QUÉ PASA.
+        */
+
+        if (lista) {
+
+            lista.innerHTML = `
+
+                <div class="no-results">
+
+                    NO SE PUDO VERIFICAR
+                    EL ESTADO DEL SISTEMA.
+
+                    <br><br>
+
+                    INTENTÁ NUEVAMENTE
+                    EN UNOS INSTANTES.
+
+                </div>
+
+            `;
+
+        }
+
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================
+ESCUCHAR CAMBIOS EN TIEMPO REAL
+========================================= */
+
+function vigilarSistema() {
+
+    escucharSistema(
+        datos => {
+
+            aplicarEstadoSistema(
+                datos
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
 CARGAR INTEGRANTES
 ========================================= */
 
 async function cargarIntegrantes() {
 
     if (!lista) {
+
         return;
+
     }
 
 
     lista.innerHTML = `
 
         <div class="no-results">
+
             CARGANDO INTEGRANTES...
+
         </div>
 
     `;
@@ -183,7 +395,8 @@ async function cargarIntegrantes() {
                         undefined,
 
                         {
-                            numeric: true
+                            numeric:
+                                true
                         }
 
                     )
@@ -208,7 +421,7 @@ async function cargarIntegrantes() {
     } catch (error) {
 
         console.error(
-            "Error cargando integrantes:",
+            "ERROR CARGANDO INTEGRANTES:",
             error
         );
 
@@ -256,7 +469,9 @@ MOSTRAR INTEGRANTES
 function mostrarIntegrantes(datos) {
 
     if (!lista) {
+
         return;
+
     }
 
 
@@ -294,6 +509,7 @@ function mostrarIntegrantes(datos) {
             </div>
 
         `;
+
 
         return;
 
@@ -384,7 +600,9 @@ function mostrarIntegrantes(datos) {
                         class="view-button"
                         href="./integrante.html?id=${encodeURIComponent(persona.id)}"
                     >
+
                         VER FICHA
+
                     </a>
 
 
@@ -408,7 +626,8 @@ function mostrarIntegrantes(datos) {
 
                 },
                 {
-                    once: true
+                    once:
+                        true
                 }
             );
 
@@ -497,4 +716,42 @@ if (
 INICIAR
 ========================================= */
 
-cargarIntegrantes();
+async function iniciar() {
+
+    /*
+    PRIMERO COMPROBAMOS SI
+    LA PÁGINA PÚBLICA ESTÁ HABILITADA
+    */
+
+    const permitido =
+        await verificarSistema();
+
+
+    if (!permitido) {
+
+        return;
+
+    }
+
+
+    /*
+    ESCUCHAMOS CAMBIOS.
+    SI EL COMANDANTE O DEVELOPER
+    ENTRAN MIENTRAS ALGUIEN TIENE
+    ABIERTA LA WEB, TAMBIÉN SE REDIRIGE.
+    */
+
+    vigilarSistema();
+
+
+    /*
+    RECIÉN AHORA CARGAMOS
+    LOS INTEGRANTES
+    */
+
+    await cargarIntegrantes();
+
+}
+
+
+iniciar();
