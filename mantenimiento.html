@@ -50,6 +50,7 @@
         }
 
         body {
+
             min-height: 100vh;
 
             display: flex;
@@ -63,13 +64,11 @@
             color: white;
 
             background:
-
                 radial-gradient(
                     circle at 50% 25%,
                     rgba(255, 101, 0, .10),
                     transparent 35%
                 ),
-
                 linear-gradient(
                     180deg,
                     #191919 0%,
@@ -78,18 +77,17 @@
         }
 
 
-        /* =====================================
-        HEADER
-        ===================================== */
-
         .header {
+
             background: #111;
 
             border-bottom:
                 4px solid #ff6500;
         }
 
+
         .header-inner {
+
             width: 100%;
             max-width: 1100px;
 
@@ -109,7 +107,9 @@
             gap: 20px;
         }
 
+
         .brand {
+
             display: flex;
 
             align-items: center;
@@ -117,7 +117,9 @@
             gap: 12px;
         }
 
+
         .brand img {
+
             width: 58px;
             height: 58px;
 
@@ -128,7 +130,9 @@
             border-radius: 8px;
         }
 
+
         .brand h1 {
+
             margin: 0;
 
             font-family:
@@ -140,7 +144,9 @@
             letter-spacing: 1px;
         }
 
+
         .brand p {
+
             margin:
                 2px
                 0
@@ -159,7 +165,9 @@
             letter-spacing: .7px;
         }
 
+
         .system-state {
+
             display: flex;
 
             align-items: center;
@@ -173,7 +181,9 @@
             font-weight: 800;
         }
 
+
         .state-dot {
+
             width: 9px;
             height: 9px;
 
@@ -187,11 +197,8 @@
         }
 
 
-        /* =====================================
-        MAIN
-        ===================================== */
-
         main {
+
             flex: 1;
 
             width: 100%;
@@ -207,7 +214,9 @@
                 20px;
         }
 
+
         .card {
+
             position: relative;
 
             overflow: hidden;
@@ -235,7 +244,9 @@
                 rgba(0,0,0,.4);
         }
 
+
         .card::before {
+
             content: "";
 
             position: absolute;
@@ -249,7 +260,9 @@
             background: #ff6500;
         }
 
+
         .watermark {
+
             position: absolute;
 
             left: 50%;
@@ -269,13 +282,17 @@
             pointer-events: none;
         }
 
+
         .content {
+
             position: relative;
 
             z-index: 2;
         }
 
+
         .icon {
+
             width: 86px;
             height: 86px;
 
@@ -303,7 +320,9 @@
             font-size: 40px;
         }
 
+
         .label {
+
             margin-bottom: 10px;
 
             color: #ff6500;
@@ -319,7 +338,9 @@
             letter-spacing: 2px;
         }
 
+
         h2 {
+
             max-width: 650px;
 
             margin:
@@ -342,7 +363,9 @@
             font-weight: 700;
         }
 
+
         .description {
+
             max-width: 610px;
 
             margin:
@@ -357,7 +380,9 @@
             line-height: 1.75;
         }
 
+
         .apology {
+
             display: inline-block;
 
             margin-top: 12px;
@@ -367,7 +392,9 @@
             font-weight: 800;
         }
 
+
         .separator {
+
             width: 85px;
             height: 3px;
 
@@ -380,7 +407,9 @@
             border-radius: 5px;
         }
 
+
         .notice {
+
             max-width: 540px;
 
             margin: auto;
@@ -399,7 +428,9 @@
             border-radius: 10px;
         }
 
+
         .notice strong {
+
             display: block;
 
             margin-bottom: 5px;
@@ -413,7 +444,9 @@
             letter-spacing: .5px;
         }
 
+
         .notice span {
+
             color: #999;
 
             font-size: 12px;
@@ -422,11 +455,8 @@
         }
 
 
-        /* =====================================
-        FOOTER
-        ===================================== */
-
         footer {
+
             padding:
                 18px
                 20px;
@@ -442,7 +472,9 @@
             font-size: 11px;
         }
 
+
         footer strong {
+
             color: #aaa;
         }
 
@@ -454,21 +486,25 @@
             }
 
             .brand img {
+
                 width: 48px;
                 height: 48px;
             }
 
             .brand h1 {
+
                 font-size: 20px;
             }
 
             .card {
+
                 padding:
                     38px
                     20px;
             }
 
             .icon {
+
                 width: 72px;
                 height: 72px;
 
@@ -476,6 +512,7 @@
             }
 
             .description {
+
                 font-size: 14px;
             }
 
@@ -557,10 +594,7 @@
 
 
             <h2>
-
-                SISTEMA TEMPORALMENTE
-                EN MANTENIMIENTO
-
+                SISTEMA TEMPORALMENTE EN MANTENIMIENTO
             </h2>
 
 
@@ -580,9 +614,7 @@
                 <br>
 
                 <span class="apology">
-
                     Sepa disculpar las molestias.
-
                 </span>
 
             </div>
@@ -626,6 +658,89 @@
     · Cuerpo Argentino de Rescate
 
 </footer>
+
+
+<script type="module">
+
+    import {
+        obtenerEstadoSistema,
+        escucharSistema
+    } from "./sistema.js";
+
+
+    let redireccionando = false;
+
+
+    function revisarEstado(datos) {
+
+        if (redireccionando) {
+            return;
+        }
+
+
+        if (
+            datos.modo === "online"
+        ) {
+
+            redireccionando = true;
+
+            window.location.replace(
+                "./"
+            );
+
+            return;
+
+        }
+
+
+        if (
+            datos.modo === "comandante"
+        ) {
+
+            redireccionando = true;
+
+            window.location.replace(
+                "./actualizacion.html"
+            );
+
+        }
+
+    }
+
+
+    async function iniciar() {
+
+        try {
+
+            const estado =
+                await obtenerEstadoSistema();
+
+
+            revisarEstado(
+                estado
+            );
+
+
+            escucharSistema(
+                revisarEstado
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "ERROR CONSULTANDO ESTADO DEL SISTEMA:",
+                error
+            );
+
+        }
+
+    }
+
+
+    iniciar();
+
+</script>
 
 
 </body>
