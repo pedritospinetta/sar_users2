@@ -43,9 +43,13 @@
             box-sizing: border-box;
         }
 
+        html,
         body {
             margin: 0;
+            min-height: 100%;
+        }
 
+        body {
             font-family:
                 Arial,
                 Helvetica,
@@ -771,6 +775,7 @@
             margin-top: 20px;
         }
 
+
         footer {
             margin-top: 50px;
 
@@ -783,6 +788,232 @@
 
         footer a {
             color: #ff6500;
+        }
+
+
+        /* =====================================
+        ADVERTENCIA SESIÓN ADMINISTRATIVA
+        ===================================== */
+
+        .session-warning-overlay {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 999999;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            width: 100vw;
+            height: 100vh;
+
+            padding: 25px;
+
+            overflow-y: auto;
+
+            background: #ff0000;
+
+            color: #ffffff;
+
+            text-align: center;
+        }
+
+
+        .session-warning-overlay.visible {
+
+            display: flex;
+        }
+
+
+        .session-warning-box {
+
+            width: 100%;
+            max-width: 1100px;
+
+            margin: auto;
+        }
+
+
+        .session-warning-icon {
+
+            font-size:
+                clamp(
+                    90px,
+                    15vw,
+                    190px
+                );
+
+            line-height: .8;
+        }
+
+
+        .session-warning-title {
+
+            margin:
+                20px
+                0
+                5px;
+
+            font-family:
+                "Rajdhani",
+                sans-serif;
+
+            font-size:
+                clamp(
+                    55px,
+                    9vw,
+                    115px
+                );
+
+            font-weight: 700;
+
+            line-height: .85;
+
+            letter-spacing: -1px;
+
+            color: #ffffff;
+
+            text-transform: uppercase;
+        }
+
+
+        .session-warning-subtitle {
+
+            margin-top: 25px;
+
+            font-family:
+                "Rajdhani",
+                sans-serif;
+
+            font-size:
+                clamp(
+                    25px,
+                    3vw,
+                    42px
+                );
+
+            font-weight: 700;
+
+            color: #ffffff;
+
+            text-transform: uppercase;
+        }
+
+
+        .session-warning-text {
+
+            max-width: 900px;
+
+            margin:
+                28px
+                auto;
+
+            font-size:
+                clamp(
+                    18px,
+                    2vw,
+                    26px
+                );
+
+            line-height: 1.5;
+
+            color: #ffffff;
+
+            font-weight: 700;
+        }
+
+
+        .session-warning-highlight {
+
+            display: inline-block;
+
+            margin-top: 15px;
+
+            padding:
+                10px
+                18px;
+
+            border:
+                3px solid #ffffff;
+
+            background: rgba(0,0,0,.15);
+
+            font-size:
+                clamp(
+                    18px,
+                    2vw,
+                    27px
+                );
+
+            font-weight: 900;
+        }
+
+
+        .session-warning-actions {
+
+            display: flex;
+            flex-wrap: wrap;
+
+            justify-content: center;
+
+            gap: 18px;
+
+            margin-top: 35px;
+        }
+
+
+        .session-warning-actions button {
+
+            min-width: 270px;
+
+            padding:
+                18px
+                28px;
+
+            border:
+                4px solid #ffffff;
+
+            border-radius: 12px;
+
+            font-size: 19px;
+
+            font-weight: 900;
+
+            cursor: pointer;
+
+            text-transform: uppercase;
+        }
+
+
+        .session-warning-understood {
+
+            background: #ffffff;
+
+            color: #ff0000;
+        }
+
+
+        .session-warning-understood:hover {
+
+            background: #eeeeee;
+        }
+
+
+        .session-warning-logout {
+
+            background: #000000;
+
+            color: #ffffff;
+        }
+
+
+        .session-warning-logout:hover {
+
+            background: #181818;
         }
 
 
@@ -818,6 +1049,47 @@
                 grid-column: auto;
             }
 
+
+            .session-warning-overlay {
+
+                padding:
+                    20px
+                    15px;
+            }
+
+
+            .session-warning-title {
+
+                font-size:
+                    clamp(
+                        48px,
+                        14vw,
+                        80px
+                    );
+            }
+
+
+            .session-warning-text {
+
+                font-size: 17px;
+            }
+
+
+            .session-warning-actions {
+
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+
+            .session-warning-actions button {
+
+                width: 100%;
+
+                min-width: 0;
+            }
+
         }
 
     </style>
@@ -827,6 +1099,115 @@
 
 <body>
 
+
+<!-- =========================================
+ADVERTENCIA DE SESIÓN
+========================================= -->
+
+<div
+    id="session-warning"
+    class="session-warning-overlay"
+>
+
+    <div class="session-warning-box">
+
+
+        <div class="session-warning-icon">
+
+            ⚠
+
+        </div>
+
+
+        <div class="session-warning-title">
+
+            NO CIERRE
+            <br>
+            ESTA PESTAÑA
+
+        </div>
+
+
+        <div class="session-warning-subtitle">
+
+            SESIÓN ADMINISTRATIVA ACTIVA
+
+        </div>
+
+
+        <div class="session-warning-text">
+
+            Para finalizar correctamente la sesión
+            administrativa y restablecer el acceso
+            público al registro de integrantes,
+            utilice siempre el botón
+
+            <strong>
+                CERRAR SESIÓN
+            </strong>.
+
+            <br><br>
+
+            Si cierra esta pestaña,
+            cierra el navegador,
+            recarga la página
+            o abandona el panel sin finalizar
+            correctamente la sesión,
+            el sistema puede permanecer
+            temporalmente en modo mantenimiento
+            hasta que expire el bloqueo
+            de seguridad.
+
+
+            <br>
+
+
+            <div class="session-warning-highlight">
+
+                NO UTILICE LA X DEL NAVEGADOR
+                PARA FINALIZAR LA SESIÓN
+
+            </div>
+
+        </div>
+
+
+        <div class="session-warning-actions">
+
+
+            <button
+                id="warning-understood"
+                class="session-warning-understood"
+                type="button"
+            >
+
+                ENTENDIDO
+
+            </button>
+
+
+            <button
+                id="warning-logout"
+                class="session-warning-logout"
+                type="button"
+            >
+
+                CERRAR SESIÓN AHORA
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+HEADER
+========================================= -->
 
 <header class="topbar">
 
@@ -897,11 +1278,17 @@
 </header>
 
 
+<!-- =========================================
+CONTENIDO
+========================================= -->
+
 <main class="wrapper">
 
 
     <div id="loading">
+
         VERIFICANDO SESIÓN Y PERMISOS...
+
     </div>
 
 
@@ -909,6 +1296,7 @@
 
 
         <div class="page-header">
+
 
             <div>
 
@@ -931,10 +1319,12 @@
                 + NUEVO INTEGRANTE
             </button>
 
+
         </div>
 
 
         <div class="toolbar">
+
 
             <input
                 id="admin-search"
@@ -969,6 +1359,7 @@
                 IMPRIMIR SELECCIONADOS
             </button>
 
+
         </div>
 
 
@@ -1000,7 +1391,7 @@
 
 
 <!-- =========================================
-MODAL
+MODAL INTEGRANTE
 ========================================= -->
 
 <div
@@ -1013,8 +1404,11 @@ MODAL
 
         <div class="modal-header">
 
+
             <h2 id="modal-title">
+
                 NUEVO INTEGRANTE
+
             </h2>
 
 
@@ -1025,6 +1419,7 @@ MODAL
             >
                 ×
             </button>
+
 
         </div>
 
@@ -1038,10 +1433,14 @@ MODAL
             <div class="form-grid">
 
 
+                <!-- ID -->
+
                 <div class="form-group">
 
                     <label for="member-id">
+
                         IDENTIFICACIÓN SAR
+
                     </label>
 
                     <input
@@ -1055,10 +1454,14 @@ MODAL
                 </div>
 
 
+                <!-- ESTADO -->
+
                 <div class="form-group">
 
                     <label for="member-status">
+
                         ESTADO
+
                     </label>
 
                     <select
@@ -1079,10 +1482,14 @@ MODAL
                 </div>
 
 
+                <!-- NOMBRE -->
+
                 <div class="form-group full">
 
                     <label for="member-name">
+
                         NOMBRE Y APELLIDO
+
                     </label>
 
                     <input
@@ -1095,10 +1502,14 @@ MODAL
                 </div>
 
 
+                <!-- DNI -->
+
                 <div class="form-group">
 
                     <label for="member-dni">
+
                         DNI
+
                     </label>
 
                     <input
@@ -1110,10 +1521,14 @@ MODAL
                 </div>
 
 
+                <!-- CARGO -->
+
                 <div class="form-group">
 
                     <label for="member-role">
+
                         CARGO / FUNCIÓN
+
                     </label>
 
                     <input
@@ -1127,10 +1542,14 @@ MODAL
                 </div>
 
 
+                <!-- DELEGACIÓN -->
+
                 <div class="form-group">
 
                     <label for="member-delegation">
+
                         DELEGACIÓN
+
                     </label>
 
                     <input
@@ -1142,59 +1561,77 @@ MODAL
                 </div>
 
 
+                <!-- GRUPO SANGUÍNEO -->
+
                 <div class="form-group">
 
                     <label for="member-blood">
+
                         GRUPO SANGUÍNEO
+
                     </label>
 
                     <select id="member-blood">
+
 
                         <option value="">
                             SELECCIONAR
                         </option>
 
+
                         <option value="O+">
                             O+
                         </option>
+
 
                         <option value="O-">
                             O-
                         </option>
 
+
                         <option value="A+">
                             A+
                         </option>
+
 
                         <option value="A-">
                             A-
                         </option>
 
+
                         <option value="B+">
                             B+
                         </option>
+
 
                         <option value="B-">
                             B-
                         </option>
 
+
                         <option value="AB+">
                             AB+
                         </option>
 
+
                         <option value="AB-">
                             AB-
                         </option>
+
 
                     </select>
 
                 </div>
 
 
+                <!-- INGRESO -->
+
                 <div class="form-group">
 
                     <label for="member-entry">
+
                         INGRESO
+
                     </label>
 
                     <input
@@ -1207,16 +1644,21 @@ MODAL
                 </div>
 
 
-                <!-- ESPECIALIDADES -->
+                <!-- =====================================
+                ESPECIALIDADES
+                ===================================== -->
 
                 <div class="form-group full">
 
                     <label>
+
                         ESPECIALIDADES
+
                     </label>
 
 
                     <div class="tag-input-row">
+
 
                         <input
                             id="specialty-input"
@@ -1224,6 +1666,7 @@ MODAL
                             type="text"
                             placeholder="EJ: BREC"
                         >
+
 
                         <button
                             id="add-specialty"
@@ -1233,6 +1676,7 @@ MODAL
                             AGREGAR
                         </button>
 
+
                     </div>
 
 
@@ -1241,19 +1685,25 @@ MODAL
                         class="tag-container"
                     ></div>
 
+
                 </div>
 
 
-                <!-- ALERGIAS -->
+                <!-- =====================================
+                ALERGIAS
+                ===================================== -->
 
                 <div class="form-group full">
 
                     <label>
+
                         ALERGIAS
+
                     </label>
 
 
                     <div class="tag-input-row">
+
 
                         <input
                             id="allergy-input"
@@ -1261,6 +1711,7 @@ MODAL
                             type="text"
                             placeholder="EJ: LÁTEX"
                         >
+
 
                         <button
                             id="add-allergy"
@@ -1270,6 +1721,7 @@ MODAL
                             AGREGAR
                         </button>
 
+
                     </div>
 
 
@@ -1278,19 +1730,25 @@ MODAL
                         class="tag-container"
                     ></div>
 
+
                 </div>
 
 
-                <!-- AFILIACIONES -->
+                <!-- =====================================
+                AFILIACIONES
+                ===================================== -->
 
                 <div class="form-group full">
 
                     <label>
+
                         AFILIACIONES / PERTENENCIAS
+
                     </label>
 
 
                     <div class="tag-input-row">
+
 
                         <input
                             id="affiliation-input"
@@ -1298,6 +1756,7 @@ MODAL
                             type="text"
                             placeholder="EJ: SCOUT"
                         >
+
 
                         <button
                             id="add-affiliation"
@@ -1307,6 +1766,7 @@ MODAL
                             AGREGAR
                         </button>
 
+
                     </div>
 
 
@@ -1315,15 +1775,19 @@ MODAL
                         class="tag-container"
                     ></div>
 
+
                 </div>
 
 
-                <!-- OPCIONES -->
+                <!-- =====================================
+                OPCIONES
+                ===================================== -->
 
                 <div class="form-group full">
 
 
                     <div class="checkboxes">
+
 
                         <label>
 
@@ -1356,9 +1820,11 @@ MODAL
                                 type="checkbox"
                             >
 
-                            MOSTRAR DATOS DE EMERGENCIA EN LA FICHA PÚBLICA
+                            MOSTRAR DATOS DE EMERGENCIA
+                            EN LA FICHA PÚBLICA
 
                         </label>
+
 
                     </div>
 
@@ -1371,16 +1837,22 @@ MODAL
 
                     </div>
 
+
                 </div>
 
 
-                <!-- FOTO -->
+                <!-- =====================================
+                FOTO
+                ===================================== -->
 
                 <div class="form-group full">
 
                     <label for="member-photo">
+
                         FOTO
+
                     </label>
+
 
                     <input
                         id="member-photo"
@@ -1388,12 +1860,14 @@ MODAL
                         accept="image/jpeg,image/png,image/webp"
                     >
 
+
                     <img
                         id="photo-preview"
                         class="photo-preview"
                         src="./img/logo.jpg"
                         alt=""
                     >
+
 
                 </div>
 
@@ -1408,6 +1882,7 @@ MODAL
 
 
             <div class="form-footer">
+
 
                 <button
                     id="cancel-button"
@@ -1426,6 +1901,7 @@ MODAL
                     GUARDAR
                 </button>
 
+
             </div>
 
 
@@ -1436,6 +1912,10 @@ MODAL
 
 </div>
 
+
+<!-- =========================================
+ADMIN JS
+========================================= -->
 
 <script
     type="module"
