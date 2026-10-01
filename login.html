@@ -19,7 +19,6 @@
         Acceso Administrativo | SAR Argentina
     </title>
 
-
     <link
         rel="preconnect"
         href="https://fonts.googleapis.com"
@@ -35,7 +34,6 @@
         href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap"
         rel="stylesheet"
     >
-
 
     <style>
 
@@ -63,7 +61,7 @@
             background:
                 radial-gradient(
                     circle at top,
-                    rgba(255, 101, 0, .12),
+                    rgba(255,101,0,.12),
                     transparent 35%
                 ),
                 #101010;
@@ -214,7 +212,7 @@
 
 
         /* =====================================
-        CABECERA TARJETA
+        CABECERA
         ===================================== */
 
         .login-card-header {
@@ -254,8 +252,6 @@
                 sans-serif;
 
             font-size: 30px;
-
-            letter-spacing: .5px;
         }
 
         .login-card-header p {
@@ -273,7 +269,7 @@
 
 
         /* =====================================
-        BODY TARJETA
+        FORMULARIOS
         ===================================== */
 
         .login-card-body {
@@ -349,20 +345,24 @@
             cursor: pointer;
         }
 
-        .primary-button:hover {
+        .primary-button:hover:not(:disabled) {
             background: #dd5700;
         }
 
         .primary-button:disabled {
-            opacity: .6;
+            background: #b8b8b8;
 
-            cursor: wait;
+            color: #ffffff;
+
+            cursor: not-allowed;
+
+            opacity: 1;
         }
 
         .secondary-button {
             width: 100%;
 
-            margin-top: 10px;
+            margin-top: 18px;
 
             padding: 12px;
 
@@ -460,47 +460,6 @@
             font-size: 13px;
 
             line-height: 1.55;
-        }
-
-
-        /* =====================================
-        REENVÍO
-        ===================================== */
-
-        .resend-container {
-            margin-top: 10px;
-
-            text-align: center;
-        }
-
-        .resend-button {
-            padding:
-                8px
-                12px;
-
-            border: 0;
-
-            background: transparent;
-
-            color: #555;
-
-            font-size: 12px;
-
-            font-weight: 800;
-
-            cursor: pointer;
-        }
-
-        .resend-button:hover:not(:disabled) {
-            color: #ff6500;
-
-            text-decoration: underline;
-        }
-
-        .resend-button:disabled {
-            color: #999;
-
-            cursor: default;
         }
 
 
@@ -624,7 +583,6 @@
 
     <div class="topbar-inner">
 
-
         <div class="brand">
 
             <img
@@ -653,7 +611,6 @@
         >
             VOLVER AL REGISTRO
         </a>
-
 
     </div>
 
@@ -687,9 +644,7 @@
         <div class="login-card-body">
 
 
-            <!-- =====================================
-            LOGIN
-            ===================================== -->
+            <!-- LOGIN -->
 
             <div id="login-panel">
 
@@ -765,9 +720,7 @@
             </div>
 
 
-            <!-- =====================================
-            RECUPERAR CONTRASEÑA
-            ===================================== -->
+            <!-- RECUPERAR CONTRASEÑA -->
 
             <div id="reset-panel">
 
@@ -829,20 +782,6 @@
                 ></div>
 
 
-                <div class="resend-container">
-
-                    <button
-                        id="resend-reset"
-                        class="resend-button"
-                        type="button"
-                        disabled
-                    >
-                        REENVIAR CORREO
-                    </button>
-
-                </div>
-
-
                 <button
                     id="back-to-login"
                     class="secondary-button"
@@ -890,7 +829,7 @@
 
 <script
     type="module"
-    src="./login.js?v=130"
+    src="./login.js?v=140"
 ></script>
 
 
