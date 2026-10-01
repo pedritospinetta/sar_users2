@@ -9,6 +9,24 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 
+import {
+    obtenerEstadoSistema,
+    escucharSistema
+} from "./sistema.js";
+
+
+/* =========================================
+CONFIGURACIÓN
+========================================= */
+
+const TIEMPO_VENCIMIENTO =
+    5 * 60 * 1000;
+
+
+/* =========================================
+ELEMENTOS
+========================================= */
+
 const loading =
     document.getElementById(
         "loading"
@@ -33,6 +51,10 @@ const notFound =
     );
 
 
+/* =========================================
+ID DESDE URL
+========================================= */
+
 const parametros =
     new URLSearchParams(
         window.location.search
@@ -49,7 +71,232 @@ const id =
         .toUpperCase();
 
 
+/* =========================================
+VARIABLES
+========================================= */
+
+let redireccionando =
+    false;
+
+
+/* =========================================
+SISTEMA
+========================================= */
+
+function bloqueoVigente(
+    datos
+) {
+
+    if (!datos) {
+
+        return false;
+
+    }
+
+
+    if (
+        datos.modo ===
+        "online"
+    ) {
+
+        return false;
+
+    }
+
+
+    const ultimaActividad =
+        datos.ultimaActividad
+            ?.toMillis?.();
+
+
+    if (!ultimaActividad) {
+
+        return false;
+
+    }
+
+
+    return (
+        Date.now() - ultimaActividad
+        <=
+        TIEMPO_VENCIMIENTO
+    );
+
+}
+
+
+/* =========================================
+APLICAR ESTADO DEL SISTEMA
+========================================= */
+
+function aplicarEstadoSistema(
+    datos
+) {
+
+    if (
+        redireccionando
+    ) {
+
+        return false;
+
+    }
+
+
+    if (
+        !bloqueoVigente(
+            datos
+        )
+    ) {
+
+        return true;
+
+    }
+
+
+    /* =====================================
+    DEVELOPER
+    ===================================== */
+
+    if (
+        datos.modo ===
+        "developer"
+    ) {
+
+        redireccionando =
+            true;
+
+
+        window.location.replace(
+            "./mantenimiento.html"
+        );
+
+
+        return false;
+
+    }
+
+
+    /* =====================================
+    COMANDANTE
+    ===================================== */
+
+    if (
+        datos.modo ===
+        "comandante"
+    ) {
+
+        redireccionando =
+            true;
+
+
+        window.location.replace(
+            "./actualizacion.html"
+        );
+
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+/* =========================================
+VERIFICAR SISTEMA
+========================================= */
+
+async function verificarSistema() {
+
+    try {
+
+        const estado =
+            await obtenerEstadoSistema();
+
+
+        return aplicarEstadoSistema(
+            estado
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "ERROR VERIFICANDO ESTADO DEL SISTEMA:",
+            error
+        );
+
+
+        ocultarTodo();
+
+
+        loading.style.display =
+            "block";
+
+
+        loading.textContent =
+            "NO SE PUDO VERIFICAR EL ESTADO DEL SISTEMA.";
+
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================
+ESCUCHAR CAMBIOS EN TIEMPO REAL
+========================================= */
+
+function vigilarSistema() {
+
+    escucharSistema(
+        datos => {
+
+            aplicarEstadoSistema(
+                datos
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+CARGAR INTEGRANTE
+========================================= */
+
 async function cargar() {
+
+    /*
+    PRIMERO SE VERIFICA EL SISTEMA
+    */
+
+    const permitido =
+        await verificarSistema();
+
+
+    if (!permitido) {
+
+        return;
+
+    }
+
+
+    /*
+    SE ESCUCHAN CAMBIOS EN TIEMPO REAL
+    */
+
+    vigilarSistema();
+
+
+    /*
+    RECIÉN DESPUÉS SE CONSULTA EL INTEGRANTE
+    */
 
     if (!id) {
 
@@ -102,7 +349,8 @@ async function cargar() {
 
 
         if (
-            estado !== "activo"
+            estado !==
+            "activo"
         ) {
 
             mostrarInactivo(
@@ -121,14 +369,40 @@ async function cargar() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "ERROR CONSULTANDO INTEGRANTE:",
+            error
+        );
 
-        mostrarNoRegistrado();
+
+        /*
+        IMPORTANTE:
+        NO MOSTRAMOS "NO REGISTRADO"
+        SI FIREBASE FALLÓ.
+        */
+
+        ocultarTodo();
+
+
+        loading.style.display =
+            "block";
+
+
+        loading.textContent =
+            "NO SE PUDO CONSULTAR EL REGISTRO. INTENTÁ NUEVAMENTE EN UNOS INSTANTES.";
+
+
+        document.title =
+            "Error de consulta | SAR Argentina";
 
     }
 
 }
 
+
+/* =========================================
+OCULTAR TODO
+========================================= */
 
 function ocultarTodo() {
 
@@ -146,6 +420,10 @@ function ocultarTodo() {
 
 }
 
+
+/* =========================================
+NO REGISTRADO
+========================================= */
 
 function mostrarNoRegistrado() {
 
@@ -169,6 +447,10 @@ function mostrarNoRegistrado() {
 
 }
 
+
+/* =========================================
+INACTIVO
+========================================= */
 
 function mostrarInactivo(
     persona
@@ -200,6 +482,10 @@ function mostrarInactivo(
 
 }
 
+
+/* =========================================
+ACTIVO
+========================================= */
 
 function mostrarActivo(
     persona
@@ -267,8 +553,14 @@ function mostrarActivo(
         cargo;
 
 
+    cargoElemento.classList.remove(
+        "commander-role"
+    );
+
+
     if (
-        cargo === "COMANDANTE"
+        cargo ===
+        "COMANDANTE"
     ) {
 
         cargoElemento.classList.add(
@@ -330,6 +622,10 @@ function mostrarActivo(
 
 }
 
+
+/* =========================================
+EMERGENCIA
+========================================= */
 
 function mostrarEmergencia(
     persona
@@ -400,6 +696,10 @@ function mostrarEmergencia(
 
 }
 
+
+/* =========================================
+TAGS
+========================================= */
 
 function mostrarTags(
     sectionId,
@@ -472,6 +772,10 @@ function mostrarTags(
 }
 
 
+/* =========================================
+CAMPO
+========================================= */
+
 function campo(
     cajaId,
     valorId,
@@ -514,6 +818,10 @@ function campo(
 }
 
 
+/* =========================================
+MAYÚSCULAS
+========================================= */
+
 function mayusculas(
     valor
 ) {
@@ -530,5 +838,9 @@ function mayusculas(
 
 }
 
+
+/* =========================================
+INICIAR
+========================================= */
 
 cargar();
