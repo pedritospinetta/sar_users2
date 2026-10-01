@@ -21,21 +21,26 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 
-/* =========================================
-CLOUDINARY
-========================================= */
-
-const CLOUD_NAME =
-    "hyvxppyb";
-
-
-const UPLOAD_PRESET =
-    "sar_integrantes";
+import {
+    tomarControlSistema,
+    iniciarHeartbeat,
+    detenerHeartbeat,
+    liberarSistema,
+    escucharSistema
+} from "./sistema.js";
 
 
-/* =========================================
-VARIABLES
-========================================= */
+/* =========================================================
+   CLOUDINARY
+========================================================= */
+
+const CLOUD_NAME = "hyvxppyb";
+const UPLOAD_PRESET = "sar_integrantes";
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
 
 let integrantes = [];
 
@@ -50,67 +55,50 @@ let alergiasActuales = [];
 let afiliacionesActuales = [];
 
 
-/* =========================================
-ELEMENTOS
-========================================= */
+/* SISTEMA */
+
+let usuarioSistemaActual = null;
+
+let dejarDeEscucharSistema = null;
+
+let redireccionandoPorBloqueo = false;
+
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
 
 const loading =
-    document.getElementById(
-        "loading"
-    );
-
+    document.getElementById("loading");
 
 const adminContent =
-    document.getElementById(
-        "admin-content"
-    );
-
+    document.getElementById("admin-content");
 
 const membersGrid =
-    document.getElementById(
-        "members-grid"
-    );
-
+    document.getElementById("members-grid");
 
 const modal =
-    document.getElementById(
-        "member-modal"
-    );
-
+    document.getElementById("member-modal");
 
 const form =
-    document.getElementById(
-        "member-form"
-    );
-
+    document.getElementById("member-form");
 
 const modalTitle =
-    document.getElementById(
-        "modal-title"
-    );
-
+    document.getElementById("modal-title");
 
 const formMessage =
-    document.getElementById(
-        "form-message"
-    );
-
+    document.getElementById("form-message");
 
 const photoPreview =
-    document.getElementById(
-        "photo-preview"
-    );
-
+    document.getElementById("photo-preview");
 
 const saveButton =
-    document.getElementById(
-        "save-button"
-    );
+    document.getElementById("save-button");
 
 
-/* =========================================
-VALIDAR ELEMENTOS
-========================================= */
+/* =========================================================
+   VALIDAR HTML
+========================================================= */
 
 const elementosObligatorios = [
 
@@ -165,18 +153,12 @@ const elementosObligatorios = [
     "form-message",
     "cancel-button",
     "save-button"
-
 ];
 
 
-for (
-    const id
-    of elementosObligatorios
-) {
+for (const id of elementosObligatorios) {
 
-    if (
-        !document.getElementById(id)
-    ) {
+    if (!document.getElementById(id)) {
 
         throw new Error(
             `FALTA EL ELEMENTO HTML #${id}`
@@ -187,95 +169,89 @@ for (
 }
 
 
-/* =========================================
-UTILIDADES
-========================================= */
+/* =========================================================
+   UTILIDADES
+========================================================= */
 
-function mayusculas(
-    valor
-) {
+function mayusculas(valor) {
 
     return String(
-        valor
-        ||
-        ""
+        valor ?? ""
     )
         .trim()
-        .toLocaleUpperCase(
-            "es-AR"
-        );
+        .toLocaleUpperCase("es-AR");
 
 }
 
 
-function escapar(
-    valor
-) {
+function escapar(valor) {
 
     return String(
-        valor
-        ??
-        ""
+        valor ?? ""
     )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 
 }
 
 
-/* =========================================
-MAYÚSCULAS AUTOMÁTICAS
-========================================= */
+function normalizarTags(valor) {
+
+    if (Array.isArray(valor)) {
+
+        return valor
+            .map(mayusculas)
+            .filter(Boolean);
+
+    }
+
+
+    if (typeof valor === "string") {
+
+        return valor
+            .split(",")
+            .map(mayusculas)
+            .filter(Boolean);
+
+    }
+
+
+    return [];
+
+}
+
+
+/* =========================================================
+   MAYÚSCULAS AUTOMÁTICAS
+========================================================= */
 
 document
-    .querySelectorAll(
-        ".uppercase-input"
-    )
-    .forEach(
-        input => {
+    .querySelectorAll(".uppercase-input")
+    .forEach(input => {
 
-            input.addEventListener(
-                "input",
-                () => {
+        input.addEventListener(
+            "input",
+            () => {
 
-                    input.value =
-                        input.value
-                            .toLocaleUpperCase(
-                                "es-AR"
-                            );
+                input.value =
+                    input.value.toLocaleUpperCase(
+                        "es-AR"
+                    );
 
-                }
-            );
+            }
+        );
 
-        }
-    );
+    });
 
 
-/* =========================================
-AUTENTICACIÓN
-========================================= */
+/* =========================================================
+   AUTENTICACIÓN
+========================================================= */
 
-async function comprobarComandante(
-    usuario
-) {
+async function comprobarAdministrador(usuario) {
 
     const referencia =
         doc(
@@ -286,14 +262,10 @@ async function comprobarComandante(
 
 
     const documento =
-        await getDoc(
-            referencia
-        );
+        await getDoc(referencia);
 
 
-    if (
-        !documento.exists()
-    ) {
+    if (!documento.exists()) {
 
         throw new Error(
             "NO EXISTE EL REGISTRO ADMINISTRATIVO DE ESTE USUARIO."
@@ -306,22 +278,7 @@ async function comprobarComandante(
         documento.data();
 
 
-    if (
-        datos.rol !==
-        "comandante"
-    ) {
-
-        throw new Error(
-            "ESTE USUARIO NO TIENE ROL DE COMANDANTE."
-        );
-
-    }
-
-
-    if (
-        datos.activo !==
-        true
-    ) {
+    if (datos.activo !== true) {
 
         throw new Error(
             "LA CUENTA ADMINISTRATIVA ESTÁ INACTIVA."
@@ -330,25 +287,152 @@ async function comprobarComandante(
     }
 
 
-    return datos;
+    if (
+        datos.rol !== "comandante"
+        &&
+        datos.rol !== "developer"
+    ) {
+
+        throw new Error(
+            "ESTE USUARIO NO TIENE PERMISOS ADMINISTRATIVOS."
+        );
+
+    }
+
+
+    return {
+
+        uid: usuario.uid,
+
+        email:
+            usuario.email || "",
+
+        nombre:
+            datos.nombre || "",
+
+        rol:
+            datos.rol,
+
+        activo:
+            datos.activo
+
+    };
 
 }
 
 
-let authRespondio =
-    false;
+/* =========================================================
+   BLOQUEO DEL COMANDANTE
+========================================================= */
+
+async function bloquearComandantePorDeveloper() {
+
+    if (redireccionandoPorBloqueo) {
+
+        return;
+
+    }
+
+
+    redireccionandoPorBloqueo = true;
+
+
+    detenerHeartbeat();
+
+
+    if (dejarDeEscucharSistema) {
+
+        dejarDeEscucharSistema();
+
+        dejarDeEscucharSistema = null;
+
+    }
+
+
+    try {
+
+        await signOut(auth);
+
+    } catch (error) {
+
+        console.error(
+            "ERROR CERRANDO SESIÓN:",
+            error
+        );
+
+    }
+
+
+    window.location.replace(
+        "./mantenimiento.html"
+    );
+
+}
+
+
+/* =========================================================
+   VIGILAR SI ENTRA DEVELOPER
+========================================================= */
+
+function vigilarPrioridadDeveloper() {
+
+    if (dejarDeEscucharSistema) {
+
+        dejarDeEscucharSistema();
+
+    }
+
+
+    dejarDeEscucharSistema =
+        escucharSistema(datos => {
+
+            if (!usuarioSistemaActual) {
+
+                return;
+
+            }
+
+
+            if (
+                usuarioSistemaActual.rol !==
+                "comandante"
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                datos.modo === "developer"
+                &&
+                datos.propietarioUid !==
+                usuarioSistemaActual.uid
+            ) {
+
+                bloquearComandantePorDeveloper();
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   INICIO DEL ADMIN
+========================================================= */
+
+let authRespondio = false;
 
 
 setTimeout(
     () => {
 
-        if (
-            !authRespondio
-        ) {
+        if (!authRespondio) {
 
             loading.textContent =
                 "FIREBASE ESTÁ TARDANDO EN VERIFICAR LA SESIÓN. RECARGÁ LA PÁGINA.";
-
 
             loading.className =
                 "error";
@@ -364,17 +448,18 @@ onAuthStateChanged(
     auth,
     async usuario => {
 
-        authRespondio =
-            true;
+        authRespondio = true;
 
 
-        if (
-            !usuario
-        ) {
+        if (!usuario) {
 
-            window.location.replace(
-                "./login.html"
-            );
+            if (!redireccionandoPorBloqueo) {
+
+                window.location.replace(
+                    "./login.html"
+                );
+
+            }
 
             return;
 
@@ -384,11 +469,79 @@ onAuthStateChanged(
         try {
 
             loading.textContent =
-                "VERIFICANDO PERMISOS DEL COMANDANTE...";
+                "VERIFICANDO PERMISOS ADMINISTRATIVOS...";
 
 
-            await comprobarComandante(
-                usuario
+            usuarioSistemaActual =
+                await comprobarAdministrador(
+                    usuario
+                );
+
+
+            loading.textContent =
+                "COMPROBANDO ESTADO DEL SISTEMA...";
+
+
+            const control =
+                await tomarControlSistema(
+                    usuarioSistemaActual
+                );
+
+
+            /*
+            SI ES COMANDANTE Y HAY
+            DEVELOPER ACTIVO, NO ENTRA
+            */
+
+            if (
+                usuarioSistemaActual.rol ===
+                "comandante"
+                &&
+                control.permitido === false
+                &&
+                control.modo === "developer"
+            ) {
+
+                await bloquearComandantePorDeveloper();
+
+                return;
+
+            }
+
+
+            /*
+            MANTIENE EL BLOQUEO ACTIVO
+            */
+
+            iniciarHeartbeat(
+                usuarioSistemaActual
+            );
+
+
+            /*
+            ESCUCHA SI EL DEVELOPER
+            TOMA EL CONTROL
+            */
+
+            vigilarPrioridadDeveloper();
+
+
+            sessionStorage.setItem(
+                "sarRol",
+                usuarioSistemaActual.rol
+            );
+
+
+            sessionStorage.setItem(
+                "sarNombre",
+                usuarioSistemaActual.nombre
+                ||
+                (
+                    usuarioSistemaActual.rol ===
+                    "developer"
+                        ? "DEVELOPER"
+                        : "COMANDANTE"
+                )
             );
 
 
@@ -405,9 +558,10 @@ onAuthStateChanged(
 
         } catch (error) {
 
-            console.error(
-                error
-            );
+            console.error(error);
+
+
+            detenerHeartbeat();
 
 
             loading.style.display =
@@ -427,23 +581,76 @@ onAuthStateChanged(
 );
 
 
-/* =========================================
-CERRAR SESIÓN
-========================================= */
+/* =========================================================
+   CERRAR SESIÓN
+========================================================= */
 
 document
-    .getElementById(
-        "logout-button"
-    )
+    .getElementById("logout-button")
     .addEventListener(
         "click",
         async () => {
 
+            const boton =
+                document.getElementById(
+                    "logout-button"
+                );
+
+
+            boton.disabled = true;
+
+            boton.textContent =
+                "CERRANDO...";
+
+
             try {
 
-                await signOut(
-                    auth
+                detenerHeartbeat();
+
+
+                if (dejarDeEscucharSistema) {
+
+                    dejarDeEscucharSistema();
+
+                    dejarDeEscucharSistema =
+                        null;
+
+                }
+
+
+                /*
+                SOLO LIBERA SI ESTE USUARIO
+                ES EL PROPIETARIO ACTUAL
+                */
+
+                if (usuarioSistemaActual) {
+
+                    await liberarSistema(
+                        usuarioSistemaActual
+                    );
+
+                }
+
+
+                sessionStorage.removeItem(
+                    "sarRol"
                 );
+
+                sessionStorage.removeItem(
+                    "sarNombre"
+                );
+
+
+                await signOut(auth);
+
+
+            } catch (error) {
+
+                console.error(
+                    "ERROR AL CERRAR SESIÓN:",
+                    error
+                );
+
 
             } finally {
 
@@ -457,18 +664,16 @@ document
     );
 
 
-/* =========================================
-CARGAR INTEGRANTES
-========================================= */
+/* =========================================================
+   CARGAR INTEGRANTES
+========================================================= */
 
 async function cargarIntegrantes() {
 
     membersGrid.innerHTML = `
 
         <div class="empty">
-
             CARGANDO INTEGRANTES...
-
         </div>
 
     `;
@@ -501,22 +706,13 @@ async function cargarIntegrantes() {
         integrantes.sort(
             (a, b) =>
 
-                String(
-                    a.id
-                )
+                String(a.id)
                     .localeCompare(
-
-                        String(
-                            b.id
-                        ),
-
+                        String(b.id),
                         undefined,
-
                         {
-                            numeric:
-                                true
+                            numeric: true
                         }
-
                     )
         );
 
@@ -529,7 +725,7 @@ async function cargarIntegrantes() {
     } catch (error) {
 
         console.error(
-            "Error cargando integrantes:",
+            "ERROR CARGANDO INTEGRANTES:",
             error
         );
 
@@ -542,9 +738,7 @@ async function cargarIntegrantes() {
 
                 <br><br>
 
-                ${escapar(
-                    error.message
-                )}
+                ${escapar(error.message)}
 
             </div>
 
@@ -555,28 +749,22 @@ async function cargarIntegrantes() {
 }
 
 
-/* =========================================
-RENDER DE INTEGRANTES
-========================================= */
+/* =========================================================
+   MOSTRAR INTEGRANTES
+========================================================= */
 
-function mostrarIntegrantes(
-    lista
-) {
+function mostrarIntegrantes(lista) {
 
     membersGrid.innerHTML =
         "";
 
 
-    if (
-        lista.length === 0
-    ) {
+    if (lista.length === 0) {
 
         membersGrid.innerHTML = `
 
             <div class="empty">
-
                 NO HAY INTEGRANTES REGISTRADOS.
-
             </div>
 
         `;
@@ -586,236 +774,211 @@ function mostrarIntegrantes(
     }
 
 
-    lista.forEach(
-        persona => {
+    lista.forEach(persona => {
 
-            const foto =
-                persona.fotoUrl
+        const foto =
+            persona.fotoUrl
+            ||
+            "./img/logo.jpg";
+
+
+        const estado =
+            String(
+                persona.estado
                 ||
-                "./img/logo.jpg";
+                "inactivo"
+            )
+                .toLowerCase()
+                .trim();
 
 
-            const estado =
-                String(
-                    persona.estado
-                    ||
-                    "inactivo"
-                )
-                    .toLowerCase()
-                    .trim();
+        const tarjeta =
+            document.createElement(
+                "article"
+            );
 
 
-            const tarjeta =
-                document.createElement(
-                    "article"
-                );
+        tarjeta.className =
+            "admin-card";
 
 
-            tarjeta.className =
-                "admin-card";
+        tarjeta.innerHTML = `
+
+            <img
+                src="${escapar(foto)}"
+                class="admin-photo"
+                alt=""
+            >
 
 
-            tarjeta.innerHTML = `
+            <div class="admin-card-body">
 
-                <img
-                    src="${foto}"
-                    class="admin-photo"
-                    alt=""
-                >
+                <div class="member-id">
+                    ${escapar(persona.id)}
+                </div>
 
 
-                <div class="admin-card-body">
-
-                    <div class="member-id">
-
-                        ${escapar(
-                            persona.id
-                        )}
-
-                    </div>
-
-
-                    <h3>
-
-                        ${escapar(
-                            mayusculas(
-                                persona.nombre
-                                ||
-                                "SIN NOMBRE"
-                            )
-                        )}
-
-                    </h3>
+                <h3>
+                    ${escapar(
+                        mayusculas(
+                            persona.nombre
+                            ||
+                            "SIN NOMBRE"
+                        )
+                    )}
+                </h3>
 
 
-                    <div class="member-role">
-
-                        ${escapar(
-                            mayusculas(
-                                persona.cargo
-                                ||
-                                "SIN CARGO"
-                            )
-                        )}
-
-                    </div>
+                <div class="member-role">
+                    ${escapar(
+                        mayusculas(
+                            persona.cargo
+                            ||
+                            "SIN CARGO"
+                        )
+                    )}
+                </div>
 
 
-                    <div
-                        class="status ${estado}"
+                <div class="status ${estado}">
+                    ${escapar(
+                        estado.toUpperCase()
+                    )}
+                </div>
+
+
+                <div class="card-actions">
+
+                    <button
+                        type="button"
+                        data-edit="${escapar(persona.id)}"
                     >
-
-                        ${estado.toUpperCase()}
-
-                    </div>
+                        EDITAR
+                    </button>
 
 
-                    <div class="card-actions">
+                    <a
+                        href="./integrante.html?id=${encodeURIComponent(persona.id)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        VER FICHA
+                    </a>
 
 
-                        <button
-                            type="button"
-                            data-edit="${persona.id}"
-                        >
-                            EDITAR
-                        </button>
+                    <button
+                        type="button"
+                        data-print="${escapar(persona.id)}"
+                    >
+                        IMPRIMIR
+                    </button>
 
 
-                        <a
-                            href="./integrante.html?id=${encodeURIComponent(persona.id)}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            VER FICHA
-                        </a>
-
-
-                        <button
-                            type="button"
-                            data-print="${persona.id}"
-                        >
-                            IMPRIMIR
-                        </button>
-
-
-                        <button
-                            type="button"
-                            class="delete-button"
-                            data-delete="${persona.id}"
-                        >
-                            ELIMINAR
-                        </button>
-
-
-                    </div>
-
-
-                    <label class="select-row">
-
-                        <input
-                            type="checkbox"
-                            class="print-check"
-                            value="${persona.id}"
-                        >
-
-                        SELECCIONAR PARA IMPRIMIR
-
-                    </label>
-
+                    <button
+                        type="button"
+                        class="delete-button"
+                        data-delete="${escapar(persona.id)}"
+                    >
+                        ELIMINAR
+                    </button>
 
                 </div>
 
-            `;
+
+                <label class="select-row">
+
+                    <input
+                        type="checkbox"
+                        class="print-check"
+                        value="${escapar(persona.id)}"
+                    >
+
+                    SELECCIONAR PARA IMPRIMIR
+
+                </label>
+
+            </div>
+
+        `;
 
 
-            const imagen =
-                tarjeta.querySelector(
-                    ".admin-photo"
-                );
+        const imagen =
+            tarjeta.querySelector(
+                ".admin-photo"
+            );
 
 
-            imagen.addEventListener(
-                "error",
+        imagen.addEventListener(
+            "error",
+            () => {
+
+                imagen.src =
+                    "./img/logo.jpg";
+
+            },
+            {
+                once: true
+            }
+        );
+
+
+        tarjeta
+            .querySelector("[data-edit]")
+            .addEventListener(
+                "click",
                 () => {
 
-                    imagen.src =
-                        "./img/logo.jpg";
+                    abrirEditar(
+                        persona
+                    );
 
-                },
-                {
-                    once: true
                 }
             );
 
 
-            tarjeta
-                .querySelector(
-                    "[data-edit]"
-                )
-                .addEventListener(
-                    "click",
-                    () => {
+        tarjeta
+            .querySelector("[data-delete]")
+            .addEventListener(
+                "click",
+                () => {
 
-                        abrirEditar(
-                            persona
-                        );
+                    eliminarIntegrante(
+                        persona
+                    );
 
-                    }
-                );
-
-
-            tarjeta
-                .querySelector(
-                    "[data-delete]"
-                )
-                .addEventListener(
-                    "click",
-                    () => {
-
-                        eliminarIntegrante(
-                            persona
-                        );
-
-                    }
-                );
-
-
-            tarjeta
-                .querySelector(
-                    "[data-print]"
-                )
-                .addEventListener(
-                    "click",
-                    () => {
-
-                        imprimirPersonas(
-                            [
-                                persona
-                            ]
-                        );
-
-                    }
-                );
-
-
-            membersGrid.appendChild(
-                tarjeta
+                }
             );
 
-        }
-    );
+
+        tarjeta
+            .querySelector("[data-print]")
+            .addEventListener(
+                "click",
+                () => {
+
+                    imprimirPersonas(
+                        [persona]
+                    );
+
+                }
+            );
+
+
+        membersGrid.appendChild(
+            tarjeta
+        );
+
+    });
 
 }
 
 
-/* =========================================
-BUSCAR
-========================================= */
+/* =========================================================
+   BUSCAR
+========================================================= */
 
 document
-    .getElementById(
-        "admin-search"
-    )
+    .getElementById("admin-search")
     .addEventListener(
         "input",
         evento => {
@@ -839,20 +1002,20 @@ document
                                 persona.dni,
                                 persona.delegacion,
 
-                                Array.isArray(
+                                ...normalizarTags(
                                     persona.especialidades
+                                ),
+
+                                ...normalizarTags(
+                                    persona.alergias
+                                ),
+
+                                ...normalizarTags(
+                                    persona.afiliaciones
                                 )
-                                    ?
-                                    persona.especialidades.join(
-                                        " "
-                                    )
-                                    :
-                                    ""
 
                             ]
-                                .join(
-                                    " "
-                                )
+                                .join(" ")
                                 .toLocaleUpperCase(
                                     "es-AR"
                                 );
@@ -874,9 +1037,9 @@ document
     );
 
 
-/* =========================================
-TAGS
-========================================= */
+/* =========================================================
+   TAGS
+========================================================= */
 
 function renderTags(
     contenedorId,
@@ -894,88 +1057,88 @@ function renderTags(
         "";
 
 
-    valores.forEach(
-        valor => {
+    valores.forEach(valor => {
 
-            const tag =
-                document.createElement(
-                    "span"
-                );
-
-
-            tag.className =
-                "tag-item";
+        const tag =
+            document.createElement(
+                "span"
+            );
 
 
-            const texto =
-                document.createElement(
-                    "span"
-                );
+        tag.className =
+            "tag-item";
 
 
-            texto.textContent =
-                valor;
+        const texto =
+            document.createElement(
+                "span"
+            );
 
 
-            const boton =
-                document.createElement(
-                    "button"
-                );
+        texto.textContent =
+            valor;
 
 
-            boton.type =
-                "button";
+        const boton =
+            document.createElement(
+                "button"
+            );
 
 
-            boton.textContent =
-                "×";
+        boton.type =
+            "button";
 
 
-            boton.addEventListener(
-                "click",
-                () => {
-
-                    const nuevo =
-                        valores.filter(
-                            item =>
-                                item !== valor
-                        );
+        boton.textContent =
+            "×";
 
 
-                    setter(
-                        nuevo
+        boton.addEventListener(
+            "click",
+            () => {
+
+                const nuevo =
+                    valores.filter(
+                        item =>
+                            item !== valor
                     );
 
 
-                    renderTags(
-                        contenedorId,
-                        nuevo,
-                        setter
-                    );
-
-                }
-            );
+                setter(nuevo);
 
 
-            tag.appendChild(
-                texto
-            );
+                renderTags(
+                    contenedorId,
+                    nuevo,
+                    setter
+                );
+
+            }
+        );
 
 
-            tag.appendChild(
-                boton
-            );
+        tag.appendChild(
+            texto
+        );
 
 
-            contenedor.appendChild(
-                tag
-            );
+        tag.appendChild(
+            boton
+        );
 
-        }
-    );
+
+        contenedor.appendChild(
+            tag
+        );
+
+    });
 
 }
 
+
+/* =========================================================
+   INPUT DE TAG
+========================================================= */
 
 function configurarTagInput(
     inputId,
@@ -1005,9 +1168,7 @@ function configurarTagInput(
             );
 
 
-        if (
-            !valor
-        ) {
+        if (!valor) {
 
             return;
 
@@ -1015,27 +1176,17 @@ function configurarTagInput(
 
 
         const actuales =
-            [
-                ...getter()
-            ];
+            [...getter()];
 
 
-        if (
-            !actuales.includes(
-                valor
-            )
-        ) {
+        if (!actuales.includes(valor)) {
 
-            actuales.push(
-                valor
-            );
+            actuales.push(valor);
 
         }
 
 
-        setter(
-            actuales
-        );
+        setter(actuales);
 
 
         input.value =
@@ -1064,10 +1215,7 @@ function configurarTagInput(
         "keydown",
         evento => {
 
-            if (
-                evento.key ===
-                "Enter"
-            ) {
+            if (evento.key === "Enter") {
 
                 evento.preventDefault();
 
@@ -1080,6 +1228,10 @@ function configurarTagInput(
 
 }
 
+
+/* =========================================================
+   CONFIGURAR TAGS
+========================================================= */
 
 configurarTagInput(
 
@@ -1135,9 +1287,9 @@ configurarTagInput(
 );
 
 
-/* =========================================
-RENDER TODOS LOS TAGS
-========================================= */
+/* =========================================================
+   RENDER TODOS LOS TAGS
+========================================================= */
 
 function renderTodoTags() {
 
@@ -1182,9 +1334,9 @@ function renderTodoTags() {
 }
 
 
-/* =========================================
-NUEVO INTEGRANTE
-========================================= */
+/* =========================================================
+   NUEVO INTEGRANTE
+========================================================= */
 
 function abrirNuevo() {
 
@@ -1211,9 +1363,11 @@ function abrirNuevo() {
     form.reset();
 
 
-    document.getElementById(
-        "member-id"
-    ).disabled =
+    document
+        .getElementById(
+            "member-id"
+        )
+        .disabled =
         false;
 
 
@@ -1253,13 +1407,11 @@ document
     );
 
 
-/* =========================================
-EDITAR
-========================================= */
+/* =========================================================
+   EDITAR INTEGRANTE
+========================================================= */
 
-function abrirEditar(
-    persona
-) {
+function abrirEditar(persona) {
 
     integranteEditando =
         persona.id;
@@ -1272,140 +1424,143 @@ function abrirEditar(
 
 
     especialidadesActuales =
-        Array.isArray(
+        normalizarTags(
             persona.especialidades
-        )
-            ?
-            persona.especialidades
-                .map(
-                    mayusculas
-                )
-            :
-            [];
+        );
 
 
     alergiasActuales =
-        Array.isArray(
+        normalizarTags(
             persona.alergias
-        )
-            ?
-            persona.alergias
-                .map(
-                    mayusculas
-                )
-            :
-            [];
+        );
 
 
     afiliacionesActuales =
-        Array.isArray(
+        normalizarTags(
             persona.afiliaciones
-        )
-            ?
-            persona.afiliaciones
-                .map(
-                    mayusculas
-                )
-            :
-            [];
+        );
 
 
     modalTitle.textContent =
         `EDITAR ${persona.id}`;
 
 
-    document.getElementById(
-        "member-id"
-    ).value =
+    const memberId =
+        document.getElementById(
+            "member-id"
+        );
+
+
+    memberId.value =
         persona.id;
 
 
-    document.getElementById(
-        "member-id"
-    ).disabled =
+    memberId.disabled =
         true;
 
 
-    document.getElementById(
-        "member-status"
-    ).value =
+    document
+        .getElementById(
+            "member-status"
+        )
+        .value =
         persona.estado
         ||
         "activo";
 
 
-    document.getElementById(
-        "member-name"
-    ).value =
+    document
+        .getElementById(
+            "member-name"
+        )
+        .value =
         mayusculas(
             persona.nombre
         );
 
 
-    document.getElementById(
-        "member-dni"
-    ).value =
+    document
+        .getElementById(
+            "member-dni"
+        )
+        .value =
         mayusculas(
             persona.dni
         );
 
 
-    document.getElementById(
-        "member-role"
-    ).value =
+    document
+        .getElementById(
+            "member-role"
+        )
+        .value =
         mayusculas(
             persona.cargo
         );
 
 
-    document.getElementById(
-        "member-delegation"
-    ).value =
+    document
+        .getElementById(
+            "member-delegation"
+        )
+        .value =
         mayusculas(
             persona.delegacion
         );
 
 
-    document.getElementById(
-        "member-blood"
-    ).value =
+    document
+        .getElementById(
+            "member-blood"
+        )
+        .value =
         persona.grupoSanguineo
         ||
         "";
 
 
-    document.getElementById(
-        "member-entry"
-    ).value =
+    document
+        .getElementById(
+            "member-entry"
+        )
+        .value =
         mayusculas(
             persona.ingreso
         );
 
 
-    document.getElementById(
-        "member-blood-donor"
-    ).checked =
+    document
+        .getElementById(
+            "member-blood-donor"
+        )
+        .checked =
         persona.donanteSangre ===
         true;
 
 
-    document.getElementById(
-        "member-organ-donor"
-    ).checked =
+    document
+        .getElementById(
+            "member-organ-donor"
+        )
+        .checked =
         persona.donanteOrganos ===
         true;
 
 
-    document.getElementById(
-        "member-public-emergency"
-    ).checked =
+    document
+        .getElementById(
+            "member-public-emergency"
+        )
+        .checked =
         persona.publicarEmergencia ===
         true;
 
 
-    document.getElementById(
-        "member-photo"
-    ).value =
+    document
+        .getElementById(
+            "member-photo"
+        )
+        .value =
         "";
 
 
@@ -1433,9 +1588,9 @@ function abrirEditar(
 }
 
 
-/* =========================================
-CERRAR MODAL
-========================================= */
+/* =========================================================
+   CERRAR MODAL
+========================================================= */
 
 function cerrarModal() {
 
@@ -1467,9 +1622,11 @@ function cerrarModal() {
         [];
 
 
-    document.getElementById(
-        "member-id"
-    ).disabled =
+    document
+        .getElementById(
+            "member-id"
+        )
+        .disabled =
         false;
 
 
@@ -1510,10 +1667,7 @@ modal.addEventListener(
     "click",
     evento => {
 
-        if (
-            evento.target ===
-            modal
-        ) {
+        if (evento.target === modal) {
 
             cerrarModal();
 
@@ -1523,9 +1677,9 @@ modal.addEventListener(
 );
 
 
-/* =========================================
-PREVIEW FOTO
-========================================= */
+/* =========================================================
+   PREVIEW FOTO
+========================================================= */
 
 document
     .getElementById(
@@ -1536,34 +1690,26 @@ document
         evento => {
 
             const archivo =
-                evento.target
-                    .files[0];
+                evento.target.files[0];
 
 
-            if (
-                !archivo
-            ) {
+            if (!archivo) {
 
                 return;
 
             }
 
 
-            const tipos =
-                [
+            const tipos = [
 
-                    "image/jpeg",
-                    "image/png",
-                    "image/webp"
+                "image/jpeg",
+                "image/png",
+                "image/webp"
 
-                ];
+            ];
 
 
-            if (
-                !tipos.includes(
-                    archivo.type
-                )
-            ) {
+            if (!tipos.includes(archivo.type)) {
 
                 alert(
                     "LA FOTO DEBE SER JPG, PNG O WEBP."
@@ -1572,6 +1718,7 @@ document
 
                 evento.target.value =
                     "";
+
 
                 return;
 
@@ -1591,6 +1738,7 @@ document
                 evento.target.value =
                     "";
 
+
                 return;
 
             }
@@ -1605,9 +1753,9 @@ document
     );
 
 
-/* =========================================
-CLOUDINARY
-========================================= */
+/* =========================================================
+   SUBIR FOTO CLOUDINARY
+========================================================= */
 
 async function subirFotoCloudinary(
     archivo
@@ -1651,9 +1799,7 @@ async function subirFotoCloudinary(
         await respuesta.json();
 
 
-    if (
-        !respuesta.ok
-    ) {
+    if (!respuesta.ok) {
 
         throw new Error(
 
@@ -1668,9 +1814,7 @@ async function subirFotoCloudinary(
     }
 
 
-    if (
-        !datos.secure_url
-    ) {
+    if (!datos.secure_url) {
 
         throw new Error(
             "CLOUDINARY NO DEVOLVIÓ LA URL DE LA FOTO."
@@ -1684,9 +1828,9 @@ async function subirFotoCloudinary(
 }
 
 
-/* =========================================
-GUARDAR
-========================================= */
+/* =========================================================
+   GUARDAR INTEGRANTE
+========================================================= */
 
 form.addEventListener(
     "submit",
@@ -1717,17 +1861,15 @@ form.addEventListener(
                 integranteEditando
                 ||
                 mayusculas(
-                    document.getElementById(
-                        "member-id"
-                    ).value
+                    document
+                        .getElementById(
+                            "member-id"
+                        )
+                        .value
                 );
 
 
-            if (
-                !/^SAR-\d+$/.test(
-                    id
-                )
-            ) {
+            if (!/^SAR-\d+$/.test(id)) {
 
                 throw new Error(
                     "EL ID DEBE TENER FORMATO SAR-001."
@@ -1736,9 +1878,11 @@ form.addEventListener(
             }
 
 
-            if (
-                !integranteEditando
-            ) {
+            /*
+            COMPROBAR DUPLICADO
+            */
+
+            if (!integranteEditando) {
 
                 const existente =
                     await getDoc(
@@ -1750,9 +1894,7 @@ form.addEventListener(
                     );
 
 
-                if (
-                    existente.exists()
-                ) {
+                if (existente.exists()) {
 
                     throw new Error(
                         `YA EXISTE EL INTEGRANTE ${id}.`
@@ -1763,20 +1905,23 @@ form.addEventListener(
             }
 
 
+            /*
+            FOTO
+            */
+
             let fotoUrl =
                 fotoActual;
 
 
             const archivo =
-                document.getElementById(
-                    "member-photo"
-                )
+                document
+                    .getElementById(
+                        "member-photo"
+                    )
                     .files[0];
 
 
-            if (
-                archivo
-            ) {
+            if (archivo) {
 
                 formMessage.textContent =
                     "SUBIENDO FOTO...";
@@ -1790,85 +1935,103 @@ form.addEventListener(
             }
 
 
+            /*
+            DATOS
+            */
+
             const datos = {
 
                 nombre:
                     mayusculas(
-                        document.getElementById(
-                            "member-name"
-                        ).value
+                        document
+                            .getElementById(
+                                "member-name"
+                            )
+                            .value
                     ),
 
                 dni:
                     mayusculas(
-                        document.getElementById(
-                            "member-dni"
-                        ).value
+                        document
+                            .getElementById(
+                                "member-dni"
+                            )
+                            .value
                     ),
 
                 cargo:
                     mayusculas(
-                        document.getElementById(
-                            "member-role"
-                        ).value
+                        document
+                            .getElementById(
+                                "member-role"
+                            )
+                            .value
                     ),
 
                 estado:
-                    document.getElementById(
-                        "member-status"
-                    ).value,
+                    document
+                        .getElementById(
+                            "member-status"
+                        )
+                        .value,
 
                 delegacion:
                     mayusculas(
-                        document.getElementById(
-                            "member-delegation"
-                        ).value
+                        document
+                            .getElementById(
+                                "member-delegation"
+                            )
+                            .value
                     ),
 
                 grupoSanguineo:
-                    document.getElementById(
-                        "member-blood"
-                    ).value,
+                    document
+                        .getElementById(
+                            "member-blood"
+                        )
+                        .value,
 
                 ingreso:
                     mayusculas(
-                        document.getElementById(
-                            "member-entry"
-                        ).value
+                        document
+                            .getElementById(
+                                "member-entry"
+                            )
+                            .value
                     ),
 
                 especialidades:
                     especialidadesActuales
-                        .map(
-                            mayusculas
-                        ),
+                        .map(mayusculas),
 
                 alergias:
                     alergiasActuales
-                        .map(
-                            mayusculas
-                        ),
+                        .map(mayusculas),
 
                 afiliaciones:
                     afiliacionesActuales
-                        .map(
-                            mayusculas
-                        ),
+                        .map(mayusculas),
 
                 donanteSangre:
-                    document.getElementById(
-                        "member-blood-donor"
-                    ).checked,
+                    document
+                        .getElementById(
+                            "member-blood-donor"
+                        )
+                        .checked,
 
                 donanteOrganos:
-                    document.getElementById(
-                        "member-organ-donor"
-                    ).checked,
+                    document
+                        .getElementById(
+                            "member-organ-donor"
+                        )
+                        .checked,
 
                 publicarEmergencia:
-                    document.getElementById(
-                        "member-public-emergency"
-                    ).checked,
+                    document
+                        .getElementById(
+                            "member-public-emergency"
+                        )
+                        .checked,
 
                 fotoUrl:
                     fotoUrl
@@ -1881,9 +2044,7 @@ form.addEventListener(
             };
 
 
-            if (
-                !integranteEditando
-            ) {
+            if (!integranteEditando) {
 
                 datos.creado =
                     serverTimestamp();
@@ -1928,9 +2089,7 @@ form.addEventListener(
 
         } catch (error) {
 
-            console.error(
-                error
-            );
+            console.error(error);
 
 
             formMessage.textContent =
@@ -1958,9 +2117,9 @@ form.addEventListener(
 );
 
 
-/* =========================================
-ELIMINAR
-========================================= */
+/* =========================================================
+   ELIMINAR
+========================================================= */
 
 async function eliminarIntegrante(
     persona
@@ -1969,18 +2128,20 @@ async function eliminarIntegrante(
     const confirmar =
         confirm(
 
-            `¿ELIMINAR DEFINITIVAMENTE A ${persona.nombre}?\n\n` +
+            `¿ELIMINAR DEFINITIVAMENTE A ${persona.nombre}?\n\n`
 
-            "SI SOLAMENTE DEJÓ DE PERTENECER AL SAR, " +
+            +
+
+            "SI SOLAMENTE DEJÓ DE PERTENECER AL SAR, "
+
+            +
 
             "ES MEJOR CAMBIAR SU ESTADO A INACTIVO."
 
         );
 
 
-    if (
-        !confirmar
-    ) {
+    if (!confirmar) {
 
         return;
 
@@ -1990,11 +2151,13 @@ async function eliminarIntegrante(
     try {
 
         await deleteDoc(
+
             doc(
                 db,
                 "integrantes",
                 persona.id
             )
+
         );
 
 
@@ -2003,9 +2166,7 @@ async function eliminarIntegrante(
 
     } catch (error) {
 
-        console.error(
-            error
-        );
+        console.error(error);
 
 
         alert(
@@ -2017,9 +2178,9 @@ async function eliminarIntegrante(
 }
 
 
-/* =========================================
-SELECCIONAR TODOS
-========================================= */
+/* =========================================================
+   SELECCIONAR TODOS
+========================================================= */
 
 document
     .getElementById(
@@ -2046,9 +2207,9 @@ document
     );
 
 
-/* =========================================
-LIMPIAR SELECCIÓN
-========================================= */
+/* =========================================================
+   LIMPIAR SELECCIÓN
+========================================================= */
 
 document
     .getElementById(
@@ -2075,9 +2236,9 @@ document
     );
 
 
-/* =========================================
-IMPRIMIR VARIOS
-========================================= */
+/* =========================================================
+   IMPRIMIR SELECCIONADOS
+========================================================= */
 
 document
     .getElementById(
@@ -2109,8 +2270,7 @@ document
 
 
             if (
-                seleccionados.length ===
-                0
+                seleccionados.length === 0
             ) {
 
                 alert(
@@ -2130,9 +2290,9 @@ document
     );
 
 
-/* =========================================
-IMPRIMIR
-========================================= */
+/* =========================================================
+   IMPRIMIR CREDENCIALES
+========================================================= */
 
 function imprimirPersonas(
     personas
@@ -2151,13 +2311,13 @@ function imprimirPersonas(
                     .trim()
 
                 ===
+
                 "activo"
         );
 
 
     if (
-        activas.length ===
-        0
+        activas.length === 0
     ) {
 
         alert(
@@ -2188,9 +2348,9 @@ function imprimirPersonas(
 }
 
 
-/* =========================================
-VER SITIO
-========================================= */
+/* =========================================================
+   VER SITIO
+========================================================= */
 
 document
     .getElementById(
