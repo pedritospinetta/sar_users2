@@ -670,7 +670,7 @@ resetForm.addEventListener(
 
             mostrarMensaje(
                 resetMessage,
-                "SI EL CORREO ESTÁ ASOCIADO A UNA CUENTA, RECIBIRÁS UN MENSAJE CON EL ENLACE PARA RESTABLECER TU CONTRASEÑA.",
+                "SI EL CORREO ESTÁ ASOCIADO A UNA CUENTA, RECIBIRÁS UN MENSAJE CON EL ENLACE PARA RESTABLECER TU CONTRASEÑA. SI NO LO ENCONTRÁS EN LA BANDEJA DE ENTRADA, REVISÁ SPAM O CORREO NO DESEADO.",
                 "success"
             );
 
