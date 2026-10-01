@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="robots"
+        content="noindex,nofollow"
+    >
+
+    <title>
+        Mi cuenta | SAR Argentina
+    </title>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #f1f2f4;
+
+            color: #181818;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+
+        /* =====================================
+        HEADER
+        ===================================== */
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 20px;
+
+            padding:
+                12px
+                22px;
+
+            background: #151515;
+
+            border-bottom:
+                4px solid #ff6500;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .brand img {
+            width: 55px;
+            height: 55px;
+
+            object-fit: contain;
+
+            background: white;
+
+            border-radius: 7px;
+        }
+
+        .brand h1 {
+            margin: 0;
+
+            color: white;
+
+            font-family:
+                "Rajdhani",
+                sans-serif;
+
+            font-size: 23px;
+        }
+
+        .brand p {
+            margin:
+                2px
+                0
+                0;
+
+            color: #ff7c29;
+
+            font-family:
+                "Rajdhani",
+                sans-serif;
+
+            font-size: 11px;
+
+            font-weight: 700;
+        }
+
+        .back {
+            padding:
+                10px
+                13px;
+
+            background: #292929;
+
+            color: white;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 12px;
+
+            font-weight: 800;
+        }
+
+
+        /* =====================================
+        CONTENIDO
+        ===================================== */
+
+        main {
+            width: 100%;
+            max-width: 900px;
+
+            margin: auto;
+
+            padding:
+                35px
+                20px
+                60px;
+        }
+
+        #loading {
+            padding: 20px;
+
+            background: white;
+
+            border:
+                1px solid #ddd;
+
+            border-radius: 12px;
+
+            text-align: center;
+        }
+
+        #account-content {
+            display: none;
+        }
+
+        .page-title {
+            margin-bottom: 25px;
+        }
+
+        .page-title h2 {
+            margin: 0;
+
+            font-family:
+                "Rajdhani",
+                sans-serif;
+
+            font-size: 38px;
+        }
+
+        .page-title p {
+            margin:
+                5px
+                0
+                0;
+
+            color: #777;
+        }
+
+
+        /* =====================================
+        DATOS ACTUALES
+        ===================================== */
+
+        .current-account {
+            margin-bottom: 20px;
+
+            padding: 20px;
+
+            background: #151515;
+
+            color: white;
+
+            border-radius: 13px;
+
+            border-left:
+                5px solid #ff6500;
+        }
+
+        .current-account small {
+            color: #aaa;
+        }
+
+        .current-account strong {
+            display: block;
+
+            margin-top: 5px;
+
+            font-size: 19px;
+        }
+
+        .role {
+            display: inline-block;
+
+            margin-top: 10px;
+
+            padding:
+                5px
+                9px;
+
+            background: #ff6500;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+
+            font-weight: 900;
+        }
+
+
+        /* =====================================
+        TARJETAS
+        ===================================== */
+
+        .account-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
+
+            gap: 20px;
+        }
+
+        .account-card {
+            padding: 23px;
+
+            background: white;
+
+            border:
+                1px solid #ddd;
+
+            border-radius: 13px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,.04);
+        }
+
+        .account-card h3 {
+            margin:
+                0
+                0
+                7px;
+
+            font-family:
+                "Rajdhani",
+                sans-serif;
+
+            font-size: 25px;
+        }
+
+        .account-card > p {
+            margin:
+                0
+                0
+                20px;
+
+            color: #777;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+        }
+
+
+        /* =====================================
+        FORMULARIOS
+        ===================================== */
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 6px;
+
+            font-size: 11px;
+
+            font-weight: 900;
+        }
+
+        .form-group input {
+            width: 100%;
+
+            padding: 12px;
+
+            border:
+                1px solid #ccd0d5;
+
+            border-radius: 8px;
+
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #ff6500;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(255,101,0,.10);
+        }
+
+        .action-button {
+            width: 100%;
+
+            padding: 13px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            background: #ff6500;
+
+            color: white;
+
+            font-weight: 900;
+
+            cursor: pointer;
+        }
+
+        .action-button:disabled {
+            opacity: .6;
+
+            cursor: wait;
+        }
+
+        .message {
+            min-height: 20px;
+
+            margin-top: 13px;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            line-height: 1.4;
+        }
+
+        .message.error {
+            color: #a5241f;
+        }
+
+        .message.success {
+            color: #14723e;
+        }
+
+        .warning {
+            margin-top: 25px;
+
+            padding: 15px;
+
+            background: #fff4dd;
+
+            border:
+                1px solid #f3cf91;
+
+            border-radius: 9px;
+
+            color: #704710;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+
+        @media(max-width:750px) {
+
+            .account-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .back {
+                font-size: 10px;
+            }
+
+            .brand h1 {
+                font-size: 19px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <img
+            src="./img/logo.jpg"
+            alt="SAR Argentina"
+        >
+
+        <div>
+
+            <h1>
+                SAR ARGENTINA
+            </h1>
+
+            <p>
+                CONFIGURACIÓN DE CUENTA
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <a
+        href="./admin.html"
+        class="back"
+    >
+        ← VOLVER AL PANEL
+    </a>
+
+</header>
+
+
+<main>
+
+
+    <div id="loading">
+        VERIFICANDO CUENTA...
+    </div>
+
+
+    <section id="account-content">
+
+
+        <div class="page-title">
+
+            <h2>
+                MI CUENTA
+            </h2>
+
+            <p>
+                Administrá las credenciales de acceso de tu cuenta.
+            </p>
+
+        </div>
+
+
+        <div class="current-account">
+
+            <small>
+                CUENTA ACTUAL
+            </small>
+
+            <strong id="current-email">
+                —
+            </strong>
+
+            <span
+                id="current-role"
+                class="role"
+            >
+                —
+            </span>
+
+        </div>
+
+
+        <div class="account-grid">
+
+
+            <!-- =====================================
+            CAMBIAR EMAIL
+            ===================================== -->
+
+            <section class="account-card">
+
+                <h3>
+                    CAMBIAR CORREO
+                </h3>
+
+                <p>
+
+                    Reemplazá el correo utilizado
+                    para iniciar sesión.
+
+                </p>
+
+
+                <form id="email-form">
+
+
+                    <div class="form-group">
+
+                        <label for="new-email">
+                            NUEVO CORREO ELECTRÓNICO
+                        </label>
+
+                        <input
+                            id="new-email"
+                            type="email"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="email-current-password">
+                            CONTRASEÑA ACTUAL
+                        </label>
+
+                        <input
+                            id="email-current-password"
+                            type="password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        id="change-email-button"
+                        class="action-button"
+                        type="submit"
+                    >
+                        CAMBIAR CORREO
+                    </button>
+
+
+                    <div
+                        id="email-message"
+                        class="message"
+                    ></div>
+
+
+                </form>
+
+            </section>
+
+
+            <!-- =====================================
+            CAMBIAR CONTRASEÑA
+            ===================================== -->
+
+            <section class="account-card">
+
+                <h3>
+                    CAMBIAR CONTRASEÑA
+                </h3>
+
+                <p>
+
+                    Elegí una contraseña nueva para
+                    esta cuenta administrativa.
+
+                </p>
+
+
+                <form id="password-form">
+
+
+                    <div class="form-group">
+
+                        <label for="password-current">
+                            CONTRASEÑA ACTUAL
+                        </label>
+
+                        <input
+                            id="password-current"
+                            type="password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="password-new">
+                            NUEVA CONTRASEÑA
+                        </label>
+
+                        <input
+                            id="password-new"
+                            type="password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="password-repeat">
+                            REPETIR NUEVA CONTRASEÑA
+                        </label>
+
+                        <input
+                            id="password-repeat"
+                            type="password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        id="change-password-button"
+                        class="action-button"
+                        type="submit"
+                    >
+                        CAMBIAR CONTRASEÑA
+                    </button>
+
+
+                    <div
+                        id="password-message"
+                        class="message"
+                    ></div>
+
+
+                </form>
+
+            </section>
+
+
+        </div>
+
+
+        <div class="warning">
+
+            <strong>IMPORTANTE:</strong>
+
+            al cambiar el correo electrónico,
+            el nuevo correo será el que deberás
+            utilizar para los próximos inicios
+            de sesión.
+
+            El cambio no modifica tu UID ni tu
+            rol administrativo.
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<script
+    type="module"
+    src="./cuenta.js?v=100"
+></script>
+
+
+</body>
+
+</html>
