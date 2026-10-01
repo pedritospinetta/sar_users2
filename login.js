@@ -23,6 +23,18 @@ import {
 
 
 /* =========================================================
+CONFIGURACIÓN
+========================================================= */
+
+const RESEND_SECONDS =
+    5 * 60;
+
+
+const RESEND_STORAGE_KEY =
+    "sar_password_reset_resend_until";
+
+
+/* =========================================================
 ELEMENTOS LOGIN
 ========================================================= */
 
@@ -102,10 +114,24 @@ const resetMessage =
     );
 
 
+const resendResetButton =
+    document.getElementById(
+        "resend-reset"
+    );
+
+
 const backToLoginButton =
     document.getElementById(
         "back-to-login"
     );
+
+
+/* =========================================================
+VARIABLES
+========================================================= */
+
+let resendInterval =
+    null;
 
 
 /* =========================================================
@@ -138,6 +164,210 @@ function mostrarMensaje(
 
     elemento.className =
         `message ${tipo}`;
+
+}
+
+
+/* =========================================================
+FORMATEAR CONTADOR
+========================================================= */
+
+function formatearTiempo(
+    segundos
+) {
+
+    const minutos =
+        Math.floor(
+            segundos / 60
+        );
+
+
+    const restoSegundos =
+        segundos % 60;
+
+
+    return (
+        String(minutos)
+            .padStart(2, "0")
+        +
+        ":"
+        +
+        String(restoSegundos)
+            .padStart(2, "0")
+    );
+
+}
+
+
+/* =========================================================
+OBTENER FIN DEL CONTADOR
+========================================================= */
+
+function obtenerFinReenvio() {
+
+    const valor =
+        localStorage.getItem(
+            RESEND_STORAGE_KEY
+        );
+
+
+    const timestamp =
+        Number(valor);
+
+
+    if (
+        !Number.isFinite(timestamp)
+    ) {
+
+        return 0;
+
+    }
+
+
+    return timestamp;
+
+}
+
+
+/* =========================================================
+GUARDAR FIN DEL CONTADOR
+========================================================= */
+
+function guardarFinReenvio() {
+
+    const hasta =
+        Date.now()
+        +
+        RESEND_SECONDS * 1000;
+
+
+    localStorage.setItem(
+        RESEND_STORAGE_KEY,
+        String(hasta)
+    );
+
+
+    return hasta;
+
+}
+
+
+/* =========================================================
+DETENER CONTADOR
+========================================================= */
+
+function detenerContador() {
+
+    if (
+        resendInterval
+    ) {
+
+        clearInterval(
+            resendInterval
+        );
+
+
+        resendInterval =
+            null;
+
+    }
+
+}
+
+
+/* =========================================================
+ACTUALIZAR CONTADOR
+========================================================= */
+
+function actualizarContador() {
+
+    const hasta =
+        obtenerFinReenvio();
+
+
+    const restanteMs =
+        hasta - Date.now();
+
+
+    if (
+        restanteMs <= 0
+    ) {
+
+        detenerContador();
+
+
+        localStorage.removeItem(
+            RESEND_STORAGE_KEY
+        );
+
+
+        resendResetButton.disabled =
+            false;
+
+
+        resendResetButton.textContent =
+            "REENVIAR CORREO";
+
+
+        return;
+
+    }
+
+
+    const restanteSegundos =
+        Math.ceil(
+            restanteMs / 1000
+        );
+
+
+    resendResetButton.disabled =
+        true;
+
+
+    resendResetButton.textContent =
+        `REENVIAR CORREO EN ${formatearTiempo(restanteSegundos)}`;
+
+}
+
+
+/* =========================================================
+INICIAR CONTADOR
+========================================================= */
+
+function iniciarContador(
+    guardarNuevo = false
+) {
+
+    detenerContador();
+
+
+    if (
+        guardarNuevo
+    ) {
+
+        guardarFinReenvio();
+
+    }
+
+
+    actualizarContador();
+
+
+    const hasta =
+        obtenerFinReenvio();
+
+
+    if (
+        hasta > Date.now()
+    ) {
+
+        resendInterval =
+            setInterval(
+                actualizarContador,
+                1000
+            );
+
+    }
 
 }
 
@@ -339,10 +569,6 @@ loginForm.addEventListener(
         try {
 
 
-            /* =========================================
-            LOGIN FIREBASE
-            ========================================= */
-
             const credencial =
                 await signInWithEmailAndPassword(
                     auth,
@@ -355,30 +581,17 @@ loginForm.addEventListener(
                 credencial.user;
 
 
-            /* =========================================
-            VERIFICAR ROL
-            ========================================= */
-
             const usuarioSistema =
                 await obtenerUsuarioAdministrativo(
                     usuario
                 );
 
 
-            /* =========================================
-            TOMAR CONTROL DEL SISTEMA
-            ========================================= */
-
             const control =
                 await tomarControlSistema(
                     usuarioSistema
                 );
 
-
-            /*
-            SI ES COMANDANTE Y HAY UN
-            DEVELOPER TRABAJANDO, NO ENTRA.
-            */
 
             if (
                 usuarioSistema.rol ===
@@ -406,10 +619,6 @@ loginForm.addEventListener(
             }
 
 
-            /* =========================================
-            DATOS DE SESIÓN
-            ========================================= */
-
             sessionStorage.setItem(
                 "sar_admin_role",
                 usuarioSistema.rol
@@ -422,10 +631,6 @@ loginForm.addEventListener(
             );
 
 
-            /* =========================================
-            ENTRAR AL PANEL
-            ========================================= */
-
             window.location.replace(
                 "./admin.html"
             );
@@ -433,12 +638,6 @@ loginForm.addEventListener(
 
         } catch (error) {
 
-
-            /*
-            SI ALCANZÓ A INICIAR SESIÓN
-            PERO FALLÓ LA AUTORIZACIÓN,
-            CERRAMOS LA SESIÓN.
-            */
 
             if (
                 auth.currentUser
@@ -499,11 +698,6 @@ forgotPasswordButton.addEventListener(
         );
 
 
-        /*
-        SI YA ESCRIBIÓ UN CORREO EN LOGIN,
-        LO COPIAMOS AUTOMÁTICAMENTE.
-        */
-
         const emailActual =
             emailInput
                 .value
@@ -533,6 +727,11 @@ forgotPasswordButton.addEventListener(
 
         document.title =
             "Recuperar contraseña | SAR Argentina";
+
+
+        iniciarContador(
+            false
+        );
 
 
         setTimeout(
@@ -576,11 +775,6 @@ backToLoginButton.addEventListener(
             "Acceso Administrativo | SAR Argentina";
 
 
-        /*
-        SI ESCRIBIÓ EL EMAIL EN RECUPERACIÓN,
-        LO PASAMOS AL LOGIN.
-        */
-
         const emailRecuperacion =
             resetEmailInput
                 .value
@@ -602,7 +796,187 @@ backToLoginButton.addEventListener(
 
 
 /* =========================================================
-ENVIAR CORREO DE RECUPERACIÓN
+ENVIAR CORREO
+========================================================= */
+
+async function enviarCorreoRecuperacion(
+    esReenvio = false
+) {
+
+    limpiarMensaje(
+        resetMessage
+    );
+
+
+    const email =
+        resetEmailInput
+            .value
+            .trim()
+            .toLowerCase();
+
+
+    if (
+        !email
+    ) {
+
+        mostrarMensaje(
+            resetMessage,
+            "INGRESÁ TU CORREO ELECTRÓNICO.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+    resetButton.disabled =
+        true;
+
+
+    resendResetButton.disabled =
+        true;
+
+
+    if (
+        esReenvio
+    ) {
+
+        resendResetButton.textContent =
+            "REENVIANDO...";
+
+    } else {
+
+        resetButton.textContent =
+            "ENVIANDO...";
+
+    }
+
+
+    try {
+
+
+        await sendPasswordResetEmail(
+            auth,
+            email
+        );
+
+
+        mostrarMensaje(
+            resetMessage,
+            "SI EL CORREO ESTÁ ASOCIADO A UNA CUENTA, RECIBIRÁS UN MENSAJE CON EL ENLACE PARA RESTABLECER TU CONTRASEÑA. SI NO LO ENCONTRÁS EN LA BANDEJA DE ENTRADA, REVISÁ SPAM O CORREO NO DESEADO.",
+            "success"
+        );
+
+
+        iniciarContador(
+            true
+        );
+
+
+        return true;
+
+
+    } catch (error) {
+
+
+        console.error(
+            "ERROR RECUPERACIÓN:",
+            error
+        );
+
+
+        if (
+            error.code ===
+            "auth/invalid-email"
+        ) {
+
+            mostrarMensaje(
+                resetMessage,
+                "EL CORREO ELECTRÓNICO NO ES VÁLIDO.",
+                "error"
+            );
+
+
+            resendResetButton.disabled =
+                false;
+
+
+            resendResetButton.textContent =
+                "REENVIAR CORREO";
+
+
+            return false;
+
+        }
+
+
+        if (
+            error.code ===
+            "auth/too-many-requests"
+        ) {
+
+            mostrarMensaje(
+                resetMessage,
+                "SE REALIZARON DEMASIADAS SOLICITUDES. ESPERÁ UN MOMENTO E INTENTÁ NUEVAMENTE.",
+                "error"
+            );
+
+
+            return false;
+
+        }
+
+
+        if (
+            error.code ===
+            "auth/network-request-failed"
+        ) {
+
+            mostrarMensaje(
+                resetMessage,
+                "NO SE PUDO CONECTAR CON FIREBASE. REVISÁ TU CONEXIÓN.",
+                "error"
+            );
+
+
+            return false;
+
+        }
+
+
+        mostrarMensaje(
+            resetMessage,
+            "SI EL CORREO ESTÁ ASOCIADO A UNA CUENTA, RECIBIRÁS UN MENSAJE CON EL ENLACE PARA RESTABLECER TU CONTRASEÑA. SI NO LO ENCONTRÁS EN LA BANDEJA DE ENTRADA, REVISÁ SPAM O CORREO NO DESEADO.",
+            "success"
+        );
+
+
+        iniciarContador(
+            true
+        );
+
+
+        return true;
+
+
+    } finally {
+
+
+        resetButton.disabled =
+            false;
+
+
+        resetButton.textContent =
+            "ENVIAR CORREO DE RECUPERACIÓN";
+
+    }
+
+}
+
+
+/* =========================================================
+PRIMER ENVÍO
 ========================================================= */
 
 resetForm.addEventListener(
@@ -613,26 +987,33 @@ resetForm.addEventListener(
         evento.preventDefault();
 
 
-        limpiarMensaje(
-            resetMessage
+        await enviarCorreoRecuperacion(
+            false
         );
 
+    }
+);
 
-        const email =
-            resetEmailInput
-                .value
-                .trim()
-                .toLowerCase();
+
+/* =========================================================
+REENVIAR
+========================================================= */
+
+resendResetButton.addEventListener(
+    "click",
+    async () => {
+
+
+        const hasta =
+            obtenerFinReenvio();
 
 
         if (
-            !email
+            hasta > Date.now()
         ) {
 
-            mostrarMensaje(
-                resetMessage,
-                "INGRESÁ TU CORREO ELECTRÓNICO.",
-                "error"
+            iniciarContador(
+                false
             );
 
             return;
@@ -640,132 +1021,42 @@ resetForm.addEventListener(
         }
 
 
-        resetButton.disabled =
-            true;
-
-
-        resetButton.textContent =
-            "ENVIANDO...";
-
-
-        try {
-
-
-            /*
-            FIREBASE ENVÍA AUTOMÁTICAMENTE
-            EL EMAIL USANDO LA PLANTILLA
-            QUE CONFIGURASTE EN LA CONSOLA.
-            */
-
-            await sendPasswordResetEmail(
-                auth,
-                email
-            );
-
-
-            /*
-            POR SEGURIDAD NO CONFIRMAMOS
-            SI EL CORREO EXISTE O NO.
-            */
-
-            mostrarMensaje(
-                resetMessage,
-                "SI EL CORREO ESTÁ ASOCIADO A UNA CUENTA, RECIBIRÁS UN MENSAJE CON EL ENLACE PARA RESTABLECER TU CONTRASEÑA. SI NO LO ENCONTRÁS EN LA BANDEJA DE ENTRADA, REVISÁ SPAM O CORREO NO DESEADO.",
-                "success"
-            );
-
-
-            resetButton.textContent =
-                "CORREO SOLICITADO";
-
-
-        } catch (error) {
-
-
-            console.error(
-                "ERROR RECUPERACIÓN:",
-                error
-            );
-
-
-            /*
-            EN MUCHOS CASOS CONVIENE MOSTRAR
-            EL MISMO MENSAJE PARA NO REVELAR
-            QUÉ CORREOS ESTÁN REGISTRADOS.
-            */
-
-            if (
-                error.code ===
-                "auth/invalid-email"
-            ) {
-
-                mostrarMensaje(
-                    resetMessage,
-                    "EL CORREO ELECTRÓNICO NO ES VÁLIDO.",
-                    "error"
-                );
-
-            }
-
-            else if (
-                error.code ===
-                "auth/too-many-requests"
-            ) {
-
-                mostrarMensaje(
-                    resetMessage,
-                    "SE REALIZARON DEMASIADAS SOLICITUDES. ESPERÁ UN MOMENTO E INTENTÁ NUEVAMENTE.",
-                    "error"
-                );
-
-            }
-
-            else if (
-                error.code ===
-                "auth/network-request-failed"
-            ) {
-
-                mostrarMensaje(
-                    resetMessage,
-                    "NO SE PUDO CONECTAR CON FIREBASE. REVISÁ TU CONEXIÓN.",
-                    "error"
-                );
-
-            }
-
-            else {
-
-                /*
-                NO REVELAMOS SI EL EMAIL EXISTE.
-                */
-
-                mostrarMensaje(
-                    resetMessage,
-                    "SI EL CORREO ESTÁ ASOCIADO A UNA CUENTA, RECIBIRÁS UN MENSAJE CON EL ENLACE PARA RESTABLECER TU CONTRASEÑA.",
-                    "success"
-                );
-
-            }
-
-
-        } finally {
-
-
-            resetButton.disabled =
-                false;
-
-
-            if (
-                resetButton.textContent !==
-                "CORREO SOLICITADO"
-            ) {
-
-                resetButton.textContent =
-                    "ENVIAR CORREO DE RECUPERACIÓN";
-
-            }
-
-        }
+        await enviarCorreoRecuperacion(
+            true
+        );
 
     }
 );
+
+
+/* =========================================================
+RESTAURAR CONTADOR AL CARGAR
+========================================================= */
+
+const finGuardado =
+    obtenerFinReenvio();
+
+
+if (
+    finGuardado > Date.now()
+) {
+
+    iniciarContador(
+        false
+    );
+
+} else {
+
+    localStorage.removeItem(
+        RESEND_STORAGE_KEY
+    );
+
+
+    resendResetButton.disabled =
+        false;
+
+
+    resendResetButton.textContent =
+        "REENVIAR CORREO";
+
+}
