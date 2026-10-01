@@ -16,15 +16,34 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 
+import {
+    tomarControlSistema
+} from "./sistema.js";
+
+
+/* =========================================
+ELEMENTOS
+========================================= */
+
 const form =
-    document.getElementById("login-form");
+    document.getElementById(
+        "login-form"
+    );
 
 
 const message =
-    document.getElementById("login-message");
+    document.getElementById(
+        "login-message"
+    );
 
 
-async function verificarComandante(usuario) {
+/* =========================================
+OBTENER USUARIO ADMINISTRATIVO
+========================================= */
+
+async function obtenerUsuarioAdministrativo(
+    usuario
+) {
 
     const usuarioRef =
         doc(
@@ -35,11 +54,17 @@ async function verificarComandante(usuario) {
 
 
     const usuarioSnap =
-        await getDoc(usuarioRef);
+        await getDoc(
+            usuarioRef
+        );
 
 
-    if (!usuarioSnap.exists()) {
-        return false;
+    if (
+        !usuarioSnap.exists()
+    ) {
+
+        return null;
+
     }
 
 
@@ -47,14 +72,59 @@ async function verificarComandante(usuario) {
         usuarioSnap.data();
 
 
-    return (
-        datos.rol === "comandante"
+    /* =====================================
+    CUENTA INACTIVA
+    ===================================== */
+
+    if (
+        datos.activo !== true
+    ) {
+
+        return null;
+
+    }
+
+
+    /* =====================================
+    SOLO COMANDANTE O DEVELOPER
+    ===================================== */
+
+    if (
+        datos.rol !== "comandante"
         &&
-        datos.activo === true
-    );
+        datos.rol !== "developer"
+    ) {
+
+        return null;
+
+    }
+
+
+    return {
+
+        uid:
+            usuario.uid,
+
+        email:
+            usuario.email,
+
+        nombre:
+            datos.nombre || "",
+
+        rol:
+            datos.rol,
+
+        activo:
+            datos.activo
+
+    };
 
 }
 
+
+/* =========================================
+LOGIN
+========================================= */
 
 form.addEventListener(
     "submit",
@@ -64,7 +134,8 @@ form.addEventListener(
 
 
         message.textContent =
-            "Verificando acceso...";
+            "VERIFICANDO ACCESO...";
+
 
         message.className =
             "login-message";
@@ -72,18 +143,26 @@ form.addEventListener(
 
         const email =
             document
-                .getElementById("email")
+                .getElementById(
+                    "email"
+                )
                 .value
                 .trim();
 
 
         const password =
             document
-                .getElementById("password")
+                .getElementById(
+                    "password"
+                )
                 .value;
 
 
         try {
+
+            /* =================================
+            INICIAR SESIÓN FIREBASE
+            ================================= */
 
             const credencial =
                 await signInWithEmailAndPassword(
@@ -93,60 +172,228 @@ form.addEventListener(
                 );
 
 
-            const usuario =
+            const usuarioFirebase =
                 credencial.user;
 
 
-            const autorizado =
-                await verificarComandante(
-                    usuario
+            /* =================================
+            LEER ROL FIRESTORE
+            ================================= */
+
+            const usuario =
+                await obtenerUsuarioAdministrativo(
+                    usuarioFirebase
                 );
 
 
-            if (!autorizado) {
+            if (
+                !usuario
+            ) {
 
-                await signOut(auth);
+                await signOut(
+                    auth
+                );
 
 
                 message.textContent =
-                    "Esta cuenta no tiene permisos administrativos.";
+                    "ESTA CUENTA NO TIENE PERMISOS ADMINISTRATIVOS.";
+
 
                 message.className =
                     "login-message error";
+
 
                 return;
 
             }
 
 
+            /* =================================
+            INTENTAR TOMAR CONTROL
+            ================================= */
+
             message.textContent =
-                "Acceso autorizado.";
+                "COMPROBANDO ESTADO DEL SISTEMA...";
+
+
+            const control =
+                await tomarControlSistema(
+                    usuario
+                );
+
+
+            /* =================================
+            COMANDANTE BLOQUEADO POR DEVELOPER
+            ================================= */
+
+            if (
+                usuario.rol === "comandante"
+                &&
+                control.permitido === false
+                &&
+                control.modo === "developer"
+            ) {
+
+                await signOut(
+                    auth
+                );
+
+
+                window.location.replace(
+                    "./mantenimiento.html"
+                );
+
+
+                return;
+
+            }
+
+
+            /* =================================
+            DEVELOPER
+            ================================= */
+
+            if (
+                usuario.rol === "developer"
+            ) {
+
+                message.textContent =
+                    "ACCESO DE DESARROLLADOR AUTORIZADO.";
+
+
+                message.className =
+                    "login-message success";
+
+
+                sessionStorage.setItem(
+                    "sarRol",
+                    "developer"
+                );
+
+
+                sessionStorage.setItem(
+                    "sarNombre",
+                    usuario.nombre
+                    ||
+                    "DEVELOPER"
+                );
+
+
+                setTimeout(
+                    () => {
+
+                        window.location.replace(
+                            "./admin.html"
+                        );
+
+                    },
+                    500
+                );
+
+
+                return;
+
+            }
+
+
+            /* =================================
+            COMANDANTE
+            ================================= */
+
+            if (
+                usuario.rol === "comandante"
+            ) {
+
+                message.textContent =
+                    "ACCESO ADMINISTRATIVO AUTORIZADO.";
+
+
+                message.className =
+                    "login-message success";
+
+
+                sessionStorage.setItem(
+                    "sarRol",
+                    "comandante"
+                );
+
+
+                sessionStorage.setItem(
+                    "sarNombre",
+                    usuario.nombre
+                    ||
+                    "COMANDANTE"
+                );
+
+
+                setTimeout(
+                    () => {
+
+                        window.location.replace(
+                            "./admin.html"
+                        );
+
+                    },
+                    500
+                );
+
+
+                return;
+
+            }
+
+
+            /* =================================
+            SEGURIDAD EXTRA
+            ================================= */
+
+            await signOut(
+                auth
+            );
+
+
+            message.textContent =
+                "NO SE PUDO AUTORIZAR EL ACCESO.";
+
 
             message.className =
-                "login-message success";
-
-
-            setTimeout(
-                () => {
-
-                    window.location.href =
-                        "./admin.html";
-
-                },
-                700
-            );
+                "login-message error";
 
 
         } catch (error) {
 
             console.error(
-                "Error de inicio de sesión:",
+                "ERROR DE INICIO DE SESIÓN:",
                 error
             );
 
 
+            try {
+
+                if (
+                    auth.currentUser
+                ) {
+
+                    await signOut(
+                        auth
+                    );
+
+                }
+
+            } catch (
+                logoutError
+            ) {
+
+                console.error(
+                    logoutError
+                );
+
+            }
+
+
             message.textContent =
-                "Correo electrónico o contraseña incorrectos.";
+                "CORREO ELECTRÓNICO O CONTRASEÑA INCORRECTOS.";
+
 
             message.className =
                 "login-message error";
