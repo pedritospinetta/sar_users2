@@ -46,7 +46,6 @@
         html,
         body {
             margin: 0;
-
             min-height: 100%;
         }
 
@@ -64,20 +63,14 @@
             color: #1c1c1c;
 
             background:
-
                 radial-gradient(
                     circle at 50% 20%,
                     rgba(255,101,0,.07),
                     transparent 35%
                 ),
-
                 #f1f2f4;
         }
 
-
-        /* =====================================
-        HEADER
-        ===================================== */
 
         .header {
             background: #151515;
@@ -85,6 +78,7 @@
             border-bottom:
                 4px solid #ff6500;
         }
+
 
         .header-inner {
             width: 100%;
@@ -106,6 +100,7 @@
             gap: 20px;
         }
 
+
         .brand {
             display: flex;
 
@@ -113,6 +108,7 @@
 
             gap: 12px;
         }
+
 
         .brand img {
             width: 58px;
@@ -124,6 +120,7 @@
 
             border-radius: 8px;
         }
+
 
         .brand h1 {
             margin: 0;
@@ -138,6 +135,7 @@
 
             letter-spacing: 1px;
         }
+
 
         .brand p {
             margin:
@@ -158,6 +156,7 @@
             letter-spacing: .7px;
         }
 
+
         .system-state {
             display: flex;
 
@@ -172,6 +171,7 @@
             font-weight: 800;
         }
 
+
         .state-dot {
             width: 9px;
             height: 9px;
@@ -185,10 +185,6 @@
                 rgba(230,166,0,.13);
         }
 
-
-        /* =====================================
-        MAIN
-        ===================================== */
 
         main {
             flex: 1;
@@ -205,6 +201,7 @@
                 50px
                 20px;
         }
+
 
         .card {
             position: relative;
@@ -233,6 +230,7 @@
                 rgba(0,0,0,.08);
         }
 
+
         .card::before {
             content: "";
 
@@ -246,6 +244,7 @@
 
             background: #ff6500;
         }
+
 
         .watermark {
             position: absolute;
@@ -267,11 +266,13 @@
             pointer-events: none;
         }
 
+
         .content {
             position: relative;
 
             z-index: 2;
         }
+
 
         .icon {
             width: 86px;
@@ -301,6 +302,7 @@
             font-size: 37px;
         }
 
+
         .label {
             margin-bottom: 10px;
 
@@ -316,6 +318,7 @@
 
             letter-spacing: 2px;
         }
+
 
         h2 {
             max-width: 650px;
@@ -340,6 +343,7 @@
             font-weight: 700;
         }
 
+
         .description {
             max-width: 610px;
 
@@ -355,6 +359,7 @@
             line-height: 1.75;
         }
 
+
         .important {
             display: inline-block;
 
@@ -364,6 +369,7 @@
 
             font-weight: 800;
         }
+
 
         .separator {
             width: 85px;
@@ -377,6 +383,7 @@
 
             border-radius: 5px;
         }
+
 
         .notice {
             max-width: 545px;
@@ -395,6 +402,7 @@
             border-radius: 10px;
         }
 
+
         .notice strong {
             display: block;
 
@@ -406,6 +414,7 @@
 
             font-size: 16px;
         }
+
 
         .notice span {
             color: #777;
@@ -430,6 +439,7 @@
 
             font-size: 11px;
         }
+
 
         footer strong {
             color: #555;
@@ -546,10 +556,7 @@
 
 
             <h2>
-
-                ACTUALIZACIÓN DEL
-                REGISTRO EN CURSO
-
+                ACTUALIZACIÓN DEL REGISTRO EN CURSO
             </h2>
 
 
@@ -571,9 +578,7 @@
                 <br>
 
                 <span class="important">
-
                     Sepa disculpar las molestias.
-
                 </span>
 
             </div>
@@ -617,6 +622,89 @@
     · Cuerpo Argentino de Rescate
 
 </footer>
+
+
+<script type="module">
+
+    import {
+        obtenerEstadoSistema,
+        escucharSistema
+    } from "./sistema.js";
+
+
+    let redireccionando = false;
+
+
+    function revisarEstado(datos) {
+
+        if (redireccionando) {
+            return;
+        }
+
+
+        if (
+            datos.modo === "online"
+        ) {
+
+            redireccionando = true;
+
+            window.location.replace(
+                "./"
+            );
+
+            return;
+
+        }
+
+
+        if (
+            datos.modo === "developer"
+        ) {
+
+            redireccionando = true;
+
+            window.location.replace(
+                "./mantenimiento.html"
+            );
+
+        }
+
+    }
+
+
+    async function iniciar() {
+
+        try {
+
+            const estado =
+                await obtenerEstadoSistema();
+
+
+            revisarEstado(
+                estado
+            );
+
+
+            escucharSistema(
+                revisarEstado
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "ERROR CONSULTANDO ESTADO DEL SISTEMA:",
+                error
+            );
+
+        }
+
+    }
+
+
+    iniciar();
+
+</script>
 
 
 </body>
